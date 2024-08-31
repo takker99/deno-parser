@@ -26,7 +26,7 @@ support Node.js release).
 ## Installation
 
 ```bash
-npm i bread-n-butter
+deno add jsr:@takker/parser
 ```
 
 ## Usage
@@ -34,20 +34,7 @@ npm i bread-n-butter
 If you are using ES modules through TypeScript/webpack and npm:
 
 ```js
-import * as bnb from "bread-n-butter";
-```
-
-If you are using Node.js require:
-
-```js
-const bnb = require("bread-n-butter");
-```
-
-If you are using ES modules natively in the browser without npm, download the
-[ES modules build](https://unpkg.com/bread-n-butter/dist/esm/bread-n-butter.js):
-
-```js
-import * as bnb from "./bread-n-butter.js";
+import * as bnb from "@takker/parser";
 ```
 
 ## Getting Started

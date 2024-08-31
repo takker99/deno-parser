@@ -1,4 +1,4 @@
-import * as bnb from "../src/bread-n-butter";
+import { eof, fail, lazy, match, ok, type Parser, text } from "../mod.ts";
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -6,8 +6,8 @@ type PyBlock = { type: "Block"; statements: PyStatement[] };
 type PyIdent = { type: "Ident"; value: string };
 type PyStatement = PyBlock | PyIdent;
 type Py = {
-  pyStatement: bnb.Parser<PyStatement>;
-  pyRestStatement: bnb.Parser<PyStatement>;
+  pyStatement: Parser<PyStatement>;
+  pyRestStatement: Parser<PyStatement>;
 };
 
 // Because parsing indentation-sensitive languages such as Python requires
@@ -26,36 +26,36 @@ function py(indent: number): Py {
   // expand them to the correct number of spaces
   //
   // https://docs.python.org/3/reference/lexical_analysis.html#indentation
-  const pyCountSpaces = bnb.match(/[ ]*/).map((s) => s.length);
+  const pyCountSpaces = match(/[ ]*/).map((s) => s.length);
 
   // Count the current indentation level and assert it's more than the current
   // parse state's desired indentation
   const pyIndentSame = pyCountSpaces.chain((n) => {
     if (n === indent) {
-      return bnb.ok(n);
+      return ok(n);
     }
-    return bnb.fail<number>([`${n} spaces`]);
+    return fail<number>([`${n} spaces`]);
   });
 
   // Count the current indentation level and assert it's equal to the current
   // parse state's desired indentation
   const pyIndentMore = pyCountSpaces.chain((n) => {
     if (n > indent) {
-      return bnb.ok(n);
+      return ok(n);
     }
-    return bnb.fail<number>([`more than ${n} spaces`]);
+    return fail<number>([`more than ${n} spaces`]);
   });
 
   // Support UNIX and Windows line endings
-  const pyNL = bnb.text("\r\n").or(bnb.text("\n"));
+  const pyNL = text("\r\n").or(text("\n"));
 
   // Lines should always end in a newline sequence, but many files are missing
   // the final newline
-  const pyEnd = pyNL.or(bnb.eof);
+  const pyEnd = pyNL.or(eof);
 
   // This is just a statement in our language. To simplify, this is either a
   // block of code or just an identifier
-  const pyStatement: bnb.Parser<PyStatement> = bnb.lazy(() => {
+  const pyStatement: Parser<PyStatement> = lazy(() => {
     return pyBlock.or(pyIdent);
   });
 
@@ -71,8 +71,7 @@ function py(indent: number): Py {
   // that new indentation level for all their parsing. Each line past the
   // first is required to be indented to the same level as that new deeper
   // indentation level.
-  const pyBlock = bnb
-    .text("block:")
+  const pyBlock = text("block:")
     .next(pyNL)
     .next(
       pyIndentMore.chain((n) => {
@@ -90,8 +89,7 @@ function py(indent: number): Py {
     );
 
   // Just a variable and then the end of the line.
-  const pyIdent = bnb
-    .match(/[a-z]+/i)
+  const pyIdent = match(/[a-z]+/i)
     .skip(pyEnd)
     .map<PyIdent>((value) => {
       return { type: "Ident", value };
@@ -101,6 +99,4 @@ function py(indent: number): Py {
 }
 
 // Start parsing at zero indentation
-const Python = py(0).pyStatement;
-
-export default Python;
+export const Python = py(0).pyStatement;

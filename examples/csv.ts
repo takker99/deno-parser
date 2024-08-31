@@ -1,33 +1,31 @@
-import * as bnb from "../src/bread-n-butter";
+import { match, ok, type Parser, text } from "../mod.ts";
 
 // CSVs should end with `\r\n` but `\n` is fine too.
-const csvEnd = bnb.text("\r\n").or(bnb.text("\n"));
+const csvEnd = text("\r\n").or(text("\n"));
 // If the string doesn't have any newlines, commas, or `"`, parse it with a
 // single regular expression for speed.
-const csvFieldSimple = bnb.match(/[^\r\n,"]*/);
+const csvFieldSimple = match(/[^\r\n,"]*/);
 // - Starts with a double quote `"`.
 // - The contains 0+ quoted characters.
 // - Quoted characters are either `""` which evaluates to a single `"`.
 // - OR they are any other character, including newlines.
-const csvFieldQuoted = bnb.text('"').chain(() => {
-  return bnb
-    .match(/[^"]+/)
-    .or(bnb.text('""').map(() => '"'))
+const csvFieldQuoted = text('"').chain(() => {
+  return match(/[^"]+/)
+    .or(text('""').map(() => '"'))
     .repeat(0)
     .map((chunks) => chunks.join(""))
-    .chain((text) => {
-      return bnb.text('"').map(() => text);
-    });
+    .chain((txt) => text('"').map(() => txt));
 });
 // A field is a single value
 const csvField = csvFieldQuoted.or(csvFieldSimple);
 // Each row (line) is 1 or more values separated by commas
-const csvRow = csvField.sepBy(bnb.text(","), 1);
-// A CSV file is _basically_ just 1 or more rows, but our parser accidentally
-// reads the final empty line incorrectly and we have to hack around that.
-const CSV = csvRow
+const csvRow = csvField.sepBy(text(","), 1);
+/** A CSV file is _basically_ just 1 or more rows, but our parser accidentally
+ * reads the final empty line incorrectly and we have to hack around that.
+ */
+export const CSV: Parser<string[][]> = csvRow
   .sepBy(csvEnd, 1)
-  .skip(csvEnd.or(bnb.ok("")))
+  .skip(csvEnd.or(ok("")))
   .map((rows) => {
     return rows.filter((row, index) => {
       // Given that CSV files don't require line endings strictly, and empty
@@ -38,5 +36,3 @@ const CSV = csvRow
       return !(index === rows.length - 1 && row.length === 1 && row[0] === "");
     });
   });
-
-export default CSV;

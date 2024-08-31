@@ -1,0 +1,1556 @@
+export const snapshot = {};
+
+snapshot[`test a test 1`] = `
+{
+  type: "ParseOK",
+  value: "x",
+}
+`;
+
+snapshot[`and 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    "x",
+    "y",
+  ],
+}
+`;
+
+snapshot[`and triple 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    [
+      "x",
+      "y",
+    ],
+    "z",
+  ],
+}
+`;
+
+snapshot[`and success triple 2 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    "x",
+    "y",
+    "z",
+  ],
+}
+`;
+
+snapshot[`and failure 1`] = `
+{
+  expected: [
+    "y",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`and failure 2`] = `
+{
+  expected: [
+    "x",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`and failure 3`] = `
+{
+  expected: [
+    "x",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`and failure 4`] = `
+{
+  expected: [
+    "x",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 0+ 1`] = `
+{
+  type: "ParseOK",
+  value: [],
+}
+`;
+
+snapshot[`sepBy 0+ 2`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+  ],
+}
+`;
+
+snapshot[`sepBy 0+ 3`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`sepBy 0+ 4`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`sepBy 0+ 5`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 5,
+    index: 4,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 0+ 6`] = `
+{
+  expected: [
+    "a",
+    "<EOF>",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 1+ 1`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 1+ 2`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+  ],
+}
+`;
+
+snapshot[`sepBy 1+ 3`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`sepBy 1+ 4`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`sepBy 1+ 5`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 5,
+    index: 4,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 1+ 6`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 2-3 1`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 2-3 2`] = `
+{
+  expected: [
+    ",",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 2-3 3`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`sepBy 2-3 4`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`sepBy 2-3 5`] = `
+{
+  expected: [
+    "<EOF>",
+  ],
+  location: {
+    column: 6,
+    index: 5,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 2-3 6`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 5,
+    index: 4,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 2-3 7`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 1-1 1`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 1-1 2`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+  ],
+}
+`;
+
+snapshot[`sepBy 1-1 3`] = `
+{
+  expected: [
+    "<EOF>",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`sepBy 1-1 4`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`repeat 0+ 1`] = `
+{
+  type: "ParseOK",
+  value: [],
+}
+`;
+
+snapshot[`repeat 0+ 2`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+  ],
+}
+`;
+
+snapshot[`repeat 0+ 3`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`repeat 0+ 4`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`repeat 0+ 5`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`repeat 0+ 6`] = `
+{
+  expected: [
+    "a",
+    "<EOF>",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`repeat 1+ 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+  ],
+}
+`;
+
+snapshot[`repeat 1+ 2`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`repeat 1+ 3`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`repeat 1+ 4`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`repeat 1+ 5`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`repeat 1+ 6`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`repeat 2-3 1`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`repeat 2-3 2`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`repeat 2-3 3`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "a",
+    "a",
+  ],
+}
+`;
+
+snapshot[`repeat 2-3 4`] = `
+{
+  expected: [
+    "<EOF>",
+  ],
+  location: {
+    column: 4,
+    index: 3,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`repeat 2-3 5`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`repeat 2-3 6`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`all 1`] = `
+{
+  expected: [
+    "b",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`all 2`] = `
+{
+  expected: [
+    "b",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`all 3`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "b",
+    "c",
+  ],
+}
+`;
+
+snapshot[`all 4`] = `
+{
+  expected: [
+    "b",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`all 5`] = `
+{
+  expected: [
+    "c",
+  ],
+  location: {
+    column: 3,
+    index: 2,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`all 6`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`all 7`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`next 1`] = `
+{
+  type: "ParseOK",
+  value: "b",
+}
+`;
+
+snapshot[`next 2`] = `
+{
+  expected: [
+    "b",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`next 3`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`next 4`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`next 5`] = `
+{
+  expected: [
+    "<EOF>",
+  ],
+  location: {
+    column: 3,
+    index: 2,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`skip 1`] = `
+{
+  type: "ParseOK",
+  value: "a",
+}
+`;
+
+snapshot[`skip 2`] = `
+{
+  expected: [
+    "b",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`skip 3`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`skip 4`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`skip 5`] = `
+{
+  expected: [
+    "<EOF>",
+  ],
+  location: {
+    column: 3,
+    index: 2,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`choice 1`] = `
+{
+  type: "ParseOK",
+  value: "a",
+}
+`;
+
+snapshot[`choice 2`] = `
+{
+  type: "ParseOK",
+  value: "b",
+}
+`;
+
+snapshot[`choice 3`] = `
+{
+  type: "ParseOK",
+  value: "c",
+}
+`;
+
+snapshot[`choice 4`] = `
+{
+  type: "ParseOK",
+  value: 1,
+}
+`;
+
+snapshot[`choice 5`] = `
+{
+  type: "ParseOK",
+  value: 2,
+}
+`;
+
+snapshot[`choice 6`] = `
+{
+  type: "ParseOK",
+  value: 3,
+}
+`;
+
+snapshot[`choice 7`] = `
+{
+  expected: [
+    "<EOF>",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`choice 8`] = `
+{
+  expected: [
+    "<EOF>",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`choice 9`] = `
+{
+  expected: [
+    "a",
+    "b",
+    "c",
+    "1",
+    "2",
+    "3",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`or 1`] = `
+{
+  type: "ParseOK",
+  value: "a",
+}
+`;
+
+snapshot[`or 2`] = `
+{
+  type: "ParseOK",
+  value: "b",
+}
+`;
+
+snapshot[`or 3`] = `
+{
+  expected: [
+    "a",
+    "b",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`or 4`] = `
+{
+  expected: [
+    "<EOF>",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`or 5`] = `
+{
+  expected: [
+    "a",
+    "b",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`map 1`] = `
+{
+  type: "ParseOK",
+  value: 1,
+}
+`;
+
+snapshot[`map 2`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`map 3`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 1`] = `
+{
+  type: "ParseOK",
+  value: "b",
+}
+`;
+
+snapshot[`chain 2`] = `
+{
+  expected: [
+    "b",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 3`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 4`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 2 1`] = `
+{
+  type: "ParseOK",
+  value: "b",
+}
+`;
+
+snapshot[`chain 2 2`] = `
+{
+  expected: [
+    "b",
+  ],
+  location: {
+    column: 3,
+    index: 2,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 2 3`] = `
+{
+  expected: [
+    "b",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 2 4`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 2 5`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 3 1`] = `
+{
+  type: "ParseOK",
+  value: "c",
+}
+`;
+
+snapshot[`chain 3 2`] = `
+{
+  expected: [
+    "c",
+  ],
+  location: {
+    column: 3,
+    index: 2,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 3 3`] = `
+{
+  expected: [
+    "b",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 3 4`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 3 5`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`chain 3 6`] = `
+{
+  expected: [
+    "a",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`matchEOF 1`] = `
+{
+  type: "ParseOK",
+  value: "<EOF>",
+}
+`;
+
+snapshot[`matchEOF 2`] = `
+{
+  expected: [
+    "<EOF>",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`match 1`] = `
+{
+  type: "ParseOK",
+  value: "12",
+}
+`;
+
+snapshot[`match 2`] = `
+{
+  expected: [
+    "/\\\\d+/",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`match 3`] = `
+{
+  expected: [
+    "/\\\\d+/",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`match with capture 1`] = `
+{
+  type: "ParseOK",
+  value: "12",
+}
+`;
+
+snapshot[`match with capture 2`] = `
+{
+  expected: [
+    "/(\\\\d+)/",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`match with capture 3`] = `
+{
+  expected: [
+    "/(\\\\d+)/",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`lisp lists 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    "a",
+    "b",
+    "c",
+  ],
+}
+`;
+
+snapshot[`node 1`] = `
+{
+  type: "ParseOK",
+  value: {
+    end: {
+      column: 4,
+      index: 3,
+      line: 1,
+    },
+    name: "Identifier",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    type: "ParseNode",
+    value: "abc",
+  },
+}
+`;
+
+snapshot[`node 2`] = `
+{
+  type: "ParseOK",
+  value: {
+    end: {
+      column: 2,
+      index: 5,
+      line: 3,
+    },
+    name: "ABC",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    type: "ParseNode",
+    value: "A
+B
+C",
+  },
+}
+`;
+
+snapshot[`tryParse 1`] = `"a"`;
+
+snapshot[`desc 1`] = `
+{
+  type: "ParseOK",
+  value: 9,
+}
+`;
+
+snapshot[`desc 2`] = `
+{
+  expected: [
+    "number",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`desc with node 1`] = `
+{
+  type: "ParseOK",
+  value: {
+    end: {
+      column: 2,
+      index: 1,
+      line: 1,
+    },
+    name: "Number",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    type: "ParseNode",
+    value: 9,
+  },
+}
+`;
+
+snapshot[`desc with node 2`] = `
+{
+  expected: [
+    "number",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`wrap 1`] = `
+{
+  type: "ParseOK",
+  value: "x",
+}
+`;
+
+snapshot[`wrap 2`] = `
+{
+  expected: [
+    ">",
+  ],
+  location: {
+    column: 3,
+    index: 2,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`wrap 3`] = `
+{
+  expected: [
+    "x",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`wrap 4`] = `
+{
+  expected: [
+    "<",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`trim 1`] = `
+{
+  type: "ParseOK",
+  value: "x",
+}
+`;
+
+snapshot[`trim 2`] = `
+{
+  expected: [
+    "~",
+  ],
+  location: {
+    column: 3,
+    index: 2,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`trim 3`] = `
+{
+  expected: [
+    "x",
+  ],
+  location: {
+    column: 2,
+    index: 1,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`trim 4`] = `
+{
+  expected: [
+    "~",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`fail 1`] = `
+{
+  expected: [
+    "apple",
+    "banana",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`fail 2`] = `
+{
+  expected: [
+    "other",
+    "apple",
+    "banana",
+  ],
+  location: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseFail",
+}
+`;
+
+snapshot[`lazy 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    "x",
+    "x",
+    [
+      "x",
+      [],
+      [
+        "x",
+      ],
+      [
+        [
+          "x",
+        ],
+      ],
+      "x",
+    ],
+    "x",
+  ],
+}
+`;
+
+snapshot[`emoji length 1`] = `
+{
+  end: {
+    column: 4,
+    index: 6,
+    line: 1,
+  },
+  name: "Emoji",
+  start: {
+    column: 1,
+    index: 0,
+    line: 1,
+  },
+  type: "ParseNode",
+  value: "🙂🙂🙂",
+}
+`;

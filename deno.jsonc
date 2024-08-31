@@ -1,4 +1,7 @@
 {
+  "name": "@takker/parser",
+  "version": "0.0.0",
+  "exports": "./mod.ts",
   "unstable": [
     "fmt-html",
     "fmt-css",
@@ -6,6 +9,17 @@
     "fmt-component"
   ],
   "tasks": {
-    "fix": "deno fmt && deno lint --fix"
+    // "fix": "deno fmt && deno lint --fix && deno doc --lint **/*.ts && deno test --allow-read=./ --doc --parallel --shuffle && deno publish --dry-run --allow-dirty",
+    // "check": "deno fmt --check && deno lint && deno doc --lint **/*.ts && deno test --allow-read=./ --doc --parallel --shuffle && deno publish --dry-run",
+    "fix": "deno fmt && deno lint --fix && deno test --allow-read=./ --parallel --shuffle && deno publish --dry-run --allow-dirty",
+    "check": "deno fmt --check && deno lint && deno test --allow-read=./ --parallel --shuffle && deno publish --dry-run",
+    // from https://github.com/jsr-core/unknownutil/blob/v4.2.2/deno.jsonc#L84-L85
+    "update": "deno run --allow-env --allow-read --allow-write=. --allow-run=git,deno --allow-net=jsr.io,registry.npmjs.org jsr:@molt/cli",
+    "update:commit": "deno task -q update --commit --prefix deps: --pre-commit=fix"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.3",
+    "@std/testing": "jsr:@std/testing@^1.0.1",
+    "@takker/parser": "./mod.ts"
   }
 }

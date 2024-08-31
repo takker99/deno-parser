@@ -228,7 +228,7 @@ export interface ParseNode<S extends string, A> {
  * Parser that yields the current {@linkcode SourceLocation}, containing properties
  * `index`, `line` and `column`.
  */
-export const location = new Parser<SourceLocation>((context) =>
+export const location: Parser<SourceLocation> = new Parser((context) =>
   context.ok(context.location.index, context.location)
 );
 
@@ -249,7 +249,7 @@ const EOF = "<EOF>" as const;
 /**
  * This parser succeeds if the input has already been fully parsed.
  */
-export const eof = new Parser<"<EOF>">((context) => {
+export const eof: Parser<"<EOF>"> = new Parser((context) => {
   const i = context.location.index;
   return i < context.input.length ? context.fail(i, [EOF]) : context.ok(i, EOF);
 });

@@ -1,23 +1,25 @@
-import XML from "../examples/xml-ish";
-import { snapTest } from "./util";
+import { XML } from "./xml-ish.ts";
+import { assertSnapshot } from "@std/testing/snapshot";
+import { assertEquals } from "@std/assert";
 
-test("xml basic", () => {
-  expect(XML.tryParse(`<a key="val" />`)).toEqual({
+Deno.test("xml basic", () => {
+  assertEquals(XML.tryParse(`<a key="val" />`), {
     name: "a",
     attributes: { key: "val" },
     children: [],
   });
-  expect(XML.tryParse(`<a key="val">foo<b /></a>`)).toEqual({
+  assertEquals(XML.tryParse(`<a key="val">foo<b /></a>`), {
     name: "a",
     attributes: { key: "val" },
     children: ["foo", { name: "b", attributes: {}, children: [] }],
   });
 });
 
-test("xml large example", () => {
-  snapTest(
-    XML,
-    `
+Deno.test("xml large example", (t) =>
+  assertSnapshot(
+    t,
+    XML.parse(
+      `
     <Map>
       <Entry key="string-a"><String>alpha</String></Entry>
       <Entry key="string-b"><String>bravo</String></Entry>
@@ -33,5 +35,5 @@ test("xml large example", () => {
       <Entry key="empty" />
     </Map>
     `,
-  );
-});
+    ),
+  ));

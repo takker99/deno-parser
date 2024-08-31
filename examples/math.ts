@@ -1,12 +1,22 @@
-import * as bnb from "../src/bread-n-butter";
+import { lazy, match, ok, type Parser, text } from "../mod.ts";
 
 // ---[ Abstract Syntax Tree and Evaluator Combined ]---
 
+/**
+ * Represents a mathematical expression.
+ *
+ * This interface defines the contract for a mathematical expression, which includes methods for calculating the expression's value and converting it to a string representation.
+ */
 export interface MathExpr {
+  /** Calculates the value of the expression. */
   calculate(): number;
+  /** Converts the expression to a string representation. */
   toString(): string;
 }
 
+/**
+ * Represents a binary mathematical operator.
+ */
 export class MathOperator2 implements MathExpr {
   constructor(
     public operator: string,
@@ -38,6 +48,9 @@ export class MathOperator2 implements MathExpr {
   }
 }
 
+/**
+ * Represents a unary mathematical operator.
+ */
 export class MathOperator1 implements MathExpr {
   constructor(public operator: string, public expression: MathExpr) {}
 
@@ -70,15 +83,15 @@ class MathNumber implements MathExpr {
 
 // ---[ Parser ]---
 
-function token<A>(parser: bnb.Parser<A>) {
+function token<A>(parser: Parser<A>) {
   return parser.trim(mathWS);
 }
 
 function operator<S extends string>(string: S) {
-  return bnb.text(string).thru(token);
+  return text(string).thru(token);
 }
 
-const mathWS = bnb.match(/\s*/);
+const mathWS = match(/\s*/);
 
 // Each precedence level builds upon the previous one. Meaning that the previous
 // parser is used in the next parser, over and over. An astute reader could
@@ -86,20 +99,19 @@ const mathWS = bnb.match(/\s*/);
 // do that, in my opinion.
 
 // Highest level
-const mathNum = bnb
-  .match(/[0-9]+([.][0-9]+)?/)
+const mathNum = match(/[0-9]+([.][0-9]+)?/)
   .map((str) => new MathNumber(Number(str)));
 
 // Next level
-const mathBasic: bnb.Parser<MathExpr> = bnb.lazy(() => {
+const mathBasic: Parser<MathExpr> = lazy(() => {
   return SimpleMath.thru(token)
-    .wrap(bnb.text("("), bnb.text(")"))
+    .wrap(text("("), text(")"))
     .or(mathNum)
     .trim(mathWS);
 });
 
 // Next level
-const mathUnaryPrefix: bnb.Parser<MathExpr> = bnb.lazy(() => {
+const mathUnaryPrefix: Parser<MathExpr> = lazy(() => {
   return operator("-")
     .and(mathUnaryPrefix)
     .map(([operator, expr]) => new MathOperator1(operator, expr))
@@ -107,7 +119,7 @@ const mathUnaryPrefix: bnb.Parser<MathExpr> = bnb.lazy(() => {
 });
 
 // Next level
-const mathPow: bnb.Parser<MathExpr> = mathUnaryPrefix.chain((expr) => {
+const mathPow: Parser<MathExpr> = mathUnaryPrefix.chain((expr) => {
   // Exponentiaton is right associative, meaning that `2 ** 3 ** 4` is
   // equivalent to `2 ** (3 ** 4)` rather than `(2 ** 3) ** 4`, so we can use
   // recursion to process side by side exponentiation into a nested structure.
@@ -116,11 +128,11 @@ const mathPow: bnb.Parser<MathExpr> = mathUnaryPrefix.chain((expr) => {
     .map(([operator, nextExpr]) => {
       return new MathOperator2(operator, expr, nextExpr);
     })
-    .or(bnb.ok(expr));
+    .or(ok(expr));
 });
 
 // Next level
-const mathMulDiv: bnb.Parser<MathExpr> = mathPow.chain((expr) => {
+const mathMulDiv: Parser<MathExpr> = mathPow.chain((expr) => {
   return operator("*")
     .or(operator("/"))
     .and(mathPow)
@@ -133,7 +145,7 @@ const mathMulDiv: bnb.Parser<MathExpr> = mathPow.chain((expr) => {
 });
 
 // Next level
-const mathAddSub: bnb.Parser<MathExpr> = mathMulDiv.chain((expr) => {
+const mathAddSub: Parser<MathExpr> = mathMulDiv.chain((expr) => {
   return operator("+")
     .or(operator("-"))
     .and(mathMulDiv)
@@ -146,6 +158,7 @@ const mathAddSub: bnb.Parser<MathExpr> = mathMulDiv.chain((expr) => {
 });
 
 // Lowest level
-const SimpleMath = mathAddSub;
-
-export default SimpleMath;
+/**
+ * Represents a parser for mathematical expressions.
+ */
+export const SimpleMath: Parser<MathExpr> = mathAddSub;

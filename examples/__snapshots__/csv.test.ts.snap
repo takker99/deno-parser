@@ -1,0 +1,152 @@
+export const snapshot = {};
+
+snapshot[`csv simple 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    [
+      "apple",
+      "1.23",
+      "1312",
+    ],
+    [
+      "banana",
+      "0.99",
+      "67",
+    ],
+    [
+      "cherry",
+      "0.54",
+      "987",
+    ],
+    [
+      "dragonfruit",
+      "2.87",
+      "4",
+    ],
+    [
+      "elderberry",
+      "9.99",
+      "22",
+    ],
+  ],
+}
+`;
+
+snapshot[`csv complex 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    [
+      "a",
+      "",
+      "c",
+      'a "complex" field, i think',
+    ],
+    [
+      "d",
+      "eeeeee",
+      "FFFF",
+      "cool",
+    ],
+    [
+      "nice",
+      "nice",
+      "nice3",
+      "nice4",
+    ],
+  ],
+}
+`;
+
+snapshot[`csv LF 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    [
+      "a",
+      "b",
+      "c",
+    ],
+    [
+      "a",
+      "b",
+      "c",
+    ],
+    [
+      "a",
+      "b",
+      "c",
+    ],
+  ],
+}
+`;
+
+snapshot[`csv CRLF 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    [
+      "a",
+      "b",
+      "c",
+    ],
+    [
+      "a",
+      "b",
+      "c",
+    ],
+    [
+      "a",
+      "b",
+      "c",
+    ],
+  ],
+}
+`;
+
+snapshot[`csv trailing newline 1`] = `
+{
+  type: "ParseOK",
+  value: [
+    [
+      "a",
+      "b",
+      "c",
+    ],
+    [
+      "a",
+      "b",
+      "c",
+    ],
+    [
+      "a",
+      "b",
+      "c",
+    ],
+  ],
+}
+`;
+
+snapshot[`csv trailing newline 2`] = `
+{
+  type: "ParseOK",
+  value: [
+    [
+      "a",
+      "b",
+      "c",
+    ],
+    [
+      "a",
+      "b",
+      "c",
+    ],
+    [
+      "a",
+      "b",
+      "c",
+    ],
+  ],
+}
+`;

@@ -22,6 +22,8 @@ the sake of brevity, most examples here will use `.tryParse` which is shorter
 but throws an exception when parsing fails.
 
 ```ts
+import * as bnb from "@takker/parser";
+
 const apple = bnb.text("apple");
 const banana = bnb.text("banana");
 const applebanana = apple.and(banana);
@@ -45,6 +47,8 @@ transforms the strings into numbers, then `sepBy1` transforms multiple
 a nice tidy JavaScript object.
 
 ```ts
+import * as bnb from "@takker/parser";
+
 const integer = bnb
   .match(/[0-9]+/)
   .map((str) => Number(str))
@@ -72,6 +76,8 @@ When you want to choose between multiple options, [.or](/api#parser-or) and
 as you want, and only the first one to succeed parsing is returned.
 
 ```ts
+import * as bnb from "@takker/parser";
+
 const a = bnb.text("a");
 const b = bnb.text("b");
 const c = bnb.text("c");
@@ -95,6 +101,8 @@ If you have a lot of parsers combined with `.or`, you can use
 yielding the result from the first one that succeeds.
 
 ```ts
+import * as bnb from "@takker/parser";
+
 const a = bnb.text("a");
 const b = bnb.text("b");
 const c = bnb.text("c");
@@ -112,6 +120,8 @@ return a new parser. So you can even use an `if` statement to choose what to
 parse next.
 
 ```ts
+import * as bnb from "@takker/parser";
+
 const customString = bnb.match(/[a-z]/);
 const lowerUpperAlphaPair = lowerAlphaChar.chain((first) => {
   const upper = first.toUpperCase();
@@ -128,6 +138,8 @@ You can combine `.chain` with [bnb.ok](/api#bnb-ok) and
 [bnb.fail](/api#bnb-fail) to do assertions about the data you just parsed:
 
 ```ts
+import * as bnb from "@takker/parser";
+
 const number = bnb
   .match(/[0-9]+/)
   .map(Number)
@@ -146,6 +158,8 @@ Finally, you can use `.chain` to combine several parsers together and keep track
 of all their values.
 
 ```ts
+import * as bnb from "@takker/parser";
+
 const oneChar = bnb.match(/./ms);
 const threeChars = oneChar.chain((first) => {
   return oneChar.chain((second) => {
@@ -166,6 +180,8 @@ As a shortcut, you can use [bnb.all](/api#bnb-all) when you want to match
 multiple parsers in a row and use all their values.
 
 ```ts
+import * as bnb from "@takker/parser";
+
 const oneChar = bnb.match(/./ms);
 const threeChars = bnb.all(oneChar, oneChar, oneChar);
 
@@ -175,6 +191,8 @@ threeChars.tryParse("abc"); // => ["a", "b", "c"]
 And if you need to access their values, you can use array destructuring.
 
 ```ts
+import * as bnb from "@takker/parser";
+
 const oneChar = bnb.match(/./ms);
 const threeChars = bnb.all(oneChar, oneChar, oneChar).map(([c1, ct, c3]) => {
   return { c1, c2, c3 };
@@ -203,6 +221,8 @@ This is called _indirect recursion_ because there's one intermediate step before
 array is nested back inside itself again.
 
 ```ts
+import * as bnb from "@takker/parser";
+
 // We have to use lazy here because `number` and `array` aren't defined yet
 const expression = bnb.lazy(() => {
   return number.or(array);
@@ -237,6 +257,8 @@ The quickest way to add this information to your parse result is using
 [.node](#/api#parser-node).
 
 ```ts
+import * as bnb from "@takker/parser";
+
 const number = bnb
   .match(/[0-9]+/)
   .map(Number)
@@ -266,6 +288,8 @@ your parser. If you don't like the structure of this `ParseNode` object, you can
 create your own without too much fuss.
 
 ```ts
+import * as bnb from "@takker/parser";
+
 function node(type: string) {
   return function <A>(parser: bnb.Parser<A>) {
     return bnb
