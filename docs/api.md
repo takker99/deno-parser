@@ -35,10 +35,14 @@ position.
 The following regexp flags are supported (any other regexp flag will throw an
 error):
 
-- `i` ([ignoreCase](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/ignoreCase))
-- `s` ([dotAll](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll))
-- `m` ([multiline](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/multiline))
-- `u` ([unicode](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicode))
+- `i`
+  ([ignoreCase](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/ignoreCase))
+- `s`
+  ([dotAll](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll))
+- `m`
+  ([multiline](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/multiline))
+- `u`
+  ([unicode](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicode))
 
 **Note:** Do not use the `^` anchor at the beginning of your regular expression.
 This internally uses sticky (`/.../y`) regular expressions with `lastIndex` set
@@ -199,8 +203,8 @@ Parses the entire `input` string, returning a [ParseResult](#parseresult) with
 the parse value if successful, otherwise a failure value indicating where the
 error is and what values we were looking for at the time of failure.
 
-**Note:** `parse` assumes you are parsing the entire input and will
-fail unless you do so.
+**Note:** `parse` assumes you are parsing the entire input and will fail unless
+you do so.
 
 ```ts
 const a = bnb.text("a");
@@ -269,7 +273,8 @@ aMaybe.tryParse(""); // => null
 
 ### `parser.next(nextParser)`
 
-Combines `parser` and `nextParser` one after the other, yielding the result of `nextParser`.
+Combines `parser` and `nextParser` one after the other, yielding the result of
+`nextParser`.
 
 ```ts
 const a = bnb.text("a");
@@ -281,7 +286,8 @@ ab.tryParse("ab");
 
 ### `parser.skip(nextParser)`
 
-Combines `parser` and `nextParser` one after the other, yielding the result of `parser`.
+Combines `parser` and `nextParser` one after the other, yielding the result of
+`parser`.
 
 ```ts
 const a = bnb.text("a");
@@ -293,10 +299,9 @@ ab.tryParse("ab");
 
 ### `parser.chain(callback)`
 
-Parse using the current parser. If it succeeds, pass the value to the
-`callback` function, which returns the next parser to use. Similar to `and`,
-but you get to choose which parser comes next based on the value of the
-first one.
+Parse using the current parser. If it succeeds, pass the value to the `callback`
+function, which returns the next parser to use. Similar to `and`, but you get to
+choose which parser comes next based on the value of the first one.
 
 This is good for parsing things like _expressions_ or _statements_ in
 programming languages, where many different types of things are applicable.
@@ -377,8 +382,8 @@ again, in that order, yielding only the value from `parser`.
 
 Generally used with a parser that parses optional whitespace.
 
-**Note:** Whitespace parsers typically also parse code comments, since
-those are generally ignored when parsing, just like whitespace.
+**Note:** Whitespace parsers typically also parse code comments, since those are
+generally ignored when parsing, just like whitespace.
 
 ```ts
 const whitespace = bnb.match(/\s+/);
@@ -389,7 +394,8 @@ item.tryParse("     a "); // => "a"
 
 ### `parser.repeat(min = 0, max = Infinity)`
 
-Repeats the current parser `min` to `max` times (defaults to `0` and `Infinity`), yielding the results in an array.
+Repeats the current parser `min` to `max` times (defaults to `0` and
+`Infinity`), yielding the results in an array.
 
 Given that this can match **zero** times, take care not to parse this
 accidentally. Usually this parser should come up in the context of some other
@@ -419,7 +425,8 @@ xs.tryParse("xx"); // => "xx"
 
 ### `parser.sepBy(sepParser, min = 0, max = Infinity)`
 
-Returns a parser that parses `min` to `max` times (defaults to `0` and `Infinity`), separated by `sepParser`, yielding the results in an array.
+Returns a parser that parses `min` to `max` times (defaults to `0` and
+`Infinity`), separated by `sepParser`, yielding the results in an array.
 
 ```ts
 const num = bnb.match(/[0-9]+/).map(Number);
@@ -535,18 +542,18 @@ representing success or failure.
 This should only be called directly when writing custom parsers using
 [new bnb.Parser](#new-bnb.parser).
 
-Make sure to use [context.merge](#context-merge) when combining
-multiple `ActionResult`s or else you will lose important parsing information.
+Make sure to use [context.merge](#context-merge) when combining multiple
+`ActionResult`s or else you will lose important parsing information.
 
 ## Built-in Parsers
 
 ### `bnb.eof`
 
-This parser succeeds if the input has already been fully parsed. Typically
-you won't need to use this since `parse` already checks this for you. But if
-your language uses newlines to terminate statements, you might want to check
-for newlines **or** eof in case the text file doesn't end with a trailing
-newline (many text editors omit this character).
+This parser succeeds if the input has already been fully parsed. Typically you
+won't need to use this since `parse` already checks this for you. But if your
+language uses newlines to terminate statements, you might want to check for
+newlines **or** eof in case the text file doesn't end with a trailing newline
+(many text editors omit this character).
 
 ```ts
 const endline = bnb.match(/\r?\n/).or(bnb.eof);
@@ -675,8 +682,7 @@ This should be returned inside custom parsers.
 
 This method takes a new source `index` (a number representing where the parse
 failed) and a list of `expected` values (array of strings), returning a
-successful
-[ActionResult](#actionresult).
+successful [ActionResult](#actionresult).
 
 This should be returned inside custom parsers.
 
@@ -697,7 +703,7 @@ messages to be preserved.
 // call multiple other parsers.
 function multiply(
   parser1: bnb.Parser<number>,
-  parser2: bnb.Parser<number>
+  parser2: bnb.Parser<number>,
 ): bnb.Parser<number> {
   return new bnb.Parser<number>((context) => {
     const result1 = parser1.action(context);
@@ -731,8 +737,7 @@ Either an [ActionOK](#actionok) or an [ActionFail](#actionfail). Check the
 
 - `location: SourceLocation`
 
-  a [SourceLocation](#sourcelocation) representing where to start
-  parsing next
+  a [SourceLocation](#sourcelocation) representing where to start parsing next
 
 - `value: A`
 
@@ -740,13 +745,13 @@ Either an [ActionOK](#actionok) or an [ActionFail](#actionfail). Check the
 
 - `furthest: SourceLocation`
 
-  a [SourceLocation](#sourcelocation) representing the furthest any
-  parser has gone so far
+  a [SourceLocation](#sourcelocation) representing the furthest any parser has
+  gone so far
 
 - `expected: string[]`
 
-  an array of strings containing names of expected things to parse
-  (e.g. `["string", "number", "end of file"]`).
+  an array of strings containing names of expected things to parse (e.g.
+  `["string", "number", "end of file"]`).
 
 ### `ActionFail`
 
@@ -762,5 +767,5 @@ Either an [ActionOK](#actionok) or an [ActionFail](#actionfail). Check the
 
 - `expected: string[]`
 
-  (array of strings) The names of expected things to parse
-  (e.g. `["string", "number", "end of file"]`).
+  (array of strings) The names of expected things to parse (e.g.
+  `["string", "number", "end of file"]`).

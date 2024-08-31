@@ -18,7 +18,7 @@ test("json complex", () => {
     {"": {}}
   ]
 }
-`
+`,
   );
 });
 
@@ -34,7 +34,7 @@ test("json multiline", () => {
   "array": [1, "two", null, true, false]
   "obj": {}
 }
-`
+`,
   );
 });
 
@@ -52,7 +52,7 @@ test("json multiline extra weird", () => {
 
   }
 }
-`
+`,
   );
 });
 

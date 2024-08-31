@@ -11,7 +11,7 @@ export class MathOperator2 implements MathExpr {
   constructor(
     public operator: string,
     public left: MathExpr,
-    public right: MathExpr
+    public right: MathExpr,
   ) {}
 
   calculate(): number {

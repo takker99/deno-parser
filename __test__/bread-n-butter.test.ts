@@ -182,7 +182,7 @@ test("choice", () => {
     bnb.text("c"),
     bnb.text("1").map(() => 1 as const),
     bnb.text("2").map(() => 2 as const),
-    bnb.text("3").map(() => 3 as const)
+    bnb.text("3").map(() => 3 as const),
   );
   snapTest(abc123, "a");
   snapTest(abc123, "b");

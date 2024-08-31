@@ -6,7 +6,8 @@ description: "bread-n-butter (bnb) is a parser combinator library for TypeScript
 
 # bread-n-butter
 
-**bnb is semver v0, but unlikely to change much. It should be a stable platform for development.**
+**bnb is semver v0, but unlikely to change much. It should be a stable platform
+for development.**
 
 bread-n-butter (bnb) is a parser combinator library for TypeScript and
 JavaScript.
@@ -42,7 +43,8 @@ If you are using Node.js require:
 const bnb = require("bread-n-butter");
 ```
 
-If you are using ES modules natively in the browser without npm, download the [ES modules build](https://unpkg.com/bread-n-butter/dist/esm/bread-n-butter.js):
+If you are using ES modules natively in the browser without npm, download the
+[ES modules build](https://unpkg.com/bread-n-butter/dist/esm/bread-n-butter.js):
 
 ```js
 import * as bnb from "./bread-n-butter.js";
@@ -63,7 +65,8 @@ Check out the [tutorial](/tutorial) for help getting started.
 
 ## Examples
 
-See [the examples](https://github.com/wavebeem/bread-n-butter/tree/main/examples) on
+See
+[the examples](https://github.com/wavebeem/bread-n-butter/tree/main/examples) on
 GitHub for how to implement various language parsers using bnb.
 
 ## API

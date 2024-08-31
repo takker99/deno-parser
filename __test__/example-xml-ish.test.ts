@@ -32,6 +32,6 @@ test("xml large example", () => {
       <Entry key="null"><Null /></Entry>
       <Entry key="empty" />
     </Map>
-    `
+    `,
   );
 });

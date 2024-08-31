@@ -1,7 +1,7 @@
 import SimpleMath, {
+  MathExpr,
   MathOperator1,
   MathOperator2,
-  MathExpr,
 } from "../examples/math";
 import { snapTest } from "./util";
 

@@ -1,0 +1,11 @@
+{
+  "unstable": [
+    "fmt-html",
+    "fmt-css",
+    "fmt-yaml",
+    "fmt-component"
+  ],
+  "tasks": {
+    "fix": "deno fmt && deno lint --fix"
+  }
+}

@@ -35,7 +35,7 @@ const JSON: bnb.Parser<JSONValue> = bnb.lazy(() => {
       jsonNumber,
       jsonNull,
       jsonTrue,
-      jsonFalse
+      jsonFalse,
     )
     .thru(token);
 });
@@ -61,7 +61,7 @@ const strEscape = bnb.choice(
   bnb.text("\\f").map(() => "\f"),
   bnb.text("\\r").map(() => "\r"),
   bnb.text("\\t").map(() => "\t"),
-  bnb.match(/\\./).map((str) => str.slice(1))
+  bnb.match(/\\./).map((str) => str.slice(1)),
 );
 
 // One or more characters that aren't `"` or `\`

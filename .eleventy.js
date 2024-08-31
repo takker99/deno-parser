@@ -24,7 +24,7 @@ module.exports = (config) => {
     }).use(markdownItTocAndAnchor, {
       tocFirstLevel: 2,
       slugify: customSlugify,
-    })
+    }),
   );
   config.addFilter("date", (date, format) => {
     if (date === "now") {

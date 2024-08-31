@@ -29,6 +29,6 @@ test("lisp list", () => {
   (add x 1))
 
 (print (inc 3))
-`
+`,
   );
 });

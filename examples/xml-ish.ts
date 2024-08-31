@@ -35,7 +35,7 @@ const OpeningTagInsides = bnb
 // `<tag>`
 const OpeningTag = OpeningTagInsides.wrap(
   bnb.text("<"),
-  W0.next(bnb.text(">"))
+  W0.next(bnb.text(">")),
 );
 
 // `<tag />`

@@ -15,7 +15,7 @@ block:
           block:
            foxtrot
   golf\
-`
+`,
   );
 });
 
@@ -26,7 +26,7 @@ test("py simple", () => {
 block:
   alpha
   bravo
-`
+`,
   );
 });
 
@@ -42,6 +42,6 @@ block:
         alpha
         block:
     beta
-`
+`,
   );
 });

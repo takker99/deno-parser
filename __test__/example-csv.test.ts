@@ -10,7 +10,7 @@ banana,0.99,67
 cherry,0.54,987
 dragonfruit,2.87,4
 elderberry,9.99,22
-`
+`,
   );
 });
 
@@ -21,7 +21,7 @@ test("csv complex", () => {
 a,,c,"a ""complex"" field, i think"
 d,eeeeee,FFFF,cool
 nice,nice,nice3,nice4
-`
+`,
   );
 });
 
@@ -32,7 +32,7 @@ test("csv LF", () => {
 a,b,c\n\
 a,b,c\n\
 a,b,c\
-`
+`,
   );
 });
 
@@ -43,7 +43,7 @@ test("csv CRLF", () => {
 a,b,c\r\n\
 a,b,c\r\n\
 a,b,c\
-`
+`,
   );
 });
 
@@ -54,7 +54,7 @@ test("csv trailing newline", () => {
 a,b,c\r\n\
 a,b,c\r\n\
 a,b,c\r\n\
-`
+`,
   );
   snapTest(
     CSV,
@@ -62,6 +62,6 @@ a,b,c\r\n\
 a,b,c\n\
 a,b,c\n\
 a,b,c\n\
-`
+`,
   );
 });

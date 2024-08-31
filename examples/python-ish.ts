@@ -86,7 +86,7 @@ function py(indent: number): Py {
               };
             });
         });
-      })
+      }),
     );
 
   // Just a variable and then the end of the line.
