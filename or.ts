@@ -10,15 +10,20 @@ import { isOk } from "./action.ts";
  *
  * See {@linkcode choice} for additional information.
  *
- * @example
+ * @example Basic usage
  * ```ts
- * import { ok, or, text, tryParse } from "@takker/parser";
+ * import { or, text, tryParse } from "@takker/parser";
  *
  * const a = text("a");
  * const b = text("b");
  * const ab = or(a, b);
  * tryParse(ab, "a"); // => "a"
  * tryParse(ab, "b"); // => "b"
+ * ```
+ *
+ * @example Optional parsers
+ * ```ts
+ * import { ok, or, text, tryParse } from "@takker/parser";
  *
  * // You can also use this to implement optional parsers
  * const aMaybe = or(text("a"), ok(null));
