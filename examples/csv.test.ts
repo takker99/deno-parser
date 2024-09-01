@@ -1,4 +1,4 @@
-import { parse } from "../parse.ts";
+import { parse } from "../src/parse.ts";
 import { CSV } from "./csv.ts";
 import { assertSnapshot } from "@std/testing/snapshot";
 

@@ -1,15 +1,15 @@
-import { sepBy } from "../sepBy.ts";
-import { trim } from "../trim.ts";
-import { desc } from "../desc.ts";
-import { map } from "../map.ts";
-import { next } from "../next.ts";
-import { and } from "../and.ts";
-import { text } from "../text.ts";
-import { match } from "../match.ts";
-import { all } from "../all.ts";
-import { choice } from "../choice.ts";
-import type { Parser } from "../parse.ts";
-import { wrap } from "../wrap.ts";
+import { sepBy } from "../src/sepBy.ts";
+import { trim } from "../src/trim.ts";
+import { desc } from "../src/desc.ts";
+import { map } from "../src/map.ts";
+import { next } from "../src/next.ts";
+import { and } from "../src/and.ts";
+import { text } from "../src/text.ts";
+import { match } from "../src/match.ts";
+import { all } from "../src/all.ts";
+import { choice } from "../src/choice.ts";
+import type { Parser } from "../src/parse.ts";
+import { wrap } from "../src/wrap.ts";
 
 function rgba(r: number, g: number, b: number, a: number) {
   return { r, g, b, a };

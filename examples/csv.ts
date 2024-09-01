@@ -1,13 +1,13 @@
-import { ok } from "../ok.ts";
-import { text } from "../text.ts";
-import { match } from "../match.ts";
-import type { Parser } from "../parse.ts";
-import { or } from "../or.ts";
-import { chain } from "../chain.ts";
-import { map } from "../map.ts";
-import { repeat } from "../repeat.ts";
-import { sepBy } from "../sepBy.ts";
-import { skip } from "../skip.ts";
+import { ok } from "../src/ok.ts";
+import { text } from "../src/text.ts";
+import { match } from "../src/match.ts";
+import type { Parser } from "../src/parse.ts";
+import { or } from "../src/or.ts";
+import { chain } from "../src/chain.ts";
+import { map } from "../src/map.ts";
+import { repeat } from "../src/repeat.ts";
+import { sepBy } from "../src/sepBy.ts";
+import { skip } from "../src/skip.ts";
 
 // CSVs should end with `\r\n` but `\n` is fine too.
 const csvEnd = or(text("\r\n"), text("\n"));

@@ -1,7 +1,7 @@
 import { XML } from "./xml-ish.ts";
 import { assertSnapshot } from "@std/testing/snapshot";
 import { assertEquals } from "@std/assert";
-import { parse, tryParse } from "../parse.ts";
+import { parse, tryParse } from "../src/parse.ts";
 
 Deno.test("xml basic", () => {
   assertEquals(tryParse(XML, `<a key="val" />`), {

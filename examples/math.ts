@@ -1,15 +1,15 @@
-import { ok } from "../ok.ts";
-import { text } from "../text.ts";
-import { match } from "../match.ts";
-import { lazy } from "../lazy.ts";
-import type { Parser } from "../parse.ts";
-import { trim } from "../trim.ts";
-import { map } from "../map.ts";
-import { or } from "../or.ts";
-import { wrap } from "../wrap.ts";
-import { and } from "../and.ts";
-import { chain } from "../chain.ts";
-import { repeat } from "../repeat.ts";
+import { ok } from "../src/ok.ts";
+import { text } from "../src/text.ts";
+import { match } from "../src/match.ts";
+import { lazy } from "../src/lazy.ts";
+import type { Parser } from "../src/parse.ts";
+import { trim } from "../src/trim.ts";
+import { map } from "../src/map.ts";
+import { or } from "../src/or.ts";
+import { wrap } from "../src/wrap.ts";
+import { and } from "../src/and.ts";
+import { chain } from "../src/chain.ts";
+import { repeat } from "../src/repeat.ts";
 
 // ---[ Abstract Syntax Tree and Evaluator Combined ]---
 

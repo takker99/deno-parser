@@ -8,7 +8,7 @@ import { isFail, isOk } from "./action.ts";
  *
  * @example
  * ```ts
- * import { and, text, tryParse } from "./mod.ts";
+ * import { and, text, tryParse } from "@takker/parser";
  *
  * const a = text("a");
  * const b = text("b");
