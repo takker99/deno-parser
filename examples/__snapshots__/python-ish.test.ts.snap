@@ -2,7 +2,7 @@ export const snapshot = {};
 
 snapshot[`py complex 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     statements: [
       {
@@ -51,7 +51,7 @@ snapshot[`py complex 1`] = `
 
 snapshot[`py simple 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     statements: [
       {
@@ -70,7 +70,7 @@ snapshot[`py simple 1`] = `
 
 snapshot[`py even simpler 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     type: "Ident",
     value: "alpha",
@@ -88,6 +88,6 @@ snapshot[`py bad indent 1`] = `
     index: 40,
     line: 4,
   },
-  type: "ParseFail",
+  ok: false,
 }
 `;

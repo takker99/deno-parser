@@ -1,4 +1,16 @@
-import { eof, fail, lazy, match, ok, type Parser, text } from "../mod.ts";
+import { ok } from "../ok.ts";
+import { fail } from "../fail.ts";
+import { eof } from "../eof.ts";
+import { text } from "../text.ts";
+import { match } from "../match.ts";
+import { lazy } from "../lazy.ts";
+import type { Parser } from "../parse.ts";
+import { chain } from "../chain.ts";
+import { map } from "../map.ts";
+import { or } from "../or.ts";
+import { next } from "../next.ts";
+import { repeat } from "../repeat.ts";
+import { skip } from "../skip.ts";
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -26,11 +38,11 @@ function py(indent: number): Py {
   // expand them to the correct number of spaces
   //
   // https://docs.python.org/3/reference/lexical_analysis.html#indentation
-  const pyCountSpaces = match(/[ ]*/).map((s) => s.length);
+  const pyCountSpaces = map(match(/[ ]*/), (s) => s.length);
 
   // Count the current indentation level and assert it's more than the current
   // parse state's desired indentation
-  const pyIndentSame = pyCountSpaces.chain((n) => {
+  const pyIndentSame = chain(pyCountSpaces, (n) => {
     if (n === indent) {
       return ok(n);
     }
@@ -39,31 +51,32 @@ function py(indent: number): Py {
 
   // Count the current indentation level and assert it's equal to the current
   // parse state's desired indentation
-  const pyIndentMore = pyCountSpaces.chain((n) => {
-    if (n > indent) {
-      return ok(n);
-    }
-    return fail<number>([`more than ${n} spaces`]);
-  });
+  const pyIndentMore = chain(
+    pyCountSpaces,
+    (n) => {
+      if (n > indent) {
+        return ok(n);
+      }
+      return fail<number>([`more than ${n} spaces`]);
+    },
+  );
 
   // Support UNIX and Windows line endings
-  const pyNL = text("\r\n").or(text("\n"));
+  const pyNL = or(text("\r\n"), text("\n"));
 
   // Lines should always end in a newline sequence, but many files are missing
   // the final newline
-  const pyEnd = pyNL.or(eof);
+  const pyEnd = or(pyNL, eof);
 
   // This is just a statement in our language. To simplify, this is either a
   // block of code or just an identifier
-  const pyStatement: Parser<PyStatement> = lazy(() => {
-    return pyBlock.or(pyIdent);
-  });
+  const pyStatement: Parser<PyStatement> = lazy(() => or(pyBlock, pyIdent));
 
   // This is a statement which is indented to the level of the current parse
   // state. It's called RestStatement because the first statement in a block
   // is indented more than the previous state, but the *rest* of the
   // statements match up with the new state.
-  const pyRestStatement = pyIndentSame.next(pyStatement);
+  const pyRestStatement = next(pyIndentSame, pyStatement);
 
   // This is where the magic happens. Basically we need to parse a deeper
   // indentation level on the first statement of the block and keep track of
@@ -71,29 +84,36 @@ function py(indent: number): Py {
   // that new indentation level for all their parsing. Each line past the
   // first is required to be indented to the same level as that new deeper
   // indentation level.
-  const pyBlock = text("block:")
-    .next(pyNL)
-    .next(
-      pyIndentMore.chain((n) => {
-        return pyStatement.chain((first) => {
-          return py(n)
-            .pyRestStatement.repeat(0)
-            .map<PyStatement>((rest) => {
-              return {
+  const pyBlock = next(
+    next(
+      text("block:"),
+      pyNL,
+    ),
+    chain(
+      pyIndentMore,
+      (n) =>
+        chain(
+          pyStatement,
+          (first) =>
+            map(
+              repeat(py(n).pyRestStatement, 0),
+              (rest) => ({
                 type: "Block",
                 statements: [first, ...rest],
-              };
-            });
-        });
-      }),
-    );
+              } as PyBlock),
+            ),
+        ),
+    ),
+  );
 
   // Just a variable and then the end of the line.
-  const pyIdent = match(/[a-z]+/i)
-    .skip(pyEnd)
-    .map<PyIdent>((value) => {
-      return { type: "Ident", value };
-    });
+  const pyIdent = map(
+    skip(
+      match(/[a-z]+/i),
+      pyEnd,
+    ),
+    (value) => ({ type: "Ident", value } as PyIdent),
+  );
 
   return { pyStatement, pyRestStatement };
 }

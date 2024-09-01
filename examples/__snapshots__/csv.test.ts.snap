@@ -2,7 +2,7 @@ export const snapshot = {};
 
 snapshot[`csv simple 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: [
     [
       "apple",
@@ -35,7 +35,7 @@ snapshot[`csv simple 1`] = `
 
 snapshot[`csv complex 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: [
     [
       "a",
@@ -61,7 +61,7 @@ snapshot[`csv complex 1`] = `
 
 snapshot[`csv LF 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: [
     [
       "a",
@@ -84,7 +84,7 @@ snapshot[`csv LF 1`] = `
 
 snapshot[`csv CRLF 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: [
     [
       "a",
@@ -107,7 +107,7 @@ snapshot[`csv CRLF 1`] = `
 
 snapshot[`csv trailing newline 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: [
     [
       "a",
@@ -130,7 +130,7 @@ snapshot[`csv trailing newline 1`] = `
 
 snapshot[`csv trailing newline 2`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: [
     [
       "a",

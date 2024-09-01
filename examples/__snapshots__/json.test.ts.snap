@@ -2,7 +2,7 @@ export const snapshot = {};
 
 snapshot[`json complex 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     "": [
       true,
@@ -25,7 +25,7 @@ ice	ab",
 
 snapshot[`json simple 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     array: [
       1,
@@ -50,13 +50,13 @@ snapshot[`json multiline 1`] = `
     index: 46,
     line: 4,
   },
-  type: "ParseFail",
+  ok: false,
 }
 `;
 
 snapshot[`json multiline extra weird 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     array: [
       1,
@@ -74,7 +74,7 @@ snapshot[`json multiline extra weird 1`] = `
 
 snapshot[`json unicode escape 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     space: " ",
   },
@@ -83,7 +83,7 @@ snapshot[`json unicode escape 1`] = `
 
 snapshot[`json named escape 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     bnfrt: "
 \\r	",
@@ -93,7 +93,7 @@ snapshot[`json named escape 1`] = `
 
 snapshot[`json useless escape 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     xyz: "xyz",
   },

@@ -2,7 +2,7 @@ export const snapshot = {};
 
 snapshot[`xml large example 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     attributes: {},
     children: [

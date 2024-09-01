@@ -1,10 +1,12 @@
 import { assertSnapshot } from "@std/testing/snapshot";
 import { Python } from "./python-ish.ts";
+import { parse } from "../parse.ts";
 
 Deno.test("py complex", (t) =>
   assertSnapshot(
     t,
-    Python.parse(
+    parse(
+      Python,
       `\
 block:
   alpha
@@ -23,7 +25,8 @@ block:
 Deno.test("py simple", (t) =>
   assertSnapshot(
     t,
-    Python.parse(
+    parse(
+      Python,
       `\
 block:
   alpha
@@ -32,12 +35,13 @@ block:
     ),
   ));
 
-Deno.test("py even simpler", (t) => assertSnapshot(t, Python.parse(`alpha`)));
+Deno.test("py even simpler", (t) => assertSnapshot(t, parse(Python, `alpha`)));
 
 Deno.test("py bad indent", (t) =>
   assertSnapshot(
     t,
-    Python.parse(
+    parse(
+      Python,
       `\
 block:
         alpha

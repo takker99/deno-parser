@@ -2,7 +2,7 @@ export const snapshot = {};
 
 snapshot[`lisp symbol 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 2,
@@ -15,7 +15,6 @@ snapshot[`lisp symbol 1`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -29,7 +28,6 @@ snapshot[`lisp symbol 1`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: "a",
       },
     ],
@@ -39,7 +37,7 @@ snapshot[`lisp symbol 1`] = `
 
 snapshot[`lisp symbol 2`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 18,
@@ -52,7 +50,6 @@ snapshot[`lisp symbol 2`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -66,7 +63,6 @@ snapshot[`lisp symbol 2`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: "kebab-case-symbol",
       },
     ],
@@ -76,7 +72,7 @@ snapshot[`lisp symbol 2`] = `
 
 snapshot[`lisp symbol 3`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 18,
@@ -89,7 +85,6 @@ snapshot[`lisp symbol 3`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -103,7 +98,6 @@ snapshot[`lisp symbol 3`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: "snake_case_symbol",
       },
     ],
@@ -113,7 +107,7 @@ snapshot[`lisp symbol 3`] = `
 
 snapshot[`lisp symbol 4`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 16,
@@ -126,7 +120,6 @@ snapshot[`lisp symbol 4`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -140,7 +133,6 @@ snapshot[`lisp symbol 4`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: "camelCaseSymbol",
       },
     ],
@@ -150,7 +142,7 @@ snapshot[`lisp symbol 4`] = `
 
 snapshot[`lisp symbol 5`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 3,
@@ -163,7 +155,6 @@ snapshot[`lisp symbol 5`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -177,7 +168,6 @@ snapshot[`lisp symbol 5`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: "a0",
       },
     ],
@@ -187,7 +177,7 @@ snapshot[`lisp symbol 5`] = `
 
 snapshot[`lisp number 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 2,
@@ -200,7 +190,6 @@ snapshot[`lisp number 1`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -214,7 +203,6 @@ snapshot[`lisp number 1`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: 1,
       },
     ],
@@ -224,7 +212,7 @@ snapshot[`lisp number 1`] = `
 
 snapshot[`lisp number 2`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 3,
@@ -237,7 +225,6 @@ snapshot[`lisp number 2`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -251,7 +238,6 @@ snapshot[`lisp number 2`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: 12,
       },
     ],
@@ -261,7 +247,7 @@ snapshot[`lisp number 2`] = `
 
 snapshot[`lisp number 3`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 4,
@@ -274,7 +260,6 @@ snapshot[`lisp number 3`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -288,7 +273,6 @@ snapshot[`lisp number 3`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: 345,
       },
     ],
@@ -298,7 +282,7 @@ snapshot[`lisp number 3`] = `
 
 snapshot[`lisp number 4`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 11,
@@ -311,7 +295,6 @@ snapshot[`lisp number 4`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -325,7 +308,6 @@ snapshot[`lisp number 4`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: 1234567890,
       },
     ],
@@ -335,7 +317,7 @@ snapshot[`lisp number 4`] = `
 
 snapshot[`lisp list 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 3,
@@ -348,7 +330,6 @@ snapshot[`lisp list 1`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -362,7 +343,6 @@ snapshot[`lisp list 1`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: [],
       },
     ],
@@ -372,7 +352,7 @@ snapshot[`lisp list 1`] = `
 
 snapshot[`lisp list 2`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 4,
@@ -385,7 +365,6 @@ snapshot[`lisp list 2`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -399,7 +378,6 @@ snapshot[`lisp list 2`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: [
           {
             end: {
@@ -413,7 +391,6 @@ snapshot[`lisp list 2`] = `
               index: 1,
               line: 1,
             },
-            type: "ParseNode",
             value: 1,
           },
         ],
@@ -425,7 +402,7 @@ snapshot[`lisp list 2`] = `
 
 snapshot[`lisp list 3`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 6,
@@ -438,7 +415,6 @@ snapshot[`lisp list 3`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -452,7 +428,6 @@ snapshot[`lisp list 3`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: [
           {
             end: {
@@ -466,7 +441,6 @@ snapshot[`lisp list 3`] = `
               index: 1,
               line: 1,
             },
-            type: "ParseNode",
             value: 1,
           },
           {
@@ -481,7 +455,6 @@ snapshot[`lisp list 3`] = `
               index: 3,
               line: 1,
             },
-            type: "ParseNode",
             value: 2,
           },
         ],
@@ -493,7 +466,7 @@ snapshot[`lisp list 3`] = `
 
 snapshot[`lisp list 4`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 11,
@@ -506,7 +479,6 @@ snapshot[`lisp list 4`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -520,7 +492,6 @@ snapshot[`lisp list 4`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: [
           {
             end: {
@@ -534,7 +505,6 @@ snapshot[`lisp list 4`] = `
               index: 1,
               line: 1,
             },
-            type: "ParseNode",
             value: "list",
           },
           {
@@ -549,7 +519,6 @@ snapshot[`lisp list 4`] = `
               index: 6,
               line: 1,
             },
-            type: "ParseNode",
             value: 1,
           },
           {
@@ -564,7 +533,6 @@ snapshot[`lisp list 4`] = `
               index: 8,
               line: 1,
             },
-            type: "ParseNode",
             value: 2,
           },
         ],
@@ -576,7 +544,7 @@ snapshot[`lisp list 4`] = `
 
 snapshot[`lisp list 5`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 13,
@@ -589,7 +557,6 @@ snapshot[`lisp list 5`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -603,7 +570,6 @@ snapshot[`lisp list 5`] = `
           index: 0,
           line: 1,
         },
-        type: "ParseNode",
         value: [
           {
             end: {
@@ -617,7 +583,6 @@ snapshot[`lisp list 5`] = `
               index: 2,
               line: 1,
             },
-            type: "ParseNode",
             value: "list",
           },
           {
@@ -632,7 +597,6 @@ snapshot[`lisp list 5`] = `
               index: 7,
               line: 1,
             },
-            type: "ParseNode",
             value: 1,
           },
           {
@@ -647,7 +611,6 @@ snapshot[`lisp list 5`] = `
               index: 9,
               line: 1,
             },
-            type: "ParseNode",
             value: 2,
           },
         ],
@@ -659,7 +622,7 @@ snapshot[`lisp list 5`] = `
 
 snapshot[`lisp list 6`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: {
     end: {
       column: 1,
@@ -672,7 +635,6 @@ snapshot[`lisp list 6`] = `
       index: 0,
       line: 1,
     },
-    type: "ParseNode",
     value: [
       {
         end: {
@@ -686,7 +648,6 @@ snapshot[`lisp list 6`] = `
           index: 1,
           line: 2,
         },
-        type: "ParseNode",
         value: [
           {
             end: {
@@ -700,7 +661,6 @@ snapshot[`lisp list 6`] = `
               index: 2,
               line: 2,
             },
-            type: "ParseNode",
             value: "def",
           },
           {
@@ -715,7 +675,6 @@ snapshot[`lisp list 6`] = `
               index: 6,
               line: 2,
             },
-            type: "ParseNode",
             value: "inc",
           },
           {
@@ -730,7 +689,6 @@ snapshot[`lisp list 6`] = `
               index: 10,
               line: 2,
             },
-            type: "ParseNode",
             value: [
               {
                 end: {
@@ -744,7 +702,6 @@ snapshot[`lisp list 6`] = `
                   index: 11,
                   line: 2,
                 },
-                type: "ParseNode",
                 value: "x",
               },
             ],
@@ -761,7 +718,6 @@ snapshot[`lisp list 6`] = `
               index: 16,
               line: 3,
             },
-            type: "ParseNode",
             value: [
               {
                 end: {
@@ -775,7 +731,6 @@ snapshot[`lisp list 6`] = `
                   index: 17,
                   line: 3,
                 },
-                type: "ParseNode",
                 value: "add",
               },
               {
@@ -790,7 +745,6 @@ snapshot[`lisp list 6`] = `
                   index: 21,
                   line: 3,
                 },
-                type: "ParseNode",
                 value: "x",
               },
               {
@@ -805,7 +759,6 @@ snapshot[`lisp list 6`] = `
                   index: 23,
                   line: 3,
                 },
-                type: "ParseNode",
                 value: 1,
               },
             ],
@@ -824,7 +777,6 @@ snapshot[`lisp list 6`] = `
           index: 28,
           line: 5,
         },
-        type: "ParseNode",
         value: [
           {
             end: {
@@ -838,7 +790,6 @@ snapshot[`lisp list 6`] = `
               index: 29,
               line: 5,
             },
-            type: "ParseNode",
             value: "print",
           },
           {
@@ -853,7 +804,6 @@ snapshot[`lisp list 6`] = `
               index: 35,
               line: 5,
             },
-            type: "ParseNode",
             value: [
               {
                 end: {
@@ -867,7 +817,6 @@ snapshot[`lisp list 6`] = `
                   index: 36,
                   line: 5,
                 },
-                type: "ParseNode",
                 value: "inc",
               },
               {
@@ -882,7 +831,6 @@ snapshot[`lisp list 6`] = `
                   index: 40,
                   line: 5,
                 },
-                type: "ParseNode",
                 value: 3,
               },
             ],

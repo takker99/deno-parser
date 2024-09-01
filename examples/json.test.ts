@@ -1,10 +1,12 @@
+import { parse } from "../parse.ts";
 import { JSON } from "./json.ts";
 import { assertSnapshot } from "@std/testing/snapshot";
 
 Deno.test("json complex", (t) =>
   assertSnapshot(
     t,
-    JSON.parse(
+    parse(
+      JSON,
       `\
 {
   "id": "a thing\\nice\tab",
@@ -26,13 +28,14 @@ Deno.test("json complex", (t) =>
 Deno.test("json simple", (t) =>
   assertSnapshot(
     t,
-    JSON.parse(`{"array":[1,"two",null,true,false],"obj":{}}`),
+    parse(JSON, `{"array":[1,"two",null,true,false],"obj":{}}`),
   ));
 
 Deno.test("json multiline", (t) =>
   assertSnapshot(
     t,
-    JSON.parse(
+    parse(
+      JSON,
       `
 {
   "array": [1, "two", null, true, false]
@@ -45,7 +48,8 @@ Deno.test("json multiline", (t) =>
 Deno.test("json multiline extra weird", (t) =>
   assertSnapshot(
     t,
-    JSON.parse(
+    parse(
+      JSON,
       `
 {
   "array" : [ 1 , "two", null , true , false ] ,
@@ -62,10 +66,10 @@ Deno.test("json multiline extra weird", (t) =>
   ));
 
 Deno.test("json unicode escape", (t) =>
-  assertSnapshot(t, JSON.parse(`{ "space": "\\u0020" }`)));
+  assertSnapshot(t, parse(JSON, `{ "space": "\\u0020" }`)));
 
 Deno.test("json named escape", (t) =>
-  assertSnapshot(t, JSON.parse(`{ "bnfrt": "\\b\\n\\f\\r\\t" }`)));
+  assertSnapshot(t, parse(JSON, `{ "bnfrt": "\\b\\n\\f\\r\\t" }`)));
 
 Deno.test("json useless escape", (t) =>
-  assertSnapshot(t, JSON.parse(`{ "xyz": "\\x\\y\\z" }`)));
+  assertSnapshot(t, parse(JSON, `{ "xyz": "\\x\\y\\z" }`)));

@@ -6,35 +6,36 @@ import {
   SimpleMath,
 } from "./math.ts";
 import { assertSnapshot } from "@std/testing/snapshot";
+import { parse, tryParse } from "../parse.ts";
 
 Deno.test("2 part expression", async (t) => {
   const text = `2 * 3 + 4`;
-  const expr = SimpleMath.tryParse(text);
-  await assertSnapshot(t, SimpleMath.parse(text));
+  const expr = tryParse(SimpleMath, text);
+  await assertSnapshot(t, parse(SimpleMath, text));
   assertEquals(expr.calculate(), 10);
   assertEquals(`${expr}`, `((2 * 3) + 4)`);
 });
 
 Deno.test("2 part expression with parentheses", async (t) => {
   const text = `2 * (3 + 4)`;
-  const expr = SimpleMath.tryParse(text);
-  await assertSnapshot(t, SimpleMath.parse(text));
+  const expr = tryParse(SimpleMath, text);
+  await assertSnapshot(t, parse(SimpleMath, text));
   assertEquals(expr.calculate(), 14);
   assertEquals(`${expr}`, `(2 * (3 + 4))`);
 });
 
 Deno.test("unary and binary minus", async (t) => {
   const text = `-1 - -1`;
-  const expr = SimpleMath.tryParse(text);
-  await assertSnapshot(t, SimpleMath.parse(text));
+  const expr = tryParse(SimpleMath, text);
+  await assertSnapshot(t, parse(SimpleMath, text));
   assertEquals(expr.calculate(), 0);
   assertEquals(`${expr}`, `((- 1) - (- 1))`);
 });
 
 Deno.test("large expression", async (t) => {
   const text = `-2 + 3 * 4 - 5 / 7 ** 6`;
-  const expr = SimpleMath.tryParse(text);
-  await assertSnapshot(t, SimpleMath.parse(text));
+  const expr = tryParse(SimpleMath, text);
+  await assertSnapshot(t, parse(SimpleMath, text));
   assertEquals(expr.calculate(), 9.999957500701239);
 });
 

@@ -1,11 +1,14 @@
-import {
-  choice,
-  lazy,
-  match,
-  type ParseNode,
-  type Parser,
-  text,
-} from "../mod.ts";
+import { node, type ParseNode } from "../node.ts";
+import { text } from "../text.ts";
+import { match } from "../match.ts";
+import { choice } from "../choice.ts";
+import { lazy } from "../lazy.ts";
+import type { Parser } from "../parse.ts";
+import { desc } from "../desc.ts";
+import { map } from "../map.ts";
+import { repeat } from "../repeat.ts";
+import { trim } from "../trim.ts";
+import { wrap } from "../wrap.ts";
 
 /** Represents a Lisp symbol. */
 export type LispSymbol = ParseNode<"LispSymbol", string>;
@@ -16,28 +19,32 @@ export type LispList = ParseNode<"LispList", LispExpr[]>;
 /** Represents a Lisp expression. */
 export type LispExpr = LispSymbol | LispNumber | LispList;
 
-const lispExpr: Parser<LispExpr> = lazy(() => {
-  return choice(lispSymbol, lispNumber, lispList);
-});
+const lispExpr: Parser<LispExpr> = lazy(() =>
+  choice(lispSymbol, lispNumber, lispList)
+);
 
-const lispSymbol = match(/[a-z_-][a-z0-9_-]*/i)
-  .node("LispSymbol")
-  .desc(["symbol"]);
+const lispSymbol = desc(
+  node(match(/[a-z_-][a-z0-9_-]*/i), "LispSymbol"),
+  ["symbol"],
+);
 
-const lispNumber = match(/[0-9]+/)
-  .map(Number)
-  .node("LispNumber")
-  .desc(["number"]);
+const lispNumber = desc(
+  node(
+    map(match(/[0-9]+/), Number),
+    "LispNumber",
+  ),
+  ["number"],
+);
 
 const lispWS = match(/\s*/);
 
-const lispList = lispExpr
-  .trim(lispWS)
-  .repeat()
-  .wrap(text("("), text(")"))
-  .node("LispList");
+const lispList = node(
+  wrap(text("("), repeat(trim(lispExpr, lispWS)), text(")")),
+  "LispList",
+);
 
 /** A Lisp file parser */
-export const Lisp: Parser<ParseNode<"LispFile", LispExpr[]>> = lispExpr.trim(
-  lispWS,
-).repeat().node("LispFile");
+export const Lisp: Parser<ParseNode<"LispFile", LispExpr[]>> = node(
+  repeat(trim(lispExpr, lispWS)),
+  "LispFile",
+);

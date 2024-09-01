@@ -1,14 +1,15 @@
 import { XML } from "./xml-ish.ts";
 import { assertSnapshot } from "@std/testing/snapshot";
 import { assertEquals } from "@std/assert";
+import { parse, tryParse } from "../parse.ts";
 
 Deno.test("xml basic", () => {
-  assertEquals(XML.tryParse(`<a key="val" />`), {
+  assertEquals(tryParse(XML, `<a key="val" />`), {
     name: "a",
     attributes: { key: "val" },
     children: [],
   });
-  assertEquals(XML.tryParse(`<a key="val">foo<b /></a>`), {
+  assertEquals(tryParse(XML, `<a key="val">foo<b /></a>`), {
     name: "a",
     attributes: { key: "val" },
     children: ["foo", { name: "b", attributes: {}, children: [] }],
@@ -18,7 +19,8 @@ Deno.test("xml basic", () => {
 Deno.test("xml large example", (t) =>
   assertSnapshot(
     t,
-    XML.parse(
+    parse(
+      XML,
       `
     <Map>
       <Entry key="string-a"><String>alpha</String></Entry>

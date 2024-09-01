@@ -2,7 +2,7 @@ export const snapshot = {};
 
 snapshot[`2 part expression 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: MathOperator2 {
     left: MathOperator2 {
       left: MathNumber {
@@ -23,7 +23,7 @@ snapshot[`2 part expression 1`] = `
 
 snapshot[`2 part expression with parentheses 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: MathOperator2 {
     left: MathNumber {
       value: 2,
@@ -44,7 +44,7 @@ snapshot[`2 part expression with parentheses 1`] = `
 
 snapshot[`unary and binary minus 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: MathOperator2 {
     left: MathOperator1 {
       expression: MathNumber {
@@ -65,7 +65,7 @@ snapshot[`unary and binary minus 1`] = `
 
 snapshot[`large expression 1`] = `
 {
-  type: "ParseOK",
+  ok: true,
   value: MathOperator2 {
     left: MathOperator2 {
       left: MathOperator1 {

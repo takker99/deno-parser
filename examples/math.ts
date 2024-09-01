@@ -1,4 +1,15 @@
-import { lazy, match, ok, type Parser, text } from "../mod.ts";
+import { ok } from "../ok.ts";
+import { text } from "../text.ts";
+import { match } from "../match.ts";
+import { lazy } from "../lazy.ts";
+import type { Parser } from "../parse.ts";
+import { trim } from "../trim.ts";
+import { map } from "../map.ts";
+import { or } from "../or.ts";
+import { wrap } from "../wrap.ts";
+import { and } from "../and.ts";
+import { chain } from "../chain.ts";
+import { repeat } from "../repeat.ts";
 
 // ---[ Abstract Syntax Tree and Evaluator Combined ]---
 
@@ -84,11 +95,11 @@ class MathNumber implements MathExpr {
 // ---[ Parser ]---
 
 function token<A>(parser: Parser<A>) {
-  return parser.trim(mathWS);
+  return trim(parser, mathWS);
 }
 
 function operator<S extends string>(string: S) {
-  return text(string).thru(token);
+  return token(text(string));
 }
 
 const mathWS = match(/\s*/);
@@ -99,63 +110,78 @@ const mathWS = match(/\s*/);
 // do that, in my opinion.
 
 // Highest level
-const mathNum = match(/[0-9]+([.][0-9]+)?/)
-  .map((str) => new MathNumber(Number(str)));
+const mathNum = map(
+  match(/[0-9]+([.][0-9]+)?/),
+  (str) => new MathNumber(Number(str)),
+);
 
 // Next level
-const mathBasic: Parser<MathExpr> = lazy(() => {
-  return SimpleMath.thru(token)
-    .wrap(text("("), text(")"))
-    .or(mathNum)
-    .trim(mathWS);
-});
+const mathBasic: Parser<MathExpr> = lazy(() =>
+  token(
+    trim(or(wrap(text("("), SimpleMath, text(")")), mathNum), mathWS),
+  )
+);
 
 // Next level
-const mathUnaryPrefix: Parser<MathExpr> = lazy(() => {
-  return operator("-")
-    .and(mathUnaryPrefix)
-    .map(([operator, expr]) => new MathOperator1(operator, expr))
-    .or(mathBasic);
-});
+const mathUnaryPrefix: Parser<MathExpr> = lazy(() =>
+  or(
+    map(
+      and(operator("-"), mathUnaryPrefix),
+      ([operator, expr]) => new MathOperator1(operator, expr),
+    ),
+    mathBasic,
+  )
+);
 
 // Next level
-const mathPow: Parser<MathExpr> = mathUnaryPrefix.chain((expr) => {
+const mathPow: Parser<MathExpr> = chain(mathUnaryPrefix, (expr) =>
   // Exponentiaton is right associative, meaning that `2 ** 3 ** 4` is
   // equivalent to `2 ** (3 ** 4)` rather than `(2 ** 3) ** 4`, so we can use
   // recursion to process side by side exponentiation into a nested structure.
-  return operator("**")
-    .and(mathPow)
-    .map(([operator, nextExpr]) => {
-      return new MathOperator2(operator, expr, nextExpr);
-    })
-    .or(ok(expr));
-});
+  or(
+    map(
+      and(operator("**"), mathPow),
+      ([operator, nextExpr]) => new MathOperator2(operator, expr, nextExpr),
+    ),
+    ok(expr),
+  ));
 
 // Next level
-const mathMulDiv: Parser<MathExpr> = mathPow.chain((expr) => {
-  return operator("*")
-    .or(operator("/"))
-    .and(mathPow)
-    .repeat(0)
-    .map((pairs) => {
-      return pairs.reduce((accum, [operator, expr]) => {
-        return new MathOperator2(operator, accum, expr);
-      }, expr);
-    });
-});
+const mathMulDiv: Parser<MathExpr> = chain(mathPow, (expr) =>
+  map(
+    repeat(
+      and(
+        or(operator("*"), operator("/")),
+        mathPow,
+      ),
+      0,
+    ),
+    (pairs) =>
+      pairs.reduce(
+        (accum, [operator, expr]) => new MathOperator2(operator, accum, expr),
+        expr,
+      ),
+  ));
 
 // Next level
-const mathAddSub: Parser<MathExpr> = mathMulDiv.chain((expr) => {
-  return operator("+")
-    .or(operator("-"))
-    .and(mathMulDiv)
-    .repeat(0)
-    .map((pairs) => {
-      return pairs.reduce((accum, [operator, expr]) => {
-        return new MathOperator2(operator, accum, expr);
-      }, expr);
-    });
-});
+const mathAddSub: Parser<MathExpr> = chain(mathMulDiv, (expr) =>
+  map(
+    repeat(
+      and(
+        or(
+          operator("+"),
+          operator("-"),
+        ),
+        mathMulDiv,
+      ),
+      0,
+    ),
+    (pairs) =>
+      pairs.reduce(
+        (accum, [operator, expr]) => new MathOperator2(operator, accum, expr),
+        expr,
+      ),
+  ));
 
 // Lowest level
 /**
