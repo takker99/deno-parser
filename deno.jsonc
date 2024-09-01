@@ -2,12 +2,6 @@
   "name": "@takker/parser",
   "version": "0.0.0",
   "exports": "./mod.ts",
-  "unstable": [
-    "fmt-html",
-    "fmt-css",
-    "fmt-yaml",
-    "fmt-component"
-  ],
   "tasks": {
     "fix": "deno fmt && deno lint --fix && deno doc --lint mod.ts && deno test --allow-read=./ --doc --parallel --shuffle && deno publish --dry-run --allow-dirty",
     "check": "deno fmt --check && deno lint && deno doc --lint mod.ts && deno test --allow-read=./ --doc --parallel --shuffle && deno publish --dry-run",
