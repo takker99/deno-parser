@@ -49,10 +49,11 @@ import type { Parser, ParserResult } from "./parse.ts";
  *
  * Since both parsers start with `abc`, we have to put the longer one first.
  */
-// deno-lint-ignore no-explicit-any
-export const choice = <Parsers extends Parser<any>[]>(
+export const choice = <Parsers extends [Parser<unknown>, ...Parser<unknown>[]]>(
   ...parsers: Parsers
 ): Parser<ParserResult<Parsers[number]>> =>
   // TODO: This could be optimized with a custom parser, but I should probably add
   // benchmarking first to see if it really matters enough to rewrite it
-  parsers.reduce((acc, p) => or(acc, p));
+  parsers.reduce((acc, p) => or(acc, p)) as Parser<
+    ParserResult<Parsers[number]>
+  >;

@@ -1,14 +1,12 @@
 import { ok } from "./ok.ts";
 import { map } from "./map.ts";
 import { chain } from "./chain.ts";
-import type { Parser } from "./parse.ts";
+import type { Parser, ParserResult } from "./parse.ts";
 
-/** A tuple of parsers */
-// deno-lint-ignore no-explicit-any
-type ManyParsers<A extends any[]> = {
-  [P in keyof A]: Parser<A[P]>;
-};
 /** Parses all parsers in order, returning the values in the same order.
+ *
+ * This type technique is referenced from the following blog:
+ * - https://blog.livewing.net/typescript-parser-combinator
  *
  * > [!NOTE]
  * > The parsers do not all have to return the same type.
@@ -34,11 +32,12 @@ type ManyParsers<A extends any[]> = {
  * // }
  * ```
  */
-// deno-lint-ignore no-explicit-any
-export const all = <A extends any[]>(...parsers: ManyParsers<A>): Parser<A> =>
+export const all = <Parsers extends Parser<unknown>[]>(
+  ...parsers: [...Parsers]
+): Parser<{ [K in keyof Parsers]: ParserResult<Parsers[K]> }> =>
   // TODO: This could be optimized with a custom parser, but I should probably add
   // benchmarking first to see if it really matters enough to rewrite it
   parsers.reduce(
     (acc, p) => chain(acc, (array) => map(p, (value) => [...array, value])),
-    ok([]),
-  );
+    ok([] as unknown[]),
+  ) as Parser<{ [K in keyof Parsers]: ParserResult<Parsers[K]> }>;
