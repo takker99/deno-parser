@@ -6,7 +6,7 @@ import {
   SimpleMath,
 } from "./math.ts";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { parse, tryParse } from "../parse.ts";
+import { parse, tryParse } from "../src/parse.ts";
 
 Deno.test("2 part expression", async (t) => {
   const text = `2 * 3 + 4`;

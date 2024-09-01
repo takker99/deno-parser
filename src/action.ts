@@ -1,4 +1,4 @@
-import type { InternalSourceLocation } from "./context.ts";
+import type { InternalSourceLocation } from "../src/context.ts";
 
 export const isOk = <A>(result: ActionResult<A>): result is ActionOK<A> =>
   result.ok;

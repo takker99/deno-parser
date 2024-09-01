@@ -1,14 +1,14 @@
-import { node, type ParseNode } from "../node.ts";
-import { text } from "../text.ts";
-import { match } from "../match.ts";
-import { choice } from "../choice.ts";
-import { lazy } from "../lazy.ts";
-import type { Parser } from "../parse.ts";
-import { desc } from "../desc.ts";
-import { map } from "../map.ts";
-import { repeat } from "../repeat.ts";
-import { trim } from "../trim.ts";
-import { wrap } from "../wrap.ts";
+import { node, type ParseNode } from "../src/node.ts";
+import { text } from "../src/text.ts";
+import { match } from "../src/match.ts";
+import { choice } from "../src/choice.ts";
+import { lazy } from "../src/lazy.ts";
+import type { Parser } from "../src/parse.ts";
+import { desc } from "../src/desc.ts";
+import { map } from "../src/map.ts";
+import { repeat } from "../src/repeat.ts";
+import { trim } from "../src/trim.ts";
+import { wrap } from "../src/wrap.ts";
 
 /** Represents a Lisp symbol. */
 export type LispSymbol = ParseNode<"LispSymbol", string>;

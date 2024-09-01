@@ -1,16 +1,16 @@
-import { ok } from "../ok.ts";
-import { fail } from "../fail.ts";
-import { eof } from "../eof.ts";
-import { text } from "../text.ts";
-import { match } from "../match.ts";
-import { lazy } from "../lazy.ts";
-import type { Parser } from "../parse.ts";
-import { chain } from "../chain.ts";
-import { map } from "../map.ts";
-import { or } from "../or.ts";
-import { next } from "../next.ts";
-import { repeat } from "../repeat.ts";
-import { skip } from "../skip.ts";
+import { ok } from "../src/ok.ts";
+import { fail } from "../src/fail.ts";
+import { eof } from "../src/eof.ts";
+import { text } from "../src/text.ts";
+import { match } from "../src/match.ts";
+import { lazy } from "../src/lazy.ts";
+import type { Parser } from "../src/parse.ts";
+import { chain } from "../src/chain.ts";
+import { map } from "../src/map.ts";
+import { or } from "../src/or.ts";
+import { next } from "../src/next.ts";
+import { repeat } from "../src/repeat.ts";
+import { skip } from "../src/skip.ts";
 
 ///////////////////////////////////////////////////////////////////////
 

@@ -1,6 +1,6 @@
 import { assertSnapshot } from "@std/testing/snapshot";
 import { Python } from "./python-ish.ts";
-import { parse } from "../parse.ts";
+import { parse } from "../src/parse.ts";
 
 Deno.test("py complex", (t) =>
   assertSnapshot(

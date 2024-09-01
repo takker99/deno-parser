@@ -1,19 +1,19 @@
-import { ok } from "../ok.ts";
-import { text } from "../text.ts";
-import { match } from "../match.ts";
-import { all } from "../all.ts";
-import { choice } from "../choice.ts";
-import { lazy } from "../lazy.ts";
-import type { Parser } from "../parse.ts";
-import { or } from "../or.ts";
-import { trim } from "../trim.ts";
-import { skip } from "../skip.ts";
-import { next } from "../next.ts";
-import { sepBy } from "../sepBy.ts";
-import { map } from "../map.ts";
-import { wrap } from "../wrap.ts";
-import { chain } from "../chain.ts";
-import { repeat } from "../repeat.ts";
+import { ok } from "../src/ok.ts";
+import { text } from "../src/text.ts";
+import { match } from "../src/match.ts";
+import { all } from "../src/all.ts";
+import { choice } from "../src/choice.ts";
+import { lazy } from "../src/lazy.ts";
+import type { Parser } from "../src/parse.ts";
+import { or } from "../src/or.ts";
+import { trim } from "../src/trim.ts";
+import { skip } from "../src/skip.ts";
+import { next } from "../src/next.ts";
+import { sepBy } from "../src/sepBy.ts";
+import { map } from "../src/map.ts";
+import { wrap } from "../src/wrap.ts";
+import { chain } from "../src/chain.ts";
+import { repeat } from "../src/repeat.ts";
 
 export interface XMLElement {
   name: string;
