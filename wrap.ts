@@ -21,8 +21,8 @@ import { skip } from "./skip.ts";
  * tryParse(list, "[a,a,a]"); // => ["a", "a", "a"]
  * ```
  */
-export const wrap = <B, A, C>(
-  before: Parser<B>,
-  parser: Parser<A>,
-  after: Parser<C>,
-): Parser<A> => skip(next(before, parser), after);
+export const wrap = <L, A, R, I extends ArrayLike<unknown>>(
+  before: Parser<L, I>,
+  parser: Parser<A, I>,
+  after: Parser<R, I>,
+): Parser<A, I> => skip(next(before, parser), after);

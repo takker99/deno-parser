@@ -15,10 +15,17 @@ export type { ActionFail, ActionOK, ActionResult } from "./action.ts";
  * @param context A parsing context
  * @returns An {@linkcode ActionResult}
  */
-export type Parser<A> = (context: Context) => ActionResult<A>;
+export type Parser<A, Input extends ArrayLike<unknown> = string> = (
+  context: Context<Input>,
+) => ActionResult<A>;
 
 /** Extracts the parsed type from a {@linkcode Parser}. */
-export type ParserResult<P> = P extends Parser<infer A> ? A : never;
+export type ParserResult<P> = P extends Parser<infer A, infer L> ? A
+  : never;
+
+/**  Extracts the input type from a {@linkcode Parser}. */
+export type ParserInput<P> = P extends Parser<infer A, infer L> ? L
+  : never;
 
 /**
  * Represents a successful parse result.
@@ -107,9 +114,9 @@ export interface SourceLocation {
  * }
  * ```
  */
-export const parse = <A>(
-  parser: Parser<A>,
-  input: string,
+export const parse = <A, Input extends ArrayLike<unknown>>(
+  parser: Parser<A, Input>,
+  input: Input,
 ): ParseOK<A> | ParseFail => {
   const result = skip(parser, eof)([input, [0, 1, 1]]);
   if (result.ok) {
@@ -143,7 +150,10 @@ export const parse = <A>(
  * tryParse(a, "a"); // => "a"
  * ```
  */
-export const tryParse = <A>(parser: Parser<A>, input: string): A => {
+export const tryParse = <A, Input extends ArrayLike<unknown>>(
+  parser: Parser<A, Input>,
+  input: Input,
+): A => {
   const result = parse(parser, input);
   if (result.ok) {
     return result.value;

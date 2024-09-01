@@ -32,8 +32,12 @@ const Word = match(/[a-zA-Z]+/);
 // Proper XML attributes would support XML entities (e.g. `&amp;`)
 const AttributeValue = trim(match(/[^"]+/), text('"'));
 
+const temp = skip(Word, text("="));
+
 // `name="value"`.
-const Attribute = all(skip(Word, text("=")), AttributeValue);
+const Attribute = all(temp, AttributeValue);
+// TypeScript fails to infer the type of `Attribute` here, so we have to do it.
+// const Attribute = all(skip(Word, text("=")), AttributeValue);
 
 // Both types of opening tag (`<x>` and `<x/>`) contain a name followed by
 // optional attributes

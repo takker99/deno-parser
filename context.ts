@@ -23,7 +23,7 @@ import type { SourceLocation } from "./parse.ts";
  * const bracket: Parser<"[" | "]"> = (context) => {
  *   const [input, [start]] = context;
  *   const end = start + 1;
- *   const ch = input.slice(start, end);
+ *   const ch = (input as string).slice(start, end);
  *   if (ch === "[" || ch === "]") {
  *     return contextOk(context, end, ch);
  *   }
@@ -31,9 +31,9 @@ import type { SourceLocation } from "./parse.ts";
  * };
  * ```
  */
-export type Context = [
+export type Context<Input extends ArrayLike<unknown>> = [
   /** The current parsing input */
-  string,
+  Input,
 
   /** The current parsing location */
   InternalSourceLocation,
@@ -75,8 +75,8 @@ export const toSourceLocation = (
  * @param value A parsed value
  * @returns A {@linkcode ActionOK}
  */
-export const contextOk = <A>(
-  context: Context,
+export const contextOk = <Input extends ArrayLike<unknown>, A>(
+  context: Context<Input>,
   index: number,
   value: A,
 ): ActionOK<A> =>
@@ -96,8 +96,8 @@ export const contextOk = <A>(
  * @param expected A list of expected thins at the location the parse failed
  * @returns A {@linkcode ActionFail}
  */
-export const contextFail = (
-  context: Context,
+export const contextFail = <Input extends ArrayLike<unknown>>(
+  context: Context<Input>,
   index: number,
   expected: string[],
 ): ActionFail => makeActionFail(internalMove(context, index), expected);
@@ -147,23 +147,40 @@ export const merge = <A, B>(
     : makeActionFail(a.furthest, expected);
 };
 
-const internalMove = (
-  context: Context,
+const internalMove = <T, Input extends ArrayLike<T>>(
+  context: Context<Input>,
   index: number,
+  delimiters?: T[],
 ): InternalSourceLocation => {
   const [input, location] = context;
   let [start, line, column] = location;
   if (index == start) return location;
 
   const end = index;
-  const chunk = input.slice(start, end);
-  for (const ch of chunk) {
-    if (ch == "\n") {
-      line++;
-      column = 1;
-    } else {
-      column++;
+  // If the input is a string, we have to use its iterator in order to properly count complex Unicode characters.
+  if (typeof input == "string") {
+    // @ts-ignore Typescript can't assume that delimiters is `string[]` when `input` is a string
+    delimiters ??= ["\n"];
+    const chunk = (input as string).slice(start, end);
+    for (const ch of chunk) {
+      if ((delimiters as string[]).includes(ch)) {
+        line++;
+        column = 1;
+      } else {
+        column++;
+      }
+    }
+  } else {
+    for (let i = start; i < end; i++) {
+      const ch = input[i];
+      if (delimiters?.includes?.(ch)) {
+        line++;
+        column = 1;
+      } else {
+        column++;
+      }
     }
   }
+
   return [index, line, column];
 };

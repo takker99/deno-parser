@@ -17,18 +17,20 @@ import { isFail, isOk } from "./action.ts";
  * // => ["a", "b"]
 ```
  */
-export const and =
-  <A, B>(parserA: Parser<A>, parserB: Parser<B>): Parser<[A, B]> =>
-  (
-    context,
-  ) => {
-    const a = parserA(context);
-    if (isFail(a)) return a;
-    context = [context[0], a.location];
-    const b = merge(a, parserB(context));
-    if (isOk(b)) {
-      const value: [A, B] = [a.value, b.value];
-      return merge(b, contextOk(context, b.location[0], value));
-    }
-    return b;
-  };
+export const and = <A, B, I extends ArrayLike<unknown>>(
+  parserA: Parser<A, I>,
+  parserB: Parser<B, I>,
+): Parser<[A, B], I> =>
+(
+  context,
+) => {
+  const a = parserA(context);
+  if (isFail(a)) return a;
+  context = [context[0], a.location];
+  const b = merge(a, parserB(context));
+  if (isOk(b)) {
+    const value: [A, B] = [a.value, b.value];
+    return merge(b, contextOk(context, b.location[0], value));
+  }
+  return b;
+};

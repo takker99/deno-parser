@@ -16,11 +16,15 @@ import type { Parser } from "./parse.ts";
  * tryParse(paren, "()"); // => ["(", ")"]
  * ```
  */
-export const text = <A extends string>(string: A): Parser<A> => (context) => {
-  const [input, [start]] = context;
-  const end = start + string.length;
-  if (input.slice(start, end) == string) {
-    return contextOk(context, end, string);
-  }
-  return contextFail(context, start, [string]);
-};
+export const text =
+  <A extends string, L extends string>(string: A): Parser<A, L> =>
+  (
+    context,
+  ) => {
+    const [input, [start]] = context;
+    const end = start + string.length;
+    if (input.slice(start, end) == string) {
+      return contextOk(context, end, string);
+    }
+    return contextFail(context, start, [string]);
+  };

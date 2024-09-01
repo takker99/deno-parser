@@ -43,11 +43,11 @@ import { isFail, isOk } from "./action.ts";
  * @param min The minimum number of times to repeat.
  * @param max The maximum number of times to repeat.
  */
-export const repeat = <A>(
-  parser: Parser<A>,
+export const repeat = <A, I extends ArrayLike<unknown>>(
+  parser: Parser<A, I>,
   min = 0,
   max = Infinity,
-): Parser<A[]> => {
+): Parser<A[], I> => {
   if (!isRangeValid(min, max)) {
     throw new Error(`repeat: bad range (${min} to ${max})`);
   }

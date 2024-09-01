@@ -44,12 +44,12 @@ import { repeat } from "./repeat.ts";
  * tryParse(dimensions, "1x2x3x4"); // => Error
  * ```
  */
-export const sepBy = <A, B>(
-  parser: Parser<A>,
-  separator: Parser<B>,
+export const sepBy = <A, B, I extends ArrayLike<unknown>>(
+  parser: Parser<A, I>,
+  separator: Parser<B, I>,
   min = 0,
   max = Infinity,
-): Parser<A[]> => {
+): Parser<A[], I> => {
   if (!isRangeValid(min, max)) {
     throw new Error(`sepBy: bad range (${min} to ${max})`);
   }

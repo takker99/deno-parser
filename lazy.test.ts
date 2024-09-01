@@ -10,7 +10,7 @@ Deno.test("lazy", () => {
   type Expr = Item | List;
   type Item = "x";
   type List = Expr[];
-  const expr: Parser<Expr> = lazy(() => {
+  const expr: Parser<Expr, string> = lazy(() => {
     return or(item, list);
   });
   const item = text("x");

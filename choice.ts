@@ -49,11 +49,16 @@ import type { Parser, ParserResult } from "./parse.ts";
  *
  * Since both parsers start with `abc`, we have to put the longer one first.
  */
-export const choice = <Parsers extends [Parser<unknown>, ...Parser<unknown>[]]>(
-  ...parsers: Parsers
-): Parser<ParserResult<Parsers[number]>> =>
+export const choice = <
+  A,
+  I extends ArrayLike<unknown>,
+  Parsers extends Parser<unknown, I>[],
+>(
+  ...parsers: [Parser<A, I>, ...Parsers]
+): Parser<A | ParserResult<Parsers[number]>, I> =>
   // TODO: This could be optimized with a custom parser, but I should probably add
   // benchmarking first to see if it really matters enough to rewrite it
   parsers.reduce((acc, p) => or(acc, p)) as Parser<
-    ParserResult<Parsers[number]>
+    A | ParserResult<Parsers[number]>,
+    I
   >;

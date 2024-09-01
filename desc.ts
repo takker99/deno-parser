@@ -28,8 +28,11 @@ import { isOk, makeActionFail } from "./action.ts";
  * // => ["number"]
  * ```
  */
-export const desc =
-  <A>(parser: Parser<A>, expected: string[]): Parser<A> => (context) => {
-    const result = parser(context);
-    return isOk(result) ? result : makeActionFail(result.furthest, expected);
-  };
+export const desc = <A, I extends ArrayLike<unknown>>(
+  parser: Parser<A, I>,
+  expected: string[],
+): Parser<A, I> =>
+(context) => {
+  const result = parser(context);
+  return isOk(result) ? result : makeActionFail(result.furthest, expected);
+};

@@ -26,11 +26,13 @@ import { isFail } from "./action.ts";
  * tryParse(xmlTag, "<meta>data</meta>"); // => ["meta", "data"]
  * ```
  */
-export const chain =
-  <A, B>(parser: Parser<A>, fn: (value: A) => Parser<B>): Parser<B> =>
-  (context) => {
-    const a = parser(context);
-    if (isFail(a)) return a;
-    const parserB = fn(a.value);
-    return merge(a, parserB([context[0], a.location]));
-  };
+export const chain = <A, B, I extends ArrayLike<unknown>>(
+  parser: Parser<A, I>,
+  fn: (value: A) => Parser<B, I>,
+): Parser<B, I> =>
+(context) => {
+  const a = parser(context);
+  if (isFail(a)) return a;
+  const parserB = fn(a.value);
+  return merge(a, parserB([context[0], a.location]));
+};

@@ -16,5 +16,7 @@ import type { Parser } from "./parse.ts";
  * // => "b"
  * ```
  */
-export const next = <A, B>(parserA: Parser<A>, parserB: Parser<B>): Parser<B> =>
-  map(and(parserA, parserB), ([, b]) => b);
+export const next = <A, B, I extends ArrayLike<unknown>>(
+  parserA: Parser<A, I>,
+  parserB: Parser<B, I>,
+): Parser<B, I> => map(and(parserA, parserB), ([, b]) => b);

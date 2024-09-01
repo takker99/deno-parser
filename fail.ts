@@ -32,5 +32,6 @@ import type { Parser } from "./parse.ts";
  * // => error: expected smaller number
  * ```
  */
-export const fail = <A>(expected: string[]): Parser<A> => (context) =>
-  contextFail(context, context[1][0], expected);
+export const fail =
+  <A, I extends ArrayLike<unknown>>(expected: string[]): Parser<A, I> =>
+  (context) => contextFail(context, context[1][0], expected);
