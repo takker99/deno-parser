@@ -20,7 +20,7 @@ import { wrap } from "./wrap.ts";
  * tryParse(item, "     a "); // => "a"
  * ```
  */
-export const trim = <A, B>(
-  parser: Parser<A>,
-  beforeAndAfter: Parser<B>,
-): Parser<A> => wrap(beforeAndAfter, parser, beforeAndAfter);
+export const trim = <A, B, I extends ArrayLike<unknown>>(
+  parser: Parser<A, I>,
+  beforeAndAfter: Parser<B, I>,
+): Parser<A, I> => wrap(beforeAndAfter, parser, beforeAndAfter);

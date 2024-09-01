@@ -20,5 +20,7 @@ import type { Parser } from "./parse.ts";
  * tryParse(bool, "no"); // => false
  * ```
  */
-export const map = <A, B>(parser: Parser<A>, fn: (value: A) => B): Parser<B> =>
-  chain(parser, (a) => ok(fn(a)));
+export const map = <A, B, I extends ArrayLike<unknown>>(
+  parser: Parser<A, I>,
+  fn: (value: A) => B,
+): Parser<B, I> => chain(parser, (a) => ok(fn(a)));

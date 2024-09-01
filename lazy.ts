@@ -38,10 +38,11 @@ import type { Parser } from "./parse.ts";
  * then `list` would reference `expr` before it's defined, so `list` would have to
  * be wrapped in `lazy` instead.
  */
-export const lazy = <A>(fn: () => Parser<A>): Parser<A> =>
-// NOTE: This parsing action overwrites itself on the specified parser. We're
-// assuming that the same parser won't be returned to multiple `lazy` calls. I
-// never heard of such a thing happening in Parsimmon, and it doesn't seem
-// likely to happen here either. I assume this is faster than using variable
-// closure and an `if`-statement here, but I honestly don't know.
-(context) => fn()(context);
+export const lazy =
+  <A, I extends ArrayLike<unknown>>(fn: () => Parser<A, I>): Parser<A, I> =>
+  // NOTE: This parsing action overwrites itself on the specified parser. We're
+  // assuming that the same parser won't be returned to multiple `lazy` calls. I
+  // never heard of such a thing happening in Parsimmon, and it doesn't seem
+  // likely to happen here either. I assume this is faster than using variable
+  // closure and an `if`-statement here, but I honestly don't know.
+  (context) => fn()(context);

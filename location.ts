@@ -1,5 +1,5 @@
-import { contextOk, toSourceLocation } from "./context.ts";
-import type { Parser, SourceLocation } from "./parse.ts";
+import { type Context, contextOk, toSourceLocation } from "./context.ts";
+import type { ActionResult, SourceLocation } from "./parse.ts";
 
 /**
  * Parser that yields the current {@linkcode SourceLocation}, containing properties
@@ -10,9 +10,12 @@ import type { Parser, SourceLocation } from "./parse.ts";
  *
  * @example
  * ```ts
- * import { chain, location, map, match, tryParse } from "@takker/parser";
+ * import { chain, location, map, match, type Parser, type SourceLocation, tryParse } from "@takker/parser";
  *
- * const identifier = chain(location, (start) => {
+ * type Inspect = { type: "Identifier"; name: string; start: SourceLocation; end: SourceLocation };
+ *
+ * // TypeScript can't assume the type parameters of `Parser`, so you have to manually specify like this.
+ * const identifier: Parser<Inspect> = chain(location, (start) => {
  *   return chain(match(/[a-z]+/i), (name) => {
  *     return map(location, (end) => {
  *       return { type: "Identifier", name, start, end };
@@ -23,10 +26,12 @@ import type { Parser, SourceLocation } from "./parse.ts";
  * // => {
  * //   type: "Identifier",
  * //   name: "abc",
- * //   start: SourceLocation { index: 0, line: 1, column: 1 },
- * //   end: SourceLocation { index: 2, line: 1, column: 3 }
+ * //   start: { index: 0, line: 1, column: 1 },
+ * //   end: { index: 2, line: 1, column: 3 }
  * // }
  * ```
  */
-export const location: Parser<SourceLocation> = (context) =>
+export const location = <I extends ArrayLike<unknown>>(
+  context: Context<I>,
+): ActionResult<SourceLocation> =>
   contextOk(context, context[1][0], toSourceLocation(context[1]));

@@ -46,7 +46,7 @@ function py(indent: number): Py {
     if (n === indent) {
       return ok(n);
     }
-    return fail<number>([`${n} spaces`]);
+    return fail<number, string>([`${n} spaces`]);
   });
 
   // Count the current indentation level and assert it's equal to the current
@@ -57,7 +57,7 @@ function py(indent: number): Py {
       if (n > indent) {
         return ok(n);
       }
-      return fail<number>([`more than ${n} spaces`]);
+      return fail<number, string>([`more than ${n} spaces`]);
     },
   );
 

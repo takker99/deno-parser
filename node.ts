@@ -43,10 +43,10 @@ import type { Parser, SourceLocation } from "./parse.ts";
  * type LispExpr = LispSymbol | LispNumber | LispList;
  * ```
  */
-export const node = <A, S extends string>(
-  parser: Parser<A>,
+export const node = <A, I extends ArrayLike<unknown>, S extends string>(
+  parser: Parser<A, I>,
   name: S,
-): Parser<ParseNode<S, A>> =>
+): Parser<ParseNode<S, A>, I> =>
   map(
     all(location, parser, location),
     ([start, value, end]) => ({ name, value, start, end }) as const,

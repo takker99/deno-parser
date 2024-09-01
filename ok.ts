@@ -17,5 +17,6 @@ import type { Parser } from "./parse.ts";
  * tryParse(sign, ""); // => ""
  * ```
  */
-export const ok = <A>(value: A): Parser<A> => (context) =>
-  contextOk(context, context[1][0], value);
+export const ok =
+  <A, I extends ArrayLike<unknown>>(value: A): Parser<A, I> => (context) =>
+    contextOk(context, context[1][0], value);

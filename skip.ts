@@ -16,5 +16,7 @@ import type { Parser } from "./parse.ts";
  * // => "a"
  * ```
  */
-export const skip = <A, B>(parserA: Parser<A>, parserB: Parser<B>): Parser<A> =>
-  map(and(parserA, parserB), ([a]) => a);
+export const skip = <A, B, I extends ArrayLike<unknown>>(
+  parserA: Parser<A, I>,
+  parserB: Parser<B, I>,
+): Parser<A, I> => map(and(parserA, parserB), ([a]) => a);

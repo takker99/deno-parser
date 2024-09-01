@@ -1,5 +1,5 @@
-import { contextFail, contextOk } from "./context.ts";
-import type { Parser } from "./parse.ts";
+import { type Context, contextFail, contextOk } from "./context.ts";
+import type { ActionResult } from "./parse.ts";
 
 const EOF = "<EOF>" as const;
 
@@ -24,7 +24,9 @@ const EOF = "<EOF>" as const;
  * tryParse(file, "A\nB\nC"); // => ["A", "B", "C"]
  * ```
  */
-export const eof: Parser<"<EOF>"> = (context) => {
+export const eof = <T, I extends ArrayLike<T>>(
+  context: Context<I>,
+): ActionResult<"<EOF>"> => {
   const [input, [i]] = context;
   return i < input.length
     ? contextFail(context, i, [EOF])

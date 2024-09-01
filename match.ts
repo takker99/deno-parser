@@ -38,7 +38,7 @@ import type { Parser } from "./parse.ts";
  * // => 404
  * ```
  */
-export const match = (regexp: RegExp): Parser<string> => {
+export const match = (regexp: RegExp): Parser<string, string> => {
   for (const flag of regexp.flags) {
     switch (flag) {
       case "i": // ignoreCase

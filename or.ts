@@ -26,12 +26,12 @@ import { isOk } from "./action.ts";
  * tryParse(aMaybe, ""); // => null
  * ```
  */
-export const or =
-  <A, B>(parserA: Parser<A>, parserB: Parser<B>): Parser<A | B> =>
-  (
-    context,
-  ) => {
-    const a = parserA(context);
-    if (isOk(a)) return a;
-    return merge(a, parserB(context));
-  };
+export const or = <A, B, I extends ArrayLike<unknown>>(
+  parserA: Parser<A, I>,
+  parserB: Parser<B, I>,
+): Parser<A | B, I> =>
+(context) => {
+  const a = parserA(context);
+  if (isOk(a)) return a;
+  return merge(a, parserB(context));
+};
