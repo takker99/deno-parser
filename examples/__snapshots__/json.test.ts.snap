@@ -1,0 +1,101 @@
+export const snapshot = {};
+
+snapshot[`json complex 1`] = `
+{
+  ok: true,
+  value: {
+    "": [
+      true,
+      false,
+      null,
+      "",
+      " ",
+      {},
+      {
+        "": {},
+      },
+    ],
+    "another property!": "also cool",
+    "weird formatting is ok too........😂": 1234.5,
+    id: "a thing
+ice	ab",
+  },
+}
+`;
+
+snapshot[`json simple 1`] = `
+{
+  ok: true,
+  value: {
+    array: [
+      1,
+      "two",
+      null,
+      true,
+      false,
+    ],
+    obj: {},
+  },
+}
+`;
+
+snapshot[`json multiline 1`] = `
+{
+  expected: [
+    ",",
+    "}",
+  ],
+  location: {
+    column: 3,
+    index: 46,
+    line: 4,
+  },
+  ok: false,
+}
+`;
+
+snapshot[`json multiline extra weird 1`] = `
+{
+  ok: true,
+  value: {
+    array: [
+      1,
+      "two",
+      null,
+      true,
+      false,
+    ],
+    obj: {
+      key: "value",
+    },
+  },
+}
+`;
+
+snapshot[`json unicode escape 1`] = `
+{
+  ok: true,
+  value: {
+    space: " ",
+  },
+}
+`;
+
+snapshot[`json named escape 1`] = `
+{
+  ok: true,
+  value: {
+    bnfrt: "
+\\r	",
+  },
+}
+`;
+
+snapshot[`json useless escape 1`] = `
+{
+  ok: true,
+  value: {
+    xyz: "xyz",
+  },
+}
+`;

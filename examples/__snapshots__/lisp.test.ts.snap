@@ -1,0 +1,843 @@
+export const snapshot = {};
+
+snapshot[`lisp symbol 1`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 2,
+      index: 1,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 2,
+          index: 1,
+          line: 1,
+        },
+        name: "LispSymbol",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: "a",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp symbol 2`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 18,
+      index: 17,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 18,
+          index: 17,
+          line: 1,
+        },
+        name: "LispSymbol",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: "kebab-case-symbol",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp symbol 3`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 18,
+      index: 17,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 18,
+          index: 17,
+          line: 1,
+        },
+        name: "LispSymbol",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: "snake_case_symbol",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp symbol 4`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 16,
+      index: 15,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 16,
+          index: 15,
+          line: 1,
+        },
+        name: "LispSymbol",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: "camelCaseSymbol",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp symbol 5`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 3,
+      index: 2,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 3,
+          index: 2,
+          line: 1,
+        },
+        name: "LispSymbol",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: "a0",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp number 1`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 2,
+      index: 1,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 2,
+          index: 1,
+          line: 1,
+        },
+        name: "LispNumber",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: 1,
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp number 2`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 3,
+      index: 2,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 3,
+          index: 2,
+          line: 1,
+        },
+        name: "LispNumber",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: 12,
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp number 3`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 4,
+      index: 3,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 4,
+          index: 3,
+          line: 1,
+        },
+        name: "LispNumber",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: 345,
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp number 4`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 11,
+      index: 10,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 11,
+          index: 10,
+          line: 1,
+        },
+        name: "LispNumber",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: 1234567890,
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp list 1`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 3,
+      index: 2,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 3,
+          index: 2,
+          line: 1,
+        },
+        name: "LispList",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: [],
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp list 2`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 4,
+      index: 3,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 4,
+          index: 3,
+          line: 1,
+        },
+        name: "LispList",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: [
+          {
+            end: {
+              column: 3,
+              index: 2,
+              line: 1,
+            },
+            name: "LispNumber",
+            start: {
+              column: 2,
+              index: 1,
+              line: 1,
+            },
+            value: 1,
+          },
+        ],
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp list 3`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 6,
+      index: 5,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 6,
+          index: 5,
+          line: 1,
+        },
+        name: "LispList",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: [
+          {
+            end: {
+              column: 3,
+              index: 2,
+              line: 1,
+            },
+            name: "LispNumber",
+            start: {
+              column: 2,
+              index: 1,
+              line: 1,
+            },
+            value: 1,
+          },
+          {
+            end: {
+              column: 5,
+              index: 4,
+              line: 1,
+            },
+            name: "LispNumber",
+            start: {
+              column: 4,
+              index: 3,
+              line: 1,
+            },
+            value: 2,
+          },
+        ],
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp list 4`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 11,
+      index: 10,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 11,
+          index: 10,
+          line: 1,
+        },
+        name: "LispList",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: [
+          {
+            end: {
+              column: 6,
+              index: 5,
+              line: 1,
+            },
+            name: "LispSymbol",
+            start: {
+              column: 2,
+              index: 1,
+              line: 1,
+            },
+            value: "list",
+          },
+          {
+            end: {
+              column: 8,
+              index: 7,
+              line: 1,
+            },
+            name: "LispNumber",
+            start: {
+              column: 7,
+              index: 6,
+              line: 1,
+            },
+            value: 1,
+          },
+          {
+            end: {
+              column: 10,
+              index: 9,
+              line: 1,
+            },
+            name: "LispNumber",
+            start: {
+              column: 9,
+              index: 8,
+              line: 1,
+            },
+            value: 2,
+          },
+        ],
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp list 5`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 13,
+      index: 12,
+      line: 1,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 13,
+          index: 12,
+          line: 1,
+        },
+        name: "LispList",
+        start: {
+          column: 1,
+          index: 0,
+          line: 1,
+        },
+        value: [
+          {
+            end: {
+              column: 7,
+              index: 6,
+              line: 1,
+            },
+            name: "LispSymbol",
+            start: {
+              column: 3,
+              index: 2,
+              line: 1,
+            },
+            value: "list",
+          },
+          {
+            end: {
+              column: 9,
+              index: 8,
+              line: 1,
+            },
+            name: "LispNumber",
+            start: {
+              column: 8,
+              index: 7,
+              line: 1,
+            },
+            value: 1,
+          },
+          {
+            end: {
+              column: 11,
+              index: 10,
+              line: 1,
+            },
+            name: "LispNumber",
+            start: {
+              column: 10,
+              index: 9,
+              line: 1,
+            },
+            value: 2,
+          },
+        ],
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`lisp list 6`] = `
+{
+  ok: true,
+  value: {
+    end: {
+      column: 1,
+      index: 44,
+      line: 6,
+    },
+    name: "LispFile",
+    start: {
+      column: 1,
+      index: 0,
+      line: 1,
+    },
+    value: [
+      {
+        end: {
+          column: 13,
+          index: 26,
+          line: 3,
+        },
+        name: "LispList",
+        start: {
+          column: 1,
+          index: 1,
+          line: 2,
+        },
+        value: [
+          {
+            end: {
+              column: 5,
+              index: 5,
+              line: 2,
+            },
+            name: "LispSymbol",
+            start: {
+              column: 2,
+              index: 2,
+              line: 2,
+            },
+            value: "def",
+          },
+          {
+            end: {
+              column: 9,
+              index: 9,
+              line: 2,
+            },
+            name: "LispSymbol",
+            start: {
+              column: 6,
+              index: 6,
+              line: 2,
+            },
+            value: "inc",
+          },
+          {
+            end: {
+              column: 13,
+              index: 13,
+              line: 2,
+            },
+            name: "LispList",
+            start: {
+              column: 10,
+              index: 10,
+              line: 2,
+            },
+            value: [
+              {
+                end: {
+                  column: 12,
+                  index: 12,
+                  line: 2,
+                },
+                name: "LispSymbol",
+                start: {
+                  column: 11,
+                  index: 11,
+                  line: 2,
+                },
+                value: "x",
+              },
+            ],
+          },
+          {
+            end: {
+              column: 12,
+              index: 25,
+              line: 3,
+            },
+            name: "LispList",
+            start: {
+              column: 3,
+              index: 16,
+              line: 3,
+            },
+            value: [
+              {
+                end: {
+                  column: 7,
+                  index: 20,
+                  line: 3,
+                },
+                name: "LispSymbol",
+                start: {
+                  column: 4,
+                  index: 17,
+                  line: 3,
+                },
+                value: "add",
+              },
+              {
+                end: {
+                  column: 9,
+                  index: 22,
+                  line: 3,
+                },
+                name: "LispSymbol",
+                start: {
+                  column: 8,
+                  index: 21,
+                  line: 3,
+                },
+                value: "x",
+              },
+              {
+                end: {
+                  column: 11,
+                  index: 24,
+                  line: 3,
+                },
+                name: "LispNumber",
+                start: {
+                  column: 10,
+                  index: 23,
+                  line: 3,
+                },
+                value: 1,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        end: {
+          column: 16,
+          index: 43,
+          line: 5,
+        },
+        name: "LispList",
+        start: {
+          column: 1,
+          index: 28,
+          line: 5,
+        },
+        value: [
+          {
+            end: {
+              column: 7,
+              index: 34,
+              line: 5,
+            },
+            name: "LispSymbol",
+            start: {
+              column: 2,
+              index: 29,
+              line: 5,
+            },
+            value: "print",
+          },
+          {
+            end: {
+              column: 15,
+              index: 42,
+              line: 5,
+            },
+            name: "LispList",
+            start: {
+              column: 8,
+              index: 35,
+              line: 5,
+            },
+            value: [
+              {
+                end: {
+                  column: 12,
+                  index: 39,
+                  line: 5,
+                },
+                name: "LispSymbol",
+                start: {
+                  column: 9,
+                  index: 36,
+                  line: 5,
+                },
+                value: "inc",
+              },
+              {
+                end: {
+                  column: 14,
+                  index: 41,
+                  line: 5,
+                },
+                name: "LispNumber",
+                start: {
+                  column: 13,
+                  index: 40,
+                  line: 5,
+                },
+                value: 3,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+}
+`;

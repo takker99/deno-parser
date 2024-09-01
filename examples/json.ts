@@ -1,22 +1,36 @@
-import * as bnb from "../src/bread-n-butter";
-
-///////////////////////////////////////////////////////////////////////
+import { ok } from "../ok.ts";
+import { text } from "../text.ts";
+import { match } from "../match.ts";
+import { all } from "../all.ts";
+import { choice } from "../choice.ts";
+import { lazy } from "../lazy.ts";
+import type { Parser } from "../parse.ts";
+import { trim } from "../trim.ts";
+import { map } from "../map.ts";
+import { desc } from "../desc.ts";
+import { or } from "../or.ts";
+import { repeat } from "../repeat.ts";
+import { sepBy } from "../sepBy.ts";
+import { wrap } from "../wrap.ts";
+import { and } from "../and.ts";
+import { chain } from "../chain.ts";
 
 // Use the JSON standard's definition of whitespace rather than Parsimmon's.
-const whitespace = bnb.match(/\s*/m);
+const whitespace = match(/\s*/m);
 
 // JSON is pretty relaxed about whitespace, so let's make it easy to ignore
 // after most text.
-function token<A>(parser: bnb.Parser<A>) {
-  return parser.trim(whitespace);
+function token<A>(parser: Parser<A>) {
+  return trim(parser, whitespace);
 }
 
 // Several parsers are just strings with optional whitespace.
-function word(str: string) {
-  return bnb.text(str).thru(token);
+function word<S extends string>(str: S) {
+  return token(text(str));
 }
 
-type JSONValue =
+/** Represents a JSON value. */
+export type JSONValue =
   | { [key: string]: JSONValue }
   | JSONValue[]
   | string
@@ -25,20 +39,18 @@ type JSONValue =
   | true
   | false;
 
-// This is the main entry point of the parser: a full JSON value.
-const JSON: bnb.Parser<JSONValue> = bnb.lazy(() => {
-  return bnb
-    .choice(
-      jsonObject,
-      jsonArray,
-      jsonString,
-      jsonNumber,
-      jsonNull,
-      jsonTrue,
-      jsonFalse
-    )
-    .thru(token);
-});
+/** This is the main entry point of the parser: a full JSON value. */
+export const JSON: Parser<JSONValue> = lazy(() =>
+  token(choice(
+    jsonObject,
+    jsonArray,
+    jsonString,
+    jsonNumber,
+    jsonNull,
+    jsonTrue,
+    jsonFalse,
+  ))
+);
 
 // The basic tokens in JSON, with optional whitespace afterward.
 const jsonLBrace = word("{");
@@ -47,39 +59,46 @@ const jsonLCurly = word("[");
 const jsonRCurly = word("]");
 const jsonComma = word(",");
 const jsonColon = word(":");
-const jsonNull = word("null").map<null>(() => null);
-const jsonTrue = word("true").map<true>(() => true);
-const jsonFalse = word("false").map<false>(() => false);
+const jsonNull = map(word("null"), () => null);
+const jsonTrue = map(word("true"), () => true as const);
+const jsonFalse = map(word("false"), () => false as const);
 
 // A string escape sequence
-const strEscape = bnb.choice(
-  bnb.match(/\\u[0-9a-fA-F]{4}/).map((str) => {
-    return String.fromCharCode(parseInt(str.slice(2), 16));
-  }),
-  bnb.text("\\b").map(() => "\b"),
-  bnb.text("\\n").map(() => "\n"),
-  bnb.text("\\f").map(() => "\f"),
-  bnb.text("\\r").map(() => "\r"),
-  bnb.text("\\t").map(() => "\t"),
-  bnb.match(/\\./).map((str) => str.slice(1))
+const strEscape = choice(
+  map(
+    match(/\\u[0-9a-fA-F]{4}/),
+    (str) => String.fromCharCode(parseInt(str.slice(2), 16)),
+  ),
+  map(text("\\b"), () => "\b"),
+  map(text("\\n"), () => "\n"),
+  map(text("\\f"), () => "\f"),
+  map(text("\\r"), () => "\r"),
+  map(text("\\t"), () => "\t"),
+  map(match(/\\./), (str) => str.slice(1)),
 );
 
 // One or more characters that aren't `"` or `\`
-const strChunk = bnb.match(/[^"\\]+/);
+const strChunk = match(/[^"\\]+/);
 
-const strPart = strEscape.or(strChunk);
+const strPart = or(strEscape, strChunk);
 
-const jsonString = strPart
-  .repeat(0)
-  .map((parts) => parts.join(""))
-  .trim(bnb.text('"'))
-  .thru(token)
-  .desc(["string"]);
+const jsonString = desc(
+  token(
+    trim(
+      map(
+        repeat(strPart, 0),
+        (parts) => parts.join(""),
+      ),
+      text('"'),
+    ),
+  ),
+  ["string"],
+);
 
-const numSign = bnb.text("-").or(bnb.text(""));
-const numInt = bnb.match(/[1-9][0-9]*/).or(bnb.text("0"));
-const numFrac = bnb.match(/\.[0-9]+/).or(bnb.text(""));
-const numExp = bnb.match(/e[+-]?[0-9]+/i).or(bnb.ok(""));
+const numSign = or(text("-"), text(""));
+const numInt = or(match(/[1-9][0-9]*/), text("0"));
+const numFrac = or(match(/\.[0-9]+/), text(""));
+const numExp = or(match(/e[+-]?[0-9]+/i), ok(""));
 
 // You could write this as one giant regular expression, but breaking it up
 // makes it easier to read, write, and test
@@ -87,39 +106,38 @@ const numExp = bnb.match(/e[+-]?[0-9]+/i).or(bnb.ok(""));
 // ```ts
 // /-?(0|[1-9][0-9]*)([.][0-9]+)?([eE][+-]?[0-9]+)?/
 // ```
-const jsonNumber = bnb
-  .all(numSign, numInt, numFrac, numExp)
-  .map(([sign, integer, fractional, exp]) => {
-    // Seeing as JSON numbers are a subset of JS numbers, we can cheat by
-    // passing the whole thing off to the `Number` function, so we don't
-    // have to evaluate the number ourselves
-    return Number(sign + integer + fractional + exp);
-  })
-  .thru(token)
-  .desc(["number"]);
+const jsonNumber = desc(
+  token(
+    map(
+      all(numSign, numInt, numFrac, numExp),
+      ([sign, integer, fractional, exp]) =>
+        // Seeing as JSON numbers are a subset of JS numbers, we can cheat by
+        // passing the whole thing off to the `Number` function, so we don't
+        // have to evaluate the number ourselves
+        Number(sign + integer + fractional + exp),
+    ),
+  ),
+  ["number"],
+);
 
 // Array parsing is ignoring brackets and commas and parsing as many nested JSON
 // documents as possible. Notice that we're using the parser `JSON` we just
 // defined above. Arrays and objects in the JSON grammar are recursive because
 // they can contain any other JSON document within them.
-const jsonArray = JSON.sepBy(jsonComma, 0).wrap(jsonLCurly, jsonRCurly);
+const jsonArray = wrap(jsonLCurly, sepBy(JSON, jsonComma, 0), jsonRCurly);
 
 // Object parsing is a little trickier because we have to collect all the key-
 // value pairs in order as length-2 arrays, then manually copy them into an
 // object.
-const objPair = jsonString.and(jsonColon.chain(() => JSON));
+const objPair = and(jsonString, chain(jsonColon, () => JSON));
 
-const jsonObject = objPair
-  .sepBy(jsonComma, 0)
-  .wrap(jsonLBrace, jsonRBrace)
-  .map((pairs) => {
+const jsonObject = map(
+  wrap(jsonLBrace, sepBy(objPair, jsonComma, 0), jsonRBrace),
+  (pairs) => {
     const obj: { [key: string]: JSONValue } = {};
     for (const [key, value] of pairs) {
       obj[key] = value;
     }
     return obj;
-  });
-
-///////////////////////////////////////////////////////////////////////
-
-export default JSON;
+  },
+);

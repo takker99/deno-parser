@@ -1,0 +1,106 @@
+export const snapshot = {};
+
+snapshot[`2 part expression 1`] = `
+{
+  ok: true,
+  value: MathOperator2 {
+    left: MathOperator2 {
+      left: MathNumber {
+        value: 2,
+      },
+      operator: "*",
+      right: MathNumber {
+        value: 3,
+      },
+    },
+    operator: "+",
+    right: MathNumber {
+      value: 4,
+    },
+  },
+}
+`;
+
+snapshot[`2 part expression with parentheses 1`] = `
+{
+  ok: true,
+  value: MathOperator2 {
+    left: MathNumber {
+      value: 2,
+    },
+    operator: "*",
+    right: MathOperator2 {
+      left: MathNumber {
+        value: 3,
+      },
+      operator: "+",
+      right: MathNumber {
+        value: 4,
+      },
+    },
+  },
+}
+`;
+
+snapshot[`unary and binary minus 1`] = `
+{
+  ok: true,
+  value: MathOperator2 {
+    left: MathOperator1 {
+      expression: MathNumber {
+        value: 1,
+      },
+      operator: "-",
+    },
+    operator: "-",
+    right: MathOperator1 {
+      expression: MathNumber {
+        value: 1,
+      },
+      operator: "-",
+    },
+  },
+}
+`;
+
+snapshot[`large expression 1`] = `
+{
+  ok: true,
+  value: MathOperator2 {
+    left: MathOperator2 {
+      left: MathOperator1 {
+        expression: MathNumber {
+          value: 2,
+        },
+        operator: "-",
+      },
+      operator: "+",
+      right: MathOperator2 {
+        left: MathNumber {
+          value: 3,
+        },
+        operator: "*",
+        right: MathNumber {
+          value: 4,
+        },
+      },
+    },
+    operator: "-",
+    right: MathOperator2 {
+      left: MathNumber {
+        value: 5,
+      },
+      operator: "/",
+      right: MathOperator2 {
+        left: MathNumber {
+          value: 7,
+        },
+        operator: "**",
+        right: MathNumber {
+          value: 6,
+        },
+      },
+    },
+  },
+}
+`;

@@ -1,0 +1,93 @@
+export const snapshot = {};
+
+snapshot[`py complex 1`] = `
+{
+  ok: true,
+  value: {
+    statements: [
+      {
+        type: "Ident",
+        value: "alpha",
+      },
+      {
+        type: "Ident",
+        value: "bravo",
+      },
+      {
+        statements: [
+          {
+            type: "Ident",
+            value: "charlie",
+          },
+          {
+            type: "Ident",
+            value: "delta",
+          },
+          {
+            type: "Ident",
+            value: "echo",
+          },
+          {
+            statements: [
+              {
+                type: "Ident",
+                value: "foxtrot",
+              },
+            ],
+            type: "Block",
+          },
+        ],
+        type: "Block",
+      },
+      {
+        type: "Ident",
+        value: "golf",
+      },
+    ],
+    type: "Block",
+  },
+}
+`;
+
+snapshot[`py simple 1`] = `
+{
+  ok: true,
+  value: {
+    statements: [
+      {
+        type: "Ident",
+        value: "alpha",
+      },
+      {
+        type: "Ident",
+        value: "bravo",
+      },
+    ],
+    type: "Block",
+  },
+}
+`;
+
+snapshot[`py even simpler 1`] = `
+{
+  ok: true,
+  value: {
+    type: "Ident",
+    value: "alpha",
+  },
+}
+`;
+
+snapshot[`py bad indent 1`] = `
+{
+  expected: [
+    "more than 4 spaces",
+  ],
+  location: {
+    column: 5,
+    index: 40,
+    line: 4,
+  },
+  ok: false,
+}
+`;

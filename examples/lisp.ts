@@ -1,33 +1,50 @@
-import * as bnb from "../src/bread-n-butter";
+import { node, type ParseNode } from "../node.ts";
+import { text } from "../text.ts";
+import { match } from "../match.ts";
+import { choice } from "../choice.ts";
+import { lazy } from "../lazy.ts";
+import type { Parser } from "../parse.ts";
+import { desc } from "../desc.ts";
+import { map } from "../map.ts";
+import { repeat } from "../repeat.ts";
+import { trim } from "../trim.ts";
+import { wrap } from "../wrap.ts";
 
-type LispSymbol = bnb.ParseNode<"LispSymbol", string>;
-type LispNumber = bnb.ParseNode<"LispNumber", number>;
-type LispList = bnb.ParseNode<"LispList", LispExpr[]>;
-type LispExpr = LispSymbol | LispNumber | LispList;
+/** Represents a Lisp symbol. */
+export type LispSymbol = ParseNode<"LispSymbol", string>;
+/** Represents a Lisp number. */
+export type LispNumber = ParseNode<"LispNumber", number>;
+/** Represents a Lisp list. */
+export type LispList = ParseNode<"LispList", LispExpr[]>;
+/** Represents a Lisp expression. */
+export type LispExpr = LispSymbol | LispNumber | LispList;
 
-const lispExpr: bnb.Parser<LispExpr> = bnb.lazy(() => {
-  return bnb.choice(lispSymbol, lispNumber, lispList);
-});
+const lispExpr: Parser<LispExpr> = lazy(() =>
+  choice(lispSymbol, lispNumber, lispList)
+);
 
-const lispSymbol = bnb
-  .match(/[a-z_-][a-z0-9_-]*/i)
-  .node("LispSymbol")
-  .desc(["symbol"]);
+const lispSymbol = desc(
+  node(match(/[a-z_-][a-z0-9_-]*/i), "LispSymbol"),
+  ["symbol"],
+);
 
-const lispNumber = bnb
-  .match(/[0-9]+/)
-  .map(Number)
-  .node("LispNumber")
-  .desc(["number"]);
+const lispNumber = desc(
+  node(
+    map(match(/[0-9]+/), Number),
+    "LispNumber",
+  ),
+  ["number"],
+);
 
-const lispWS = bnb.match(/\s*/);
+const lispWS = match(/\s*/);
 
-const lispList = lispExpr
-  .trim(lispWS)
-  .repeat()
-  .wrap(bnb.text("("), bnb.text(")"))
-  .node("LispList");
+const lispList = node(
+  wrap(text("("), repeat(trim(lispExpr, lispWS)), text(")")),
+  "LispList",
+);
 
-const Lisp = lispExpr.trim(lispWS).repeat().node("LispFile");
-
-export default Lisp;
+/** A Lisp file parser */
+export const Lisp: Parser<ParseNode<"LispFile", LispExpr[]>> = node(
+  repeat(trim(lispExpr, lispWS)),
+  "LispFile",
+);

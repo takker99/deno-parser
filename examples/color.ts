@@ -1,46 +1,67 @@
-import * as bnb from "../src/bread-n-butter";
+import { sepBy } from "../sepBy.ts";
+import { trim } from "../trim.ts";
+import { desc } from "../desc.ts";
+import { map } from "../map.ts";
+import { next } from "../next.ts";
+import { and } from "../and.ts";
+import { text } from "../text.ts";
+import { match } from "../match.ts";
+import { all } from "../all.ts";
+import { choice } from "../choice.ts";
+import type { Parser } from "../parse.ts";
+import { wrap } from "../wrap.ts";
 
 function rgba(r: number, g: number, b: number, a: number) {
   return { r, g, b, a };
 }
 
 // Primitives
-const ws = bnb.match(/\s*/).desc(["whitespace"]);
-const sharp = bnb.text("#");
-const hexDigit = bnb.match(/[0-9a-fA-F]/).desc(["a hex digit"]);
-const hex1 = hexDigit.map((d) => parseInt(d + d, 16));
-const hex2 = hexDigit.and(hexDigit).map(([d1, d2]) => parseInt(d1 + d2, 16));
-const number = bnb
-  .match(/[0-9]+(\.[0-9]*)?/)
-  .map(Number)
-  .desc(["a number"]);
+const ws = desc(match(/\s*/), ["whitespace"]);
+const sharp = text("#");
+const hexDigit = desc(match(/[0-9a-fA-F]/), ["a hex digit"]);
+const hex1 = map(hexDigit, (d) => parseInt(d + d, 16));
+const hex2 = map(and(hexDigit, hexDigit), ([d1, d2]) => parseInt(d1 + d2, 16));
+const number = desc(map(match(/[0-9]+(\.[0-9]*)?/), Number), ["a number"]);
 
 // Color types
-const hexColorShort = sharp
-  .next(bnb.all(hex1, hex1, hex1))
-  .map(([r, g, b]) => rgba(r, g, b, 1));
+const hexColorShort = map(
+  next(sharp, all(hex1, hex1, hex1)),
+  ([r, g, b]) => rgba(r, g, b, 1),
+);
 
-const hexColorLong = sharp
-  .next(bnb.all(hex2, hex2, hex2))
-  .map(([r, g, b]) => rgba(r, g, b, 1));
+const hexColorLong = map(
+  next(sharp, all(hex2, hex2, hex2)),
+  ([r, g, b]) => rgba(r, g, b, 1),
+);
 
-const rgbColor = bnb
-  .text("rgb(")
-  .next(number.trim(ws).sepBy(bnb.text(","), 3, 3).trim(ws))
-  .skip(bnb.text(")"))
-  .map(([r, g, b]) => rgba(r, g, b, 1));
+const rgbColor = map(
+  wrap(
+    text("rgb("),
+    trim(sepBy(trim(number, ws), text(","), 3, 3), ws),
+    text(")"),
+  ),
+  ([r, g, b]) => rgba(r, g, b, 1),
+);
 
-const rgbaColor = bnb
-  .text("rgba(")
-  .next(number.trim(ws).sepBy(bnb.text(","), 4, 4).trim(ws))
-  .skip(bnb.text(")"))
-  .map(([r, g, b, a]) => rgba(r, g, b, a));
+const rgbaColor = map(
+  wrap(
+    text("rgba("),
+    trim(sepBy(trim(number, ws), text(","), 4, 4), ws),
+    text(")"),
+  ),
+  ([r, g, b, a]) => rgba(r, g, b, a),
+);
 
-// Note that hexColorLong must be placed before hexColorShort. `bnb.choice`
-// picks the first parser that matches, and `.parse` and `.tryParse` error if
-// your parser does not consume the entire input. If you put `hexColorShort`
-// first then the last 3 hex digits would be left over at the end when parsing a
-// 6-digit hex color, causing an error.
-const Color = bnb.choice(hexColorLong, hexColorShort, rgbColor, rgbaColor);
-
-export default Color;
+/**
+ * Note that {@linkcode hexColorLong} must be placed before {@linkcode hexColorShort}. {@linkcode choice}
+ * picks the first parser that matches, and {@linkcode Parser.parse} and {@linkcode Parser.tryParse} error if
+ * your parser does not consume the entire input. If you put {@linkcode hexColorShort}
+ * first then the last 3 hex digits would be left over at the end when parsing a
+ * 6-digit hex color, causing an error.
+ */
+export const Color: Parser<{
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+}> = choice(hexColorLong, hexColorShort, rgbColor, rgbaColor);
