@@ -1,4 +1,4 @@
-import type { Parser } from "./parse.ts";
+import type { Parser } from "./parser.ts";
 import { wrap } from "./wrap.ts";
 
 /**
@@ -20,7 +20,18 @@ import { wrap } from "./wrap.ts";
  * tryParse(item, "     a "); // => "a"
  * ```
  */
-export const trim = <A, B, I extends ArrayLike<unknown>>(
-  parser: Parser<A, I>,
-  beforeAndAfter: Parser<B, I>,
-): Parser<A, I> => wrap(beforeAndAfter, parser, beforeAndAfter);
+export const trim = <
+  A,
+  const Expected extends string[],
+  B,
+  const ExpectedB extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  parser: Parser<A, Expected, Input, Data, Cursor, T, FormattedCursor>,
+  beforeAndAfter: Parser<B, ExpectedB, Input, Data, Cursor, T, FormattedCursor>,
+): Parser<A, Expected | ExpectedB, Input, Data, Cursor, T, FormattedCursor> =>
+  wrap(beforeAndAfter, parser, beforeAndAfter);

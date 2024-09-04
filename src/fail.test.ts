@@ -1,11 +1,11 @@
 import { fail } from "./fail.ts";
 import { or } from "./or.ts";
-import { parse } from "./parse.ts";
+import { parseText as parse, type TextParser } from "./text_parser.ts";
 import { text } from "./text.ts";
 import { assertEquals } from "@std/assert";
 
 Deno.test("fail", () => {
-  const p = fail(["apple", "banana"]);
+  const p: TextParser<never, ["apple", "banana"]> = fail(["apple", "banana"]);
   const q = or(text("other"), p);
   assertEquals(parse(p, ""), {
     expected: ["apple", "banana"],

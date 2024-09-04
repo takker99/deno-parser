@@ -1,5 +1,6 @@
-import { contextFail, contextOk } from "./context.ts";
-import type { Parser } from "./parse.ts";
+import type { DeepReadonly } from "./deep_readonly.ts";
+import type { Parser } from "./parser.ts";
+import { getNextCursor, pop } from "./reader.ts";
 
 /** Returns a parser that matches the exact `string` supplied.
  *
@@ -16,15 +17,18 @@ import type { Parser } from "./parse.ts";
  * tryParse(paren, "()"); // => ["(", ")"]
  * ```
  */
-export const text =
-  <A extends string, L extends string>(string: A): Parser<A, L> =>
-  (
-    context,
-  ) => {
-    const [input, [start]] = context;
-    const end = start + string.length;
-    if (input.slice(start, end) == string) {
-      return contextOk(context, end, string);
-    }
-    return contextFail(context, start, [string]);
-  };
+export const text = <
+  Input,
+  Data,
+  Cursor,
+  const T extends string,
+  FormattedCursor,
+  const S extends T,
+>(string: S): Parser<S, [S], Input, Data, Cursor, T, FormattedCursor> =>
+(reader, data) => {
+  const [sliced, next] = pop(reader, data, string.length);
+  if (sliced == string) {
+    return [true, string as DeepReadonly<S>, next];
+  }
+  return [false, getNextCursor(reader, data), next, [string]];
+};

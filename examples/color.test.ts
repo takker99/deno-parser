@@ -1,5 +1,5 @@
 import { Color } from "./color.ts";
-import { tryParse } from "../src/parse.ts";
+import { tryParseText as tryParse } from "../src/text_parser.ts";
 import { assertEquals, assertThrows } from "@std/assert";
 
 Deno.test("hex color", () => {

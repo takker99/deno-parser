@@ -1,6 +1,6 @@
 import { and } from "./and.ts";
 import { map } from "./map.ts";
-import type { Parser } from "./parse.ts";
+import type { Parser } from "./parser.ts";
 
 /**
  * Combines `parserA` and `parserB` one after the other, yielding the result of `parserB`.
@@ -16,7 +16,18 @@ import type { Parser } from "./parse.ts";
  * // => "b"
  * ```
  */
-export const next = <A, B, I extends ArrayLike<unknown>>(
-  parserA: Parser<A, I>,
-  parserB: Parser<B, I>,
-): Parser<B, I> => map(and(parserA, parserB), ([, b]) => b);
+export const next = <
+  L,
+  const ExpectedL extends string[],
+  A,
+  const Expected extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  before: Parser<L, ExpectedL, Input, Data, Cursor, T, FormattedCursor>,
+  parser: Parser<A, Expected, Input, Data, Cursor, T, FormattedCursor>,
+): Parser<A, ExpectedL | Expected, Input, Data, Cursor, T, FormattedCursor> =>
+  map(and(before, parser), ([, b]) => b);

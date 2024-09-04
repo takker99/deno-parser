@@ -4,7 +4,7 @@ import { next } from "./next.ts";
 import { isRangeValid } from "./isRangeValid.ts";
 import { ok } from "./ok.ts";
 import { or } from "./or.ts";
-import type { Parser } from "./parse.ts";
+import type { Parser } from "./parser.ts";
 import { repeat } from "./repeat.ts";
 
 /**
@@ -44,12 +44,30 @@ import { repeat } from "./repeat.ts";
  * tryParse(dimensions, "1x2x3x4"); // => Error
  * ```
  */
-export const sepBy = <A, B, I extends ArrayLike<unknown>>(
-  parser: Parser<A, I>,
-  separator: Parser<B, I>,
+export const sepBy = <
+  A,
+  ExpectedA extends string[],
+  I,
+  ExpectedI extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  parser: Parser<A, ExpectedA, Input, Data, Cursor, T, FormattedCursor>,
+  separator: Parser<I, ExpectedI, Input, Data, Cursor, T, FormattedCursor>,
   min = 0,
   max = Infinity,
-): Parser<A[], I> => {
+): Parser<
+  A[],
+  ExpectedA | ExpectedI,
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor
+> => {
   if (!isRangeValid(min, max)) {
     throw new Error(`sepBy: bad range (${min} to ${max})`);
   }
@@ -59,14 +77,14 @@ export const sepBy = <A, B, I extends ArrayLike<unknown>>(
   // We also know that min=1 due to previous checks, so we can skip the call
   // to `repeat` here
   if (max === 1) {
-    return map(parser, (x) => [x]);
+    return map(parser, (x) => [x] as const);
   }
   return chain(
     parser,
     (first) =>
       map(
         repeat(next(separator, parser), min - 1, max - 1),
-        (rest) => [first, ...rest],
+        (rest) => [first, ...rest] as const,
       ),
   );
 };

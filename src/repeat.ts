@@ -1,9 +1,7 @@
-import { contextOk, merge } from "./context.ts";
 import { isRangeValid } from "./isRangeValid.ts";
-import { ok } from "./ok.ts";
-import { or } from "./or.ts";
-import type { Parser } from "./parse.ts";
-import { isFail, isOk } from "./action.ts";
+import { isOk, nextData, parsedValue, type Parser } from "./parser.ts";
+import type { DeepReadonly } from "./deep_readonly.ts";
+import { discard, getNextCursor, isFinish, restore, save } from "./reader.ts";
 
 /**
  * Repeats the current parser between min and max times, yielding the results
@@ -43,35 +41,48 @@ import { isFail, isOk } from "./action.ts";
  * @param min The minimum number of times to repeat.
  * @param max The maximum number of times to repeat.
  */
-export const repeat = <A, I extends ArrayLike<unknown>>(
-  parser: Parser<A, I>,
+export const repeat = <
+  A,
+  Expected extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  parser: Parser<A, Expected, Input, Data, Cursor, T, FormattedCursor>,
   min = 0,
   max = Infinity,
-): Parser<A[], I> => {
+): Parser<A[], Expected, Input, Data, Cursor, T, FormattedCursor> => {
   if (!isRangeValid(min, max)) {
     throw new Error(`repeat: bad range (${min} to ${max})`);
   }
-  if (min === 0) {
-    return or(repeat(parser, 1, max), ok([]));
-  }
-  return (context) => {
-    const items: A[] = [];
-    let result = parser(context);
-    if (isFail(result)) return result;
+  return (reader, start) => {
+    const items: DeepReadonly<A>[] = [];
+    let prev = start;
+    let next = start;
+    while (true) {
+      if (items.length >= max) break;
 
-    while (isOk(result) && items.length < max) {
-      items.push(result.value);
-      if (result.location[0] === context[1][0]) {
+      const result = parser(reader, save(reader, next));
+      prev = next;
+      const is = isOk(result);
+      const isLack = items.length < min;
+      next = (is || isLack ? discard : restore)(reader, nextData(result));
+      if (!is) {
+        if (isLack) return result;
+        break;
+      }
+      if (
+        getNextCursor(reader, prev) === getNextCursor(reader, next) &&
+        max == Infinity && !isFinish(reader, next)
+      ) {
         throw new Error(
           "infinite loop detected; don't call .repeat() with parsers that can accept zero characters",
         );
       }
-      context = [context[0], result.location];
-      result = merge(result, parser(context));
+      items.push(parsedValue(result));
     }
-    if (isFail(result) && items.length < min) {
-      return result;
-    }
-    return merge(result, contextOk(context, context[1][0], items));
+    return [true, items, next];
   };
 };

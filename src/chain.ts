@@ -1,6 +1,5 @@
-import { merge } from "./context.ts";
-import type { Parser } from "./parse.ts";
-import { isFail } from "./action.ts";
+import type { Parser } from "./parser.ts";
+import type { DeepReadonly } from "./deep_readonly.ts";
 
 /**
  * Parse using the current parser. If it succeeds, pass the value to the `fn`
@@ -26,13 +25,32 @@ import { isFail } from "./action.ts";
  * tryParse(xmlTag, "<meta>data</meta>"); // => ["meta", "data"]
  * ```
  */
-export const chain = <A, B, I extends ArrayLike<unknown>>(
-  parser: Parser<A, I>,
-  fn: (value: A) => Parser<B, I>,
-): Parser<B, I> =>
-(context) => {
-  const a = parser(context);
-  if (isFail(a)) return a;
-  const parserB = fn(a.value);
-  return merge(a, parserB([context[0], a.location]));
+export const chain = <
+  A,
+  const ExpectedA extends string[],
+  B,
+  const ExpectedB extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  parser: Parser<A, ExpectedA, Input, Data, Cursor, T, FormattedCursor>,
+  fn: (
+    value: DeepReadonly<A>,
+  ) => Parser<B, ExpectedB, Input, Data, Cursor, T, FormattedCursor>,
+): Parser<
+  B,
+  ExpectedA | ExpectedB,
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor
+> =>
+(reader, data) => {
+  const a = parser(reader, data);
+  if (!a[0]) return a;
+  return fn(a[1])(reader, a[2]);
 };

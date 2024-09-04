@@ -1,5 +1,6 @@
-import { type Context, contextFail, contextOk } from "./context.ts";
-import type { ActionResult } from "./parse.ts";
+import type { DeepReadonly } from "./deep_readonly.ts";
+import type { ActionResult } from "./parser.ts";
+import { getNextCursor, isFinish, Reader } from "./reader.ts";
 
 const EOF = "<EOF>" as const;
 
@@ -24,11 +25,10 @@ const EOF = "<EOF>" as const;
  * tryParse(file, "A\nB\nC"); // => ["A", "B", "C"]
  * ```
  */
-export const eof = <T, I extends ArrayLike<T>>(
-  context: Context<I>,
-): ActionResult<"<EOF>"> => {
-  const [input, [i]] = context;
-  return i < input.length
-    ? contextFail(context, i, [EOF])
-    : contextOk(context, i, EOF);
-};
+export const eof = <Input, Data, Cursor, T, FormattedCursor>(
+  reader: DeepReadonly<Reader<Input, Data, Cursor, T, FormattedCursor>>,
+  data: DeepReadonly<Data>,
+): ActionResult<"<EOF>", Data, Cursor, ["<EOF>"]> =>
+  isFinish(reader, data)
+    ? [true, EOF, data]
+    : [false, getNextCursor(reader, data), data, [EOF]];

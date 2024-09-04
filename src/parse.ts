@@ -1,61 +1,8 @@
 import { skip } from "./skip.ts";
 import { eof } from "./eof.ts";
-import { type Context, toSourceLocation } from "./context.ts";
-import type { ActionResult } from "./action.ts";
-export type { ActionFail, ActionOK, ActionResult } from "./action.ts";
-
-/**
- * The parsing action.
- * This should only be called directly when writing custom parsers.
- *
- * > [!NOTE]
- * > Make sure to use {@linkcode merge} when combining multiple
- * > {@linkcode ActionResult}s or else you will lose important parsing information.
- *
- * @param context A parsing context
- * @returns An {@linkcode ActionResult}
- */
-export type Parser<A, Input extends ArrayLike<unknown> = string> = (
-  context: Context<Input>,
-) => ActionResult<A>;
-
-/** Extracts the parsed type from a {@linkcode Parser}. */
-export type ParserResult<P> = P extends Parser<infer A, infer L> ? A
-  : never;
-
-/**  Extracts the input type from a {@linkcode Parser}. */
-export type ParserInput<P> = P extends Parser<infer A, infer L> ? L
-  : never;
-
-/**
- * Represents a successful parse result.
- */
-export interface ParseOK<A> {
-  /**
-   * Whether the parse was successful.
-   */
-  ok: true;
-
-  /** The parsed value */
-  value: A;
-}
-
-/**
- * Represents a failed parse result, where it failed, and what types of
- * values were expected at the point of failure.
- */
-export interface ParseFail {
-  /**
-   * Whether the parse was successful.
-   */
-  ok: false;
-
-  /** The input location where the parse failed */
-  location: SourceLocation;
-
-  /** List of expected values at the location the parse failed */
-  expected: string[];
-}
+import type { DeepReadonly } from "./deep_readonly.ts";
+import type { Parser } from "./parser.ts";
+import { formatLocation, init, type Reader } from "./reader.ts";
 
 /**
  * Represents a location in the input (source code). Keeps track of `index` (for
@@ -114,20 +61,52 @@ export interface SourceLocation {
  * }
  * ```
  */
-export const parse = <A, Input extends ArrayLike<unknown>>(
-  parser: Parser<A, Input>,
+export const parse = <
+  A,
+  const ExpectedA extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  parser: Parser<A, ExpectedA, Input, Data, Cursor, T, FormattedCursor>,
+  reader: DeepReadonly<Reader<Input, Data, Cursor, T, FormattedCursor>>,
   input: Input,
-): ParseOK<A> | ParseFail => {
-  const result = skip(parser, eof)([input, [0, 1, 1]]);
-  if (result.ok) {
-    return { ok: true, value: result.value };
+): ParseFinalResult<A, ExpectedA | ["<EOF>"], FormattedCursor> => {
+  const result = skip(parser, eof)(reader, init(reader, input));
+  if (result[0]) {
+    return { ok: true, value: result[1] };
   }
   return {
     ok: false,
-    location: toSourceLocation(result.furthest),
-    expected: result.expected,
+    location: formatLocation(reader, result[1]),
+    expected: result[3],
   };
 };
+
+/** Extracts the parsed type from a {@linkcode Parser}. */
+export type ParseFinalResult<A, Expected extends string[], FormattedCursor> =
+  | ParseFinalOk<A>
+  | ParseFinalFail<Expected, FormattedCursor>;
+
+/**
+ * Represents a successful parse result.
+ */
+export interface ParseFinalOk<A> {
+  ok: true;
+  value: DeepReadonly<A>;
+}
+
+/**
+ * Represents a failed parse result, where it failed, and what types of
+ * values were expected at the point of failure.
+ */
+export interface ParseFinalFail<Expected extends string[], FormattedCursor> {
+  ok: false;
+  location: FormattedCursor;
+  expected: Expected;
+}
 
 /**
  * Returns the parsed result or throws an error.
@@ -150,17 +129,23 @@ export const parse = <A, Input extends ArrayLike<unknown>>(
  * tryParse(a, "a"); // => "a"
  * ```
  */
-export const tryParse = <A, Input extends ArrayLike<unknown>>(
-  parser: Parser<A, Input>,
+export const tryParse = <
+  A,
+  const ExpectedA extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  parser: Parser<A, ExpectedA, Input, Data, Cursor, T, FormattedCursor>,
+  reader: DeepReadonly<Reader<Input, Data, Cursor, T, FormattedCursor>>,
   input: Input,
-): A => {
-  const result = parse(parser, input);
-  if (result.ok) {
-    return result.value;
-  }
+): DeepReadonly<A> => {
+  const result = parse(parser, reader, input);
+  if (result.ok) return result.value;
   const { expected, location } = result;
-  const { line, column } = location;
-  const message = `parse error at line ${line} column ${column}: ` +
+  const message = `parse error at ${location}: ` +
     `expected ${expected.join(", ")}`;
   throw new Error(message);
 };

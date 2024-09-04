@@ -1,8 +1,11 @@
-import { assertEquals } from "@std/assert";
 import { choice } from "./choice.ts";
 import { map } from "./map.ts";
-import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { parseText as parse, type TextParser } from "./text_parser.ts";
+import { text as textBase } from "./text.ts";
+import { assertEquals } from "@std/assert";
+
+type TextFn = <S extends string>(string: S) => TextParser<S, [S]>;
+const text: TextFn = textBase;
 
 Deno.test("choice", () => {
   const abc123 = choice(

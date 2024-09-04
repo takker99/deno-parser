@@ -1,5 +1,5 @@
-import { contextFail } from "./context.ts";
-import type { Parser } from "./parse.ts";
+import type { Parser } from "./parser.ts";
+import { getNextCursor } from "./reader.ts";
 
 /**
  * Returns a parser that fails with the given array of strings `expected` and consumes no input.
@@ -32,6 +32,14 @@ import type { Parser } from "./parse.ts";
  * // => error: expected smaller number
  * ```
  */
-export const fail =
-  <A, I extends ArrayLike<unknown>>(expected: string[]): Parser<A, I> =>
-  (context) => contextFail(context, context[1][0], expected);
+export const fail = <
+  const Expected extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  expected: [...Expected],
+): Parser<never, Expected, Input, Data, Cursor, T, FormattedCursor> =>
+(reader, data) => [false, getNextCursor(reader, data), data, expected];

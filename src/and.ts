@@ -1,6 +1,4 @@
-import { contextOk, merge } from "./context.ts";
-import type { Parser } from "./parse.ts";
-import { isFail, isOk } from "./action.ts";
+import type { Parser } from "./parser.ts";
 
 /**
  * Combines two parsers one after the other, yielding the results of both in
@@ -17,20 +15,33 @@ import { isFail, isOk } from "./action.ts";
  * // => ["a", "b"]
 ```
  */
-export const and = <A, B, I extends ArrayLike<unknown>>(
-  parserA: Parser<A, I>,
-  parserB: Parser<B, I>,
-): Parser<[A, B], I> =>
-(
-  context,
-) => {
-  const a = parserA(context);
-  if (isFail(a)) return a;
-  context = [context[0], a.location];
-  const b = merge(a, parserB(context));
-  if (isOk(b)) {
-    const value: [A, B] = [a.value, b.value];
-    return merge(b, contextOk(context, b.location[0], value));
-  }
-  return b;
+export const and = <
+  A,
+  const ExpectedA extends string[],
+  B,
+  const ExpectedB extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  parserA: Parser<A, ExpectedA, Input, Data, Cursor, T, FormattedCursor>,
+  parserB: Parser<B, ExpectedB, Input, Data, Cursor, T, FormattedCursor>,
+): Parser<
+  [A, B],
+  ExpectedA | ExpectedB,
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor
+> =>
+(reader, data) => {
+  const a = parserA(reader, data);
+  if (!a[0]) return a;
+  const [, valueA, nextA] = a;
+  const b = parserB(reader, nextA);
+  if (!b[0]) return b;
+  return [true, [valueA, b[1]], b[2]];
 };

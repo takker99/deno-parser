@@ -1,5 +1,4 @@
-import type { Parser } from "./parse.ts";
-import { isOk, makeActionFail } from "./action.ts";
+import { isOk, nextData, type Parser } from "./parser.ts";
 
 /**
  * Returns a parser which parses the same value, but discards other error messages,
@@ -28,11 +27,21 @@ import { isOk, makeActionFail } from "./action.ts";
  * // => ["number"]
  * ```
  */
-export const desc = <A, I extends ArrayLike<unknown>>(
-  parser: Parser<A, I>,
-  expected: string[],
-): Parser<A, I> =>
-(context) => {
-  const result = parser(context);
-  return isOk(result) ? result : makeActionFail(result.furthest, expected);
+export const desc = <
+  A,
+  const ExpectedA extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+  const Expected extends string[],
+>(
+  parser: Parser<A, ExpectedA, Input, Data, Cursor, T, FormattedCursor>,
+  expected: [...Expected],
+): Parser<A, Expected, Input, Data, Cursor, T, FormattedCursor> =>
+(reader, data) => {
+  const result = parser(reader, data);
+  if (isOk(result)) return result;
+  return [false, result[1], nextData(result), expected];
 };

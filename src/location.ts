@@ -1,5 +1,6 @@
-import { type Context, contextOk, toSourceLocation } from "./context.ts";
-import type { ActionResult, SourceLocation } from "./parse.ts";
+import type { DeepReadonly } from "./deep_readonly.ts";
+import type { ActionResult } from "./parser.ts";
+import { formatLocation, getNextCursor, type Reader } from "./reader.ts";
 
 /**
  * Parser that yields the current {@linkcode SourceLocation}, containing properties
@@ -31,7 +32,13 @@ import type { ActionResult, SourceLocation } from "./parse.ts";
  * // }
  * ```
  */
-export const location = <I extends ArrayLike<unknown>>(
-  context: Context<I>,
-): ActionResult<SourceLocation> =>
-  contextOk(context, context[1][0], toSourceLocation(context[1]));
+export const location = <Input, Data, Cursor, T, FormattedCursor>(
+  reader: DeepReadonly<Reader<Input, Data, Cursor, T, FormattedCursor>>,
+  data: DeepReadonly<Data>,
+): ActionResult<FormattedCursor, Data, Cursor, never> => [
+  true,
+  formatLocation(reader, getNextCursor(reader, data)) as DeepReadonly<
+    FormattedCursor
+  >,
+  data,
+];

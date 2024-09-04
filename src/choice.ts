@@ -1,5 +1,12 @@
 import { or } from "./or.ts";
-import type { Parser, ParserResult } from "./parse.ts";
+import type { Parser, ParserdData, ParserdExpected } from "./parser.ts";
+
+export type JoinExpected<ParserList extends readonly unknown[]> =
+  ParserList extends [infer P, ...infer RestParserList]
+    ? ParserdExpected<P> extends unknown[]
+      ? [...ParserdExpected<P>, ...JoinExpected<RestParserList>]
+    : never
+    : [];
 
 /**
  * Parse using the parsers given, returning the first one that succeeds.
@@ -51,14 +58,44 @@ import type { Parser, ParserResult } from "./parse.ts";
  */
 export const choice = <
   A,
-  I extends ArrayLike<unknown>,
-  Parsers extends Parser<unknown, I>[],
+  Expected extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+  ParserList extends readonly Parser<
+    unknown,
+    string[],
+    Input,
+    Data,
+    Cursor,
+    T,
+    FormattedCursor
+  >[],
 >(
-  ...parsers: [Parser<A, I>, ...Parsers]
-): Parser<A | ParserResult<Parsers[number]>, I> =>
+  ...parsers: [
+    Parser<A, Expected, Input, Data, Cursor, T, FormattedCursor>,
+    ...ParserList,
+  ]
+): Parser<
+  A | ParserdData<ParserList[number]>,
+  [...Expected, ...JoinExpected<ParserList>],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor
+> => (
   // TODO: This could be optimized with a custom parser, but I should probably add
   // benchmarking first to see if it really matters enough to rewrite it
   parsers.reduce((acc, p) => or(acc, p)) as Parser<
-    A | ParserResult<Parsers[number]>,
-    I
-  >;
+    A | ParserdData<ParserList[number]>,
+    [...Expected, ...JoinExpected<ParserList>],
+    Input,
+    Data,
+    Cursor,
+    T,
+    FormattedCursor
+  >
+);

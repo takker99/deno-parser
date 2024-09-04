@@ -1,8 +1,8 @@
 import { desc } from "./desc.ts";
 import { map } from "./map.ts";
-import { parse } from "./parse.ts";
 import { match } from "./match.ts";
 import { node } from "./node.ts";
+import { parseText as parse } from "./text_parser.ts";
 import { assertEquals } from "@std/assert";
 
 Deno.test("desc", () => {

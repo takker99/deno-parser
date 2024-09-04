@@ -1,5 +1,5 @@
-import { contextFail, contextOk } from "./context.ts";
-import type { Parser } from "./parse.ts";
+import type { TextParser } from "./text_parser.ts";
+import { getNextCursor, pop } from "./reader.ts";
 
 /**
  * Returns a parser that matches the entire `regexp` at the current parser
@@ -38,7 +38,7 @@ import type { Parser } from "./parse.ts";
  * // => 404
  * ```
  */
-export const match = (regexp: RegExp): Parser<string, string> => {
+export const match = (regexp: RegExp): TextParser<string, [string]> => {
   for (const flag of regexp.flags) {
     switch (flag) {
       case "i": // ignoreCase
@@ -51,15 +51,13 @@ export const match = (regexp: RegExp): Parser<string, string> => {
     }
   }
   const sticky = new RegExp(regexp.source, regexp.flags + "y");
-  return (context) => {
-    const [input, [start]] = context;
-    sticky.lastIndex = start;
-    const match = input.match(sticky);
-    if (match) {
-      const end = start + match[0].length;
-      const string = input.slice(start, end);
-      return contextOk(context, end, string);
+  return (reader, data) => {
+    sticky.lastIndex = data[1][0];
+    const match = data[0].match(sticky);
+    if (!match) {
+      return [false, getNextCursor(reader, data), data, [`${regexp}`]];
     }
-    return contextFail(context, start, [`${regexp}`]);
+    const [sliced, next] = pop(reader, data, match[0].length);
+    return [true, sliced, next];
   };
 };

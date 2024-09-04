@@ -1,6 +1,7 @@
 import { chain } from "./chain.ts";
+import type { DeepReadonly } from "./deep_readonly.ts";
 import { ok } from "./ok.ts";
-import type { Parser } from "./parse.ts";
+import type { Parser } from "./parser.ts";
 
 /**
  * Yields the result of calling `fn` with the parser's value.
@@ -20,7 +21,17 @@ import type { Parser } from "./parse.ts";
  * tryParse(bool, "no"); // => false
  * ```
  */
-export const map = <A, B, I extends ArrayLike<unknown>>(
-  parser: Parser<A, I>,
-  fn: (value: A) => B,
-): Parser<B, I> => chain(parser, (a) => ok(fn(a)));
+export const map = <
+  A,
+  const ExpectedA extends string[],
+  B,
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  parser: Parser<A, ExpectedA, Input, Data, Cursor, T, FormattedCursor>,
+  fn: (value: DeepReadonly<A>) => DeepReadonly<B>,
+): Parser<B, ExpectedA, Input, Data, Cursor, T, FormattedCursor> =>
+  chain(parser, (a) => ok(fn(a)));

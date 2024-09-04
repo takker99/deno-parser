@@ -1,15 +1,16 @@
-import { assertEquals, assertThrows } from "@std/assert";
-import { parse } from "./parse.ts";
 import { repeat } from "./repeat.ts";
-import { sepBy } from "./sepBy.ts";
-import { text } from "./text.ts";
+import { parseText as parse, type TextParser } from "./text_parser.ts";
+import { text as textBase } from "./text.ts";
+import { assertEquals, assertThrows } from "@std/assert";
+
+type TextFn = <S extends string>(string: S) => TextParser<S, [S]>;
+const text = textBase as TextFn;
 
 Deno.test("repeat with bad range", () => {
   const a = text("a");
-  const sep = text(" ");
-  assertThrows(() => sepBy(a, sep, 5, 3), "bad range");
-  assertThrows(() => sepBy(a, sep, -2, 0), "bad range");
-  assertThrows(() => sepBy(a, sep, 1.2, 3.4), "bad range");
+  assertThrows(() => repeat(a, 5, 3), "bad range");
+  assertThrows(() => repeat(a, -2, 0), "bad range");
+  assertThrows(() => repeat(a, 1.2, 3.4), "bad range");
 });
 
 Deno.test("repeat 0+", () => {
@@ -24,7 +25,7 @@ Deno.test("repeat 0+", () => {
     value: ["a", "a", "a", "a"],
   });
   assertEquals(parse(aaa, "b"), {
-    expected: ["a", "<EOF>"],
+    expected: ["<EOF>"],
     location: { index: 0, line: 1, column: 1 },
     ok: false,
   });

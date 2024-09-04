@@ -1,6 +1,6 @@
 import { next } from "./next.ts";
-import type { Parser } from "./parse.ts";
 import { skip } from "./skip.ts";
+import type { Parser } from "./parser.ts";
 
 /**
  * Returns a parser that parses `before`, `parser`, and `after` in that
@@ -21,8 +21,28 @@ import { skip } from "./skip.ts";
  * tryParse(list, "[a,a,a]"); // => ["a", "a", "a"]
  * ```
  */
-export const wrap = <L, A, R, I extends ArrayLike<unknown>>(
-  before: Parser<L, I>,
-  parser: Parser<A, I>,
-  after: Parser<R, I>,
-): Parser<A, I> => skip(next(before, parser), after);
+export const wrap = <
+  L,
+  const ExpectedL extends string[],
+  A,
+  const ExpectedA extends string[],
+  R,
+  const ExpectedR extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  left: Parser<L, ExpectedL, Input, Data, Cursor, T, FormattedCursor>,
+  parser: Parser<A, ExpectedA, Input, Data, Cursor, T, FormattedCursor>,
+  right: Parser<R, ExpectedR, Input, Data, Cursor, T, FormattedCursor>,
+): Parser<
+  A,
+  ExpectedL | ExpectedA | ExpectedR,
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor
+> => next(left, skip(parser, right));

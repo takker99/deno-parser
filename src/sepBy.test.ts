@@ -1,7 +1,11 @@
-import { assertEquals } from "@std/assert";
-import { parse } from "./parse.ts";
 import { sepBy } from "./sepBy.ts";
-import { text } from "./text.ts";
+import { parseText as parse, type TextParser } from "./text_parser.ts";
+import { text as textBase } from "./text.ts";
+import { assertEquals } from "@std/assert";
+
+type TextFn = <S extends string>(string: S) => TextParser<S, [S]>;
+const text = textBase as TextFn;
+
 Deno.test("sepBy 0+", () => {
   const a = text("a");
   const sep = text(",");
@@ -14,12 +18,12 @@ Deno.test("sepBy 0+", () => {
     value: ["a", "a", "a"],
   });
   assertEquals(parse(list, "a,a,b"), {
-    expected: ["a"],
-    location: { index: 4, line: 1, column: 5 },
+    expected: ["<EOF>"],
+    location: { index: 3, line: 1, column: 4 },
     ok: false,
   });
   assertEquals(parse(list, "b"), {
-    expected: ["a", "<EOF>"],
+    expected: ["<EOF>"],
     location: { index: 0, line: 1, column: 1 },
     ok: false,
   });
@@ -41,8 +45,8 @@ Deno.test("sepBy 1+", () => {
     value: ["a", "a", "a"],
   });
   assertEquals(parse(list, "a,a,b"), {
-    expected: ["a"],
-    location: { index: 4, line: 1, column: 5 },
+    expected: ["<EOF>"],
+    location: { index: 3, line: 1, column: 4 },
     ok: false,
   });
   assertEquals(parse(list, "b"), {
@@ -77,8 +81,8 @@ Deno.test("sepBy 2-3", () => {
     ok: false,
   });
   assertEquals(parse(list, "a,a,b"), {
-    expected: ["a"],
-    location: { index: 4, line: 1, column: 5 },
+    expected: ["<EOF>"],
+    location: { index: 3, line: 1, column: 4 },
     ok: false,
   });
   assertEquals(parse(list, "b"), {

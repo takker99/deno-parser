@@ -1,9 +1,12 @@
-import { assertEquals } from "@std/assert";
 import { desc } from "./desc.ts";
 import { match } from "./match.ts";
 import { node } from "./node.ts";
-import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { parseText as parse, type TextParser } from "./text_parser.ts";
+import { text as textBase } from "./text.ts";
+import { assertEquals } from "@std/assert";
+
+type TextFn = <S extends string>(string: S) => TextParser<S, [S]>;
+const text = textBase as TextFn;
 
 Deno.test("node", () => {
   const identifier = desc(node(match(/[a-z]+/i), "Identifier"), ["identifier"]);

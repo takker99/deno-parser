@@ -1,7 +1,8 @@
 import { all } from "./all.ts";
+import type { DeepReadonly } from "./deep_readonly.ts";
 import { location } from "./location.ts";
 import { map } from "./map.ts";
-import type { Parser, SourceLocation } from "./parse.ts";
+import type { Parser } from "./parser.ts";
 
 /**
  * Returns a parser that adds `name` and start/end location metadata.
@@ -43,20 +44,40 @@ import type { Parser, SourceLocation } from "./parse.ts";
  * type LispExpr = LispSymbol | LispNumber | LispList;
  * ```
  */
-export const node = <A, I extends ArrayLike<unknown>, S extends string>(
-  parser: Parser<A, I>,
+export const node = <
+  S extends string,
+  A,
+  const Expected extends string[],
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  parser: Parser<A, Expected, Input, Data, Cursor, T, FormattedCursor>,
   name: S,
-): Parser<ParseNode<S, A>, I> =>
+): Parser<
+  ParseNode<S, A, FormattedCursor>,
+  Expected,
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor
+> =>
   map(
     all(location, parser, location),
-    ([start, value, end]) => ({ name, value, start, end }) as const,
+    ([start, value, end]) =>
+      ({ name, value, start, end }) as DeepReadonly<
+        ParseNode<S, A, FormattedCursor>
+      >,
   );
 
 /**
  * Result type from {@linkcode node}.
  * See {@linkcode node} for more details.
  */
-export interface ParseNode<S extends string, A> {
+export interface ParseNode<S extends string, A, FormattedCursor> {
   /**
    * The name of the node.
    * This is useful for debugging and error reporting.
@@ -67,8 +88,8 @@ export interface ParseNode<S extends string, A> {
   value: A;
 
   /** The start location of the parsed range. */
-  start: SourceLocation;
+  start: FormattedCursor;
 
   /** The end location of the parsed range. */
-  end: SourceLocation;
+  end: FormattedCursor;
 }

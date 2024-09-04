@@ -1,5 +1,5 @@
-import { contextOk } from "./context.ts";
-import type { Parser } from "./parse.ts";
+import type { DeepReadonly } from "./deep_readonly.ts";
+import type { Parser } from "./parser.ts";
 
 /**
  * Returns a parser that yields the given `value` and consumes no input.
@@ -17,6 +17,14 @@ import type { Parser } from "./parse.ts";
  * tryParse(sign, ""); // => ""
  * ```
  */
-export const ok =
-  <A, I extends ArrayLike<unknown>>(value: A): Parser<A, I> => (context) =>
-    contextOk(context, context[1][0], value);
+export const ok = <
+  A,
+  Input,
+  Data,
+  Cursor,
+  T,
+  FormattedCursor,
+>(
+  value: DeepReadonly<A>,
+): Parser<A, never, Input, Data, Cursor, T, FormattedCursor> =>
+(_, data) => [true, value, data];
