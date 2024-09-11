@@ -1,88 +1,60 @@
 import { isRangeValid } from "./isRangeValid.ts";
-import { isOk, nextData, parsedValue, type Parser } from "./parser.ts";
-import type { DeepReadonly } from "./deep_readonly.ts";
-import { discard, getNextCursor, isFinish, restore, save } from "./reader.ts";
+import {
+  type BaseReader,
+  compare,
+  type Context,
+  discardPreviousPosition,
+  isDone,
+  isOk,
+  type Parser,
+  type ReaderTuple,
+  restorePreviousPosition,
+  saveCurrentPosition,
+} from "./types.ts";
 
-/**
- * Repeats the current parser between min and max times, yielding the results
- * in an array.
- *
- * Repeats the current parser `min` to `max` times, yielding the results in an array.
- *
- * Given that this can match **zero** times, take care not to parse this
- * accidentally. Usually this parser should come up in the context of some other
- * characters that must be present, such as `{}` to indicate a code block, with
- * zero or more statements inside.
- *
- * ```ts
- * import { match, repeat, skip, text, tryParse, wrap } from "@takker/parser";
- *
- * const identifier = match(/[a-z]+/i);
- * const expression = skip(identifier, text("()"));
- * const statement = skip(expression, text(";"));
- * const block = wrap(text("{"), repeat(statement), text("}"));
- * tryParse(block, "{apple();banana();coconut();}");
- * // => ["apple", "banana", "coconut"];
- *
- * const aaa = repeat(text("a"), 1, 3);
- * tryParse(aaa, ""); // => Error
- * tryParse(aaa, "a"); // => "a"
- * tryParse(aaa, "aa"); // => "aa"
- * tryParse(aaa, "aaa"); // => "aaa"
- * tryParse(aaa, "aaaa"); // => Error
- *
- * const xs = repeat(text("x"), 1);
- * tryParse(xs, ""); // => Error
- * tryParse(xs, "x"); // => "x"
- * tryParse(xs, "xx"); // => "xx"
- * ```
- *
- * @param parser The parser to repeat.
- * @param min The minimum number of times to repeat.
- * @param max The maximum number of times to repeat.
- */
 export const repeat = <
   A,
   Expected extends string[],
-  Input,
-  Data,
-  Cursor,
-  T,
-  FormattedCursor,
 >(
-  parser: Parser<A, Expected, Input, Data, Cursor, T, FormattedCursor>,
+  parser: Parser<A, Expected>,
   min = 0,
   max = Infinity,
-): Parser<A[], Expected, Input, Data, Cursor, T, FormattedCursor> => {
+): Parser<A[], Expected> => {
   if (!isRangeValid(min, max)) {
     throw new Error(`repeat: bad range (${min} to ${max})`);
   }
-  return (reader, start) => {
-    const items: DeepReadonly<A>[] = [];
+  return <R extends BaseReader>(
+    reader: ReaderTuple<R>,
+    ...start: Context<R>
+  ) => {
+    const items: A[] = [];
     let prev = start;
     let next = start;
     while (true) {
       if (items.length >= max) break;
 
-      const result = parser(reader, save(reader, next));
+      const result = parser(reader, ...saveCurrentPosition(reader, next));
       prev = next;
       const is = isOk(result);
       const isLack = items.length < min;
-      next = (is || isLack ? discard : restore)(reader, nextData(result));
+      next = (is || isLack ? discardPreviousPosition : restorePreviousPosition)(
+        reader,
+        result[1],
+      );
       if (!is) {
         if (isLack) return result;
         break;
       }
       if (
-        getNextCursor(reader, prev) === getNextCursor(reader, next) &&
-        max == Infinity && !isFinish(reader, next)
+        compare(reader, prev, next) == 0 &&
+        max == Infinity && !isDone(reader, next)
       ) {
         throw new Error(
           "infinite loop detected; don't call .repeat() with parsers that can accept zero characters",
         );
       }
-      items.push(parsedValue(result));
+      items.push(result[2]);
     }
-    return [true, items, next];
+    return [true, next, items];
   };
 };

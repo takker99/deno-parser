@@ -1,4 +1,4 @@
-import { parse } from "../src/parse.ts";
+import { parse } from "../src/text_parser.ts";
 import { Lisp } from "./lisp.ts";
 import { assertSnapshot } from "@std/testing/snapshot";
 

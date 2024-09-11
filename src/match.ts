@@ -1,44 +1,9 @@
-import type { TextParser } from "./text_parser.ts";
-import { getNextCursor, pop } from "./reader.ts";
+import type { TextReader } from "./text_parser.ts";
+import { type Parser, read } from "./types.ts";
 
-/**
- * Returns a parser that matches the entire `regexp` at the current parser
- * position.
- *
- * The following regexp flags are supported (any other regexp flag will throw an
- * error):
- *
- * - `i`
- *   ([ignoreCase](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp/ignoreCase))
- * - `s`
- *   ([dotAll](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll))
- * - `m`
- *   ([multiline](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp/multiline))
- * - `u`
- *   ([unicode](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicode))
- *
- * > [!NOTE]
- * > Do not use the `^` anchor at the beginning of your regular expression.
- * > This internally uses [sticky](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky) (`/.../y`) regular expressions with [lastIndex](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp/lastIndex) set
- * > to the current parsing index.
- *
- * > [!NOTE]
- * > Capture groups `()` are not significant to this parser. The entire
- * > match is returned regardless of any capture groups used.
- *
- * @example
- * ```ts
- * import { match, tryParse } from "@takker/parser";
- * const identifier = match(/[a-z_]+/i);
- * tryParse(identifier, "internal_toString");
- * // => "internal_toString"
- *
- * const number = match(/[0-9]+/);
- * tryParse(number, "404");
- * // => 404
- * ```
- */
-export const match = (regexp: RegExp): TextParser<string, [string]> => {
+export const match = (
+  regexp: RegExp,
+): Parser<string, [string], TextReader> => {
   for (const flag of regexp.flags) {
     switch (flag) {
       case "i": // ignoreCase
@@ -51,13 +16,13 @@ export const match = (regexp: RegExp): TextParser<string, [string]> => {
     }
   }
   const sticky = new RegExp(regexp.source, regexp.flags + "y");
-  return (reader, data) => {
-    sticky.lastIndex = data[1][0];
-    const match = data[0].match(sticky);
+  return (reader, ...context) => {
+    sticky.lastIndex = context[1]?.[0]?.[0] ?? 0;
+    const match = context[0].match(sticky);
     if (!match) {
-      return [false, getNextCursor(reader, data), data, [`${regexp}`]];
+      return [false, context, [`${regexp}`]];
     }
-    const [sliced, next] = pop(reader, data, match[0].length);
-    return [true, sliced, next];
+    const res = read(match[0].length, reader, ...context);
+    return [true, res[1], res[2] ?? ""];
   };
 };

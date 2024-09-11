@@ -1,6 +1,6 @@
 import { eof } from "./eof.ts";
-import { parseText as parse } from "./text_parser.ts";
 import { assertEquals } from "@std/assert/equals";
+import { parse } from "./text_parser.ts";
 
 Deno.test("matchEOF", () => {
   assertEquals(parse(eof, ""), { ok: true, value: "<EOF>" });

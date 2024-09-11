@@ -1,5 +1,4 @@
-import type { Parser } from "./parser.ts";
-import { getNextCursor } from "./reader.ts";
+import type { Parser } from "./types.ts";
 
 /**
  * Returns a parser that fails with the given array of strings `expected` and consumes no input.
@@ -34,12 +33,7 @@ import { getNextCursor } from "./reader.ts";
  */
 export const fail = <
   const Expected extends string[],
-  Input,
-  Data,
-  Cursor,
-  T,
-  FormattedCursor,
 >(
   expected: [...Expected],
-): Parser<never, Expected, Input, Data, Cursor, T, FormattedCursor> =>
-(reader, data) => [false, getNextCursor(reader, data), data, expected];
+): Parser<never, Expected> =>
+(_, ...context) => [false, context, expected];

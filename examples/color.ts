@@ -4,17 +4,11 @@ import { desc } from "../src/desc.ts";
 import { map } from "../src/map.ts";
 import { next } from "../src/next.ts";
 import { and } from "../src/and.ts";
-import { text as textBase } from "../src/text.ts";
 import { match } from "../src/match.ts";
 import { all } from "../src/all.ts";
 import { choice } from "../src/choice.ts";
-import type { Parser } from "../src/parser.ts";
+import { text } from "../src/text.ts";
 import { wrap } from "../src/wrap.ts";
-import type { TextParser } from "../src/text_parser.ts";
-import { ParserdExpected } from "@takker/parser";
-
-type TextFn = <S extends string>(string: S) => TextParser<S, [S]>;
-const text = textBase as TextFn;
 
 function rgba(r: number, g: number, b: number, a: number) {
   return { r, g, b, a };

@@ -1,47 +1,49 @@
-import { parse } from "./parse.ts";
-import type { Parser } from "./parser.ts";
-import type { Reader } from "./reader.ts";
+import { makeExec, makeTryExec, type ParseFinalResult } from "./exec.ts";
+import type { BaseLocation, Parser, ReaderTuple } from "./types.ts";
 
-export type ByteReader = Reader<
-  Uint8Array,
-  [Uint8Array, number, number[]],
-  number,
-  Uint8Array,
-  number
->;
-export const byteReader: ByteReader = [
-  (input) => [input, 0, []],
-  (data, size) => {
-    const [input, index, stack] = data;
+export type ByteSeeker = readonly [index: number, stack: readonly number[]];
+export interface ByteLocation extends BaseLocation {}
+export interface ByteReader {
+  input: Uint8Array;
+  seeker: ByteSeeker;
+  location: ByteLocation;
+}
+const initialSeeker: ByteSeeker = [0, []];
+const byteReader: ReaderTuple<ByteReader> = [
+  initialSeeker,
+  (context, size) => {
+    if (size == 0) return [false, context, new Uint8Array()];
+    const [input, seeker] = context;
     const len = input.length;
+    const [index, stack] = seeker ?? initialSeeker;
     size = Math.min(size, input.length - index);
-    if (size <= 0 || len <= 0) return [new Uint8Array(), data];
+    if (size < 0 || len <= 0) return [true, context];
     const popped = input.subarray(index, index + size);
-    return [popped, [input, index + size, stack]];
+    return [false, [input, [index + size, stack]], popped];
   },
-  (data) => {
-    const [input, cursor, stack] = data;
-    return [input, cursor, [cursor, ...stack]];
+  ([cur, stack]) => [cur, [cur, ...stack]],
+  (seeker) => {
+    if (seeker[1].length === 0) return seeker;
+    const [, [prev, ...stack]] = seeker;
+    return [prev, stack];
   },
-  (data) => {
-    if (data[2].length == 0) return data;
-    const [input, , [prev, ...stack]] = data;
-    return [input, prev, stack];
+  (seeker) => {
+    if (seeker[1].length === 0) return seeker;
+    const [cur, [, ...stack]] = seeker;
+    return [cur, stack];
   },
-  (data) => data[1],
-  (data) => data[1] >= data[0].length,
-  (cursor) => cursor,
+  ([input, seeker]) => (seeker?.[0] ?? 0) >= input.length,
+  (a, b) => a[0] - b[0],
+  ([index]) => ({ index }),
 ];
-export type ByteParser<A, Expected extends string[] = string[]> = Parser<
-  A,
-  Expected,
-  Uint8Array,
-  [Uint8Array, number, number[]],
-  number,
-  Uint8Array,
-  number
->;
-export const parseBytes = <A, Expected extends string[]>(
-  parser: ByteParser<A, Expected>,
+
+export const parse: <A, const Expected extends string[]>(
+  parser: Parser<A, Expected, ByteReader>,
   input: Uint8Array,
-) => parse(parser, byteReader, input);
+) => ParseFinalResult<A, Expected | ["<EOF>"], ByteLocation> =
+  /* #__PURE__ */ makeExec(byteReader);
+
+export const tryParse: <A, const Expected extends string[]>(
+  parser: Parser<A, Expected, ByteReader>,
+  input: Uint8Array,
+) => A = /* #__PURE__ */ makeTryExec(byteReader);

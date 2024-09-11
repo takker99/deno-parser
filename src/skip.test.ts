@@ -1,10 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { skip } from "./skip.ts";
-import { parseText as parse, type TextParser } from "./text_parser.ts";
-import { text as textBase } from "./text.ts";
-
-type TextFn = <S extends string>(string: S) => TextParser<S>;
-const text = textBase as TextFn;
+import { text } from "./text.ts";
+import { parse } from "./text_parser.ts";
 
 Deno.test("skip", () => {
   const ab = skip(text("a"), text("b"));

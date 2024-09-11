@@ -1,10 +1,9 @@
-import { assertSnapshot } from "@std/testing/snapshot";
+import { assertEquals } from "@std/assert";
 import { Python } from "./python-ish.ts";
-import { parse } from "../src/parse.ts";
+import { parse } from "../src/text_parser.ts";
 
-Deno.test("py complex", (t) =>
-  assertSnapshot(
-    t,
+Deno.test("py complex", () =>
+  assertEquals(
     parse(
       Python,
       `\
@@ -20,11 +19,35 @@ block:
   golf\
 `,
     ),
+    {
+      ok: true,
+      value: {
+        type: "Block",
+        statements: [
+          { type: "Ident", value: "alpha" },
+          { type: "Ident", value: "bravo" },
+          {
+            type: "Block",
+            statements: [
+              { type: "Ident", value: "charlie" },
+              { type: "Ident", value: "delta" },
+              { type: "Ident", value: "echo" },
+              {
+                type: "Block",
+                statements: [
+                  { type: "Ident", value: "foxtrot" },
+                ],
+              },
+            ],
+          },
+          { type: "Ident", value: "golf" },
+        ],
+      },
+    },
   ));
 
-Deno.test("py simple", (t) =>
-  assertSnapshot(
-    t,
+Deno.test("py simple", () =>
+  assertEquals(
     parse(
       Python,
       `\
@@ -33,13 +56,26 @@ block:
   bravo
 `,
     ),
+    {
+      ok: true,
+      value: {
+        type: "Block",
+        statements: [
+          { type: "Ident", value: "alpha" },
+          { type: "Ident", value: "bravo" },
+        ],
+      },
+    },
   ));
 
-Deno.test("py even simpler", (t) => assertSnapshot(t, parse(Python, `alpha`)));
+Deno.test("py even simpler", () =>
+  assertEquals(parse(Python, `alpha`), {
+    ok: true,
+    value: { type: "Ident", value: "alpha" },
+  }));
 
-Deno.test("py bad indent", (t) =>
-  assertSnapshot(
-    t,
+Deno.test("py bad indent", () =>
+  assertEquals(
     parse(
       Python,
       `\
@@ -49,4 +85,9 @@ block:
     beta
 `,
     ),
+    {
+      expected: ["more than 4 spaces"],
+      location: { column: 5, index: 40, line: 4 },
+      ok: false,
+    },
   ));

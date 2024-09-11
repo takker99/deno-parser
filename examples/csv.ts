@@ -1,13 +1,13 @@
 import { ok } from "../src/ok.ts";
 import { text } from "../src/text.ts";
 import { match } from "../src/match.ts";
-import type { Parser } from "../src/parse.ts";
 import { or } from "../src/or.ts";
 import { chain } from "../src/chain.ts";
 import { map } from "../src/map.ts";
 import { repeat } from "../src/repeat.ts";
 import { sepBy } from "../src/sepBy.ts";
 import { skip } from "../src/skip.ts";
+import type { Parser } from "../src/types.ts";
 
 // CSVs should end with `\r\n` but `\n` is fine too.
 const csvEnd = or(text("\r\n"), text("\n"));
@@ -42,7 +42,14 @@ const csvRow = sepBy(csvField, text(","), 1);
 /** A CSV file is _basically_ just 1 or more rows, but our parser accidentally
  * reads the final empty line incorrectly and we have to hack around that.
  */
-export const CSV: Parser<string[][]> = map(
+export const CSV: Parser<
+  string[][],
+  [","] | ["\r\n", "\n"] | [string, '""', string] | ['"', string] | [
+    "\r\n",
+    "\n",
+    ...string[],
+  ]
+> = map(
   skip(
     sepBy(csvRow, csvEnd, 1),
     or(csvEnd, ok("")),

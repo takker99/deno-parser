@@ -1,9 +1,6 @@
-import { parseText as parse, type TextParser } from "./text_parser.ts";
-import { text as textBase } from "./text.ts";
+import { text } from "./text.ts";
 import { assertEquals } from "@std/assert";
-
-type TextFn = <S extends string>(string: S) => TextParser<S, [S]>;
-const text: TextFn = textBase;
+import { parse } from "./text_parser.ts";
 
 Deno.test("test a test", () => {
   const x = text("x");

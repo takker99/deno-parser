@@ -2,11 +2,8 @@ import { assertEquals } from "@std/assert";
 import { and } from "./and.ts";
 import { chain } from "./chain.ts";
 import { map } from "./map.ts";
-import { parseText as parse, type TextParser } from "./text_parser.ts";
-import { text as textBase } from "./text.ts";
-
-type TextFn = <S extends string>(string: S) => TextParser<S, [S]>;
-const text: TextFn = textBase;
+import { text } from "./text.ts";
+import { parse } from "./text_parser.ts";
 
 Deno.test("and", () => {
   const x = text("x");

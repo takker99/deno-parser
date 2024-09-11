@@ -2,7 +2,7 @@ import { desc } from "./desc.ts";
 import { map } from "./map.ts";
 import { match } from "./match.ts";
 import { node } from "./node.ts";
-import { parseText as parse } from "./text_parser.ts";
+import { parse, type TextReader } from "./text_parser.ts";
 import { assertEquals } from "@std/assert";
 
 Deno.test("desc", () => {
@@ -19,7 +19,9 @@ Deno.test("desc", () => {
 });
 
 Deno.test("desc with node", () => {
-  const num = desc(node(map(match(/[0-9]+/), Number), "Number"), ["number"]);
+  const num = desc(node<TextReader>()(map(match(/[0-9]+/), Number), "Number"), [
+    "number",
+  ]);
   assertEquals(parse(num, "9"), {
     ok: true,
     value: {

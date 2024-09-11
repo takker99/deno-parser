@@ -1,31 +1,38 @@
-import { parse, tryParse } from "./parse.ts";
-import type { Parser } from "./parser.ts";
-import type { Reader } from "./reader.ts";
+import { makeExec, makeTryExec, type ParseFinalResult } from "./exec.ts";
+import type { BaseLocation, Parser, ReaderTuple } from "./types.ts";
 
-export type TextCursor = [number, number, number];
-export type TextFormattedCursor = {
-  index: number;
+export type TextPosition = readonly [
+  index: number,
+  line: number,
+  column: number,
+];
+export type TextSeeker = readonly [
+  currentPosition: TextPosition,
+  stack: readonly TextPosition[],
+];
+export interface TextLocation extends BaseLocation {
   line: number;
   column: number;
-};
-export type TextReader = Reader<
-  string,
-  // input, current cursor, stack of backtracked cursors
-  [string, TextCursor, TextCursor[]],
-  TextCursor,
-  string,
-  TextFormattedCursor
->;
-export const textReader: TextReader = [
-  (input) => [input, [0, 1, 1], []],
-  (data, size) => {
-    if (size <= 0 || data[0] == "") return ["", data];
-    let [input, [index, line, column], stack] = data;
-    const popped = input.slice(index, index + size);
-    const len = popped.length;
-    if (len == 0) return ["", data];
+}
+export interface TextReader {
+  position: TextPosition;
+  input: string;
+  seeker: TextSeeker;
+  location: TextLocation;
+}
+const initialSeeker: TextSeeker = [[0, 1, 1], []];
+const textReader: ReaderTuple<TextReader> = [
+  initialSeeker,
+  (context, size) => {
+    if (size == 0) return [false, context, ""];
+    const [input, seeker] = context;
+    if (size < 0 || input == "") return [true, context];
+    let [[index, line, column], stack] = seeker ?? initialSeeker;
+    const sliced = input.slice(index, index + size);
+    const len = sliced.length;
+    if (len == 0) return [true, context];
     index += len;
-    for (const char of popped) {
+    for (const char of sliced) {
       if (char == "\n") {
         line++;
         column = 1;
@@ -33,41 +40,31 @@ export const textReader: TextReader = [
         column++;
       }
     }
-    return [popped, [input, [index, line, column], stack]];
+    return [false, [input, [[index, line, column], stack]], sliced];
   },
-  (data) => {
-    const [input, next, stack] = data;
-    return [input, next, [next, ...stack]];
+  ([cur, stack]) => [cur, [cur, ...stack]],
+  (seeker) => {
+    if (seeker[1].length === 0) return seeker;
+    const [, [prev, ...stack]] = seeker;
+    return [prev, stack];
   },
-  (data) => {
-    if (data[2].length == 0) return data;
-    const [input, , [prev, ...stack]] = data;
-    return [input, prev, stack];
+  (seeker) => {
+    if (seeker[1].length === 0) return seeker;
+    const [cur, [, ...stack]] = seeker;
+    return [cur, stack];
   },
-  (data) => {
-    if (data[2].length == 0) return data;
-    const [input, next, [, ...stack]] = data;
-    return [input, next, stack];
-  },
-  (data) => data[1],
-  (data) => data[1][0] >= data[0].length,
-  ([index, line, column]) => ({ index, line, column }),
+  ([input, seeker]) => (seeker?.[0]?.[0] ?? 0) >= input.length,
+  (a, b) => a[0][0] - b[0][0],
+  ([[index, line, column]]) => ({ index, line, column }),
 ];
-export type TextParser<A, Expected extends string[] = string[]> = Parser<
-  A,
-  Expected,
-  string,
-  [string, TextCursor, TextCursor[]],
-  TextCursor,
-  string,
-  TextFormattedCursor
->;
-export const parseText = <A, Expected extends string[]>(
-  parser: TextParser<A, Expected>,
-  input: string,
-) => parse(parser, textReader, input);
 
-export const tryParseText = <A, Expected extends string[]>(
-  parser: TextParser<A, Expected>,
+export const parse: <A, const Expected extends string[]>(
+  parser: Parser<A, Expected, TextReader>,
   input: string,
-) => tryParse(parser, textReader, input);
+) => ParseFinalResult<A, Expected | ["<EOF>"], TextLocation> =
+  /* #__PURE__ */ makeExec(textReader);
+
+export const tryParse: <A, const Expected extends string[]>(
+  parser: Parser<A, Expected, TextReader>,
+  input: string,
+) => A = /* #__PURE__ */ makeTryExec(textReader);

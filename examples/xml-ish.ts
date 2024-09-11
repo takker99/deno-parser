@@ -4,7 +4,7 @@ import { match } from "../src/match.ts";
 import { all } from "../src/all.ts";
 import { choice } from "../src/choice.ts";
 import { lazy } from "../src/lazy.ts";
-import type { Parser } from "../src/parse.ts";
+import type { Parser } from "../src/types.ts";
 import { or } from "../src/or.ts";
 import { trim } from "../src/trim.ts";
 import { skip } from "../src/skip.ts";
@@ -60,12 +60,12 @@ const EmptyTag = wrap(text("<"), OpeningTagInsides, next(W0, text("/>")));
 
 // - Full elements have an opening and closing tag (e.g. `<a></a>`)
 // - Empty elements just have an empty tag (e.g. `<a/>`).
-const Element: Parser<XMLElement> = lazy(() =>
+const Element: Parser<XMLElement, string[]> = lazy(() =>
   skip(choice(FullElement, EmptyElement), W0)
 );
 
 // Construct an appropriate output object, and use the parsed tag name to
-// create a closing tag parser on the fly, to check that a matching end tag
+// create a closing tag BaseParser on the fly, to check that a matching end tag
 // is found.
 const FullElement = chain(
   OpeningTag,
@@ -92,4 +92,4 @@ const TextContent = match(/[^<>]+/);
 // An element can contain other elements, or text.
 const Children = repeat(choice(Element, TextContent));
 
-export const XML: Parser<XMLElement> = trim(Element, W0);
+export const XML: Parser<XMLElement, string[]> = trim(Element, W0);

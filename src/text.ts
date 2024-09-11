@@ -1,34 +1,26 @@
-import type { DeepReadonly } from "./deep_readonly.ts";
-import type { Parser } from "./parser.ts";
-import { getNextCursor, pop } from "./reader.ts";
+import { type BaseLocation, isEmpty, type Parser, read } from "./types.ts";
 
-/** Returns a parser that matches the exact `string` supplied.
- *
- * This is typically used for things like parsing keywords (`for`, `while`, `if`,
- * `else`, `let`...), or parsing static characters such as `{`, `}`, `"`, `'`...
- *
- * @example
- * ```ts
- * import { and, text, tryParse } from "@takker/parser";
- *
- * const keywordWhile = text("while");
- * const paren = and(text("("), text(")"));
- * tryParse(keywordWhile, "while"); // => "while"
- * tryParse(paren, "()"); // => ["(", ")"]
- * ```
- */
 export const text = <
-  Input,
-  Data,
-  Cursor,
-  const T extends string,
-  FormattedCursor,
-  const S extends T,
->(string: S): Parser<S, [S], Input, Data, Cursor, T, FormattedCursor> =>
-(reader, data) => {
-  const [sliced, next] = pop(reader, data, string.length);
-  if (sliced == string) {
-    return [true, string as DeepReadonly<S>, next];
+  const S extends string,
+>(string: S): Parser<S, [S]> =>
+(reader, ...context) => {
+  const res = read(string.length, reader, ...context);
+  if (!isEmpty(res) && res[2] == string) {
+    return [true, res[1], string];
   }
-  return [false, getNextCursor(reader, data), next, [string]];
+  return [false, context, [string]];
+};
+
+const decode = (buffer: BufferSource) => new TextDecoder().decode(buffer);
+
+export const textInBytes = <
+  const S extends string,
+  R extends { input: BufferSource; seeker: unknown; location: BaseLocation },
+>(string: S): Parser<S, [S], R> =>
+(reader, ...context) => {
+  const res = read(string.length, reader, ...context);
+  if (!isEmpty(res) && decode(res[2]!) == string) {
+    return [true, res[1], string];
+  }
+  return [false, context, [string]];
 };

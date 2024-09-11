@@ -1,16 +1,17 @@
 // deno-fmt-ignore
-import { all, choice, lazy, map, match, next, parse, type Parser, text, trim, wrap, } from "@takker/parser";
+import { all, choice, lazy, map, match, next, type Parser, text, trim, wrap, } from "@takker/parser";
+import { parse } from "../src/text_parser.ts";
 
 const ws = match(/\s*/);
 const token = <S extends string>(str: S) => trim(text(str), ws);
 const digit = map(trim(match(/[1-9]\d*(\.\d+)?/), ws), Number);
-const expr: Parser<number> = lazy(() =>
+const expr: Parser<number, string[]> = lazy(() =>
   choice(add, sub, mul, div, plus, minus, digit)
 );
-const term: Parser<number> = lazy(() =>
+const term: Parser<number, string[]> = lazy(() =>
   choice(wrap(token("("), expr, token(")")), digit)
 );
-const termMul: Parser<number> = lazy(() => choice(mul, div, term));
+const termMul: Parser<number, string[]> = lazy(() => choice(mul, div, term));
 const mul = map(all(term, token("*"), termMul), ([l, , r]) => l * r);
 const div = map(all(term, text("/"), termMul), ([l, , r]) => l / r);
 const add = map(all(termMul, token("+"), termMul), ([l, , r]) => l + r);

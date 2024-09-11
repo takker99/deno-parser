@@ -1,21 +1,23 @@
 import { lazy } from "./lazy.ts";
 import { or } from "./or.ts";
-import { parseText as parse, type TextParser } from "./text_parser.ts";
+import { parse } from "./text_parser.ts";
 import { sepBy } from "./sepBy.ts";
 import { text } from "./text.ts";
 import { wrap } from "./wrap.ts";
 import { assertEquals } from "@std/assert";
+import type { Parser } from "./types.ts";
 
 Deno.test("lazy", () => {
   type Expr = Item | List;
   type Item = "x";
   type List = Expr[];
-  const expr: TextParser<Expr> = lazy(() => {
+  type ExprExpected = ["x", "("] | ["x", " "] | ["x", ")"] | ["x", ...string[]];
+  const expr: Parser<Expr, ExprExpected> = lazy(() => {
     return or(item, list);
   });
-  const item: TextParser<"x", ["x"]> = text("x");
+  const item = text("x");
   const list = wrap(
-    text("(") as TextParser<"(", ["("]>,
+    text("("),
     sepBy(expr, text(" "), 0),
     text(")"),
   );

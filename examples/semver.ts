@@ -1,5 +1,6 @@
 // deno-fmt-ignore
-import { and, choice, map, match, next, ok, or, parse, type Parser, sepBy, skip, text, trim, } from "@takker/parser";
+import { and, choice, map, match, next, ok, or, type Parser, sepBy, skip, text, trim, } from "@takker/parser";
+import { parse } from "../src/text_parser.ts";
 
 const nr = or(text("0"), match(/[1-9]\d*/));
 const part = or(nr, match(/[-0-9A-Za-z]+/));
@@ -11,7 +12,9 @@ const xr = or(
   map(nr, parseInt),
 );
 const dotXr = next(text("."), xr);
-const optional = <A>(parser: Parser<A>) => or(parser, ok(undefined));
+const optional = <A, const Expected extends string[]>(
+  parser: Parser<A, Expected>,
+) => or(parser, ok(undefined));
 interface Semver {
   major: number | "*";
   minor?: number | "*";
@@ -31,7 +34,7 @@ const qualifier = map(
     return obj;
   },
 );
-const partial: Parser<Semver> = map(
+const partial: Parser<Semver, string[]> = map(
   and(xr, optional(and(dotXr, optional(and(dotXr, optional(qualifier)))))),
   ([major, rest]) => {
     const [minor, rest2] = rest ?? [];
@@ -53,7 +56,7 @@ const primitive = and(
 interface Comparator extends Semver {
   op: "<" | ">" | ">=" | "<=" | "=" | "~" | "^";
 }
-const simple: Parser<Comparator> = map(
+const simple: Parser<Comparator, string[]> = map(
   choice(primitive, partial, tilde, caret),
   (v) => {
     if (!Array.isArray(v)) return { op: "=", ...v };
@@ -61,7 +64,7 @@ const simple: Parser<Comparator> = map(
     return { op, ...partial };
   },
 );
-const hyphen: Parser<[Comparator, Comparator]> = map(
+const hyphen: Parser<[Comparator, Comparator], string[]> = map(
   and(skip(partial, text(" - ")), partial),
   ([start, end]) => [{ op: ">=", ...start }, { op: "<=", ...end }],
 );

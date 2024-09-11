@@ -1,16 +1,10 @@
 import { assertEquals } from "@std/assert";
-import {
-  and,
-  type ByteParser,
-  chain,
-  map,
-  or,
-  parseBytes as parse,
-} from "@takker/parser";
-import { textBytes } from "./src/text_bytes.ts";
-
-type TextFn = <S extends string>(string: S) => ByteParser<S, [S]>;
-const text = textBytes as TextFn;
+import { or } from "./or.ts";
+import { and } from "./and.ts";
+import { chain } from "./chain.ts";
+import { map } from "./map.ts";
+import { textInBytes as text } from "./text.ts";
+import { parse } from "./byte_parser.ts";
 
 const encode = (str: string) => new TextEncoder().encode(str);
 
@@ -51,22 +45,22 @@ Deno.test("and failure", () => {
   assertEquals(parse(xy, encode("x")), {
     ok: false,
     expected: ["y"],
-    location: 1,
+    location: { index: 1 },
   });
   assertEquals(parse(xy, encode("y")), {
     ok: false,
     expected: ["x"],
-    location: 0,
+    location: { index: 0 },
   });
   assertEquals(parse(xy, encode("yx")), {
     ok: false,
     expected: ["x"],
-    location: 0,
+    location: { index: 0 },
   });
   assertEquals(parse(xy, new Uint8Array()), {
     ok: false,
     expected: ["x"],
-    location: 0,
+    location: { index: 0 },
   });
 });
 
@@ -78,17 +72,17 @@ Deno.test("or", () => {
   assertEquals(parse(ab, encode("b")), { ok: true, value: "b" });
   assertEquals(parse(ab, encode("c")), {
     expected: ["a", "b"],
-    location: 0,
+    location: { index: 0 },
     ok: false,
   });
   assertEquals(parse(ab, encode("ab")), {
     expected: ["<EOF>"],
-    location: 1,
+    location: { index: 1 },
     ok: false,
   });
   assertEquals(parse(ab, new Uint8Array()), {
     expected: ["a", "b"],
-    location: 0,
+    location: { index: 0 },
     ok: false,
   });
 });

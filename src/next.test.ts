@@ -1,10 +1,10 @@
-import { next } from "./next.ts";
-import { parseText as parse, type TextParser } from "./text_parser.ts";
-import { text } from "./text.ts";
 import { assertEquals } from "@std/assert";
+import { next } from "./next.ts";
+import { text } from "./text.ts";
+import { parse } from "./text_parser.ts";
 
 Deno.test("next", () => {
-  const ab = next(text("a") as TextParser<"a", ["a"]>, text("b"));
+  const ab = next(text("a"), text("b"));
   assertEquals(parse(ab, "ab"), { ok: true, value: "b" });
   assertEquals(parse(ab, "a"), {
     ok: false,

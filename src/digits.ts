@@ -1,23 +1,23 @@
-import type { DeepReadonly } from "./deep_readonly.ts";
-import type { Parser } from "./parser.ts";
-import { getNextCursor, pop } from "./reader.ts";
+import { type BaseReader, isEmpty, type Parser, read } from "./types.ts";
+
+export interface ArrayLikeReader extends BaseReader {
+  input: ArrayLike<unknown>;
+}
 
 export const digits = <
   N extends unknown[],
-  Input,
-  Data,
-  Cursor,
-  T extends ArrayLike<N[number]>,
-  FormattedCursor,
+  Reader extends ArrayLikeReader,
 >(
-  digits: DeepReadonly<[...N]>,
-): Parser<[...N], [string], Input, Data, Cursor, T, FormattedCursor> =>
-(reader, data) => {
-  const [sliced, next] = pop(reader, data, digits.length);
+  digits: [...N],
+): Parser<[...N], [string], Reader> =>
+(reader, ...context) => {
+  const res = read(digits.length, reader, ...context);
+  if (isEmpty(res)) return [false, context, [digits.join(",")]];
+  const [, next, sliced] = res;
   for (let i = 0; i < digits.length; i++) {
-    if (sliced != digits[i]) {
-      return [false, getNextCursor(reader, data), next, [`${digits[i]}`]];
+    if (sliced![i] != digits[i]) {
+      return [false, next, [`${digits[i]}`]];
     }
   }
-  return [true, digits, next];
+  return [true, next, digits];
 };
