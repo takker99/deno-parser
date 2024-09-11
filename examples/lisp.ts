@@ -3,7 +3,7 @@ import { text } from "../src/text.ts";
 import { match } from "../src/match.ts";
 import { choice } from "../src/choice.ts";
 import { lazy } from "../src/lazy.ts";
-import type { Parser } from "../src/types.ts";
+import type { Parser } from "../src/parser.ts";
 import { desc } from "../src/desc.ts";
 import { map } from "../src/map.ts";
 import { repeat } from "../src/repeat.ts";

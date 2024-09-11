@@ -1,5 +1,5 @@
-import { formatLocation } from "./types.ts";
-import type { BaseReader, ParseResult, ReaderTuple } from "./types.ts";
+import type { ParseResult } from "./parser.ts";
+import { type BaseReader, formatLocation, type ReaderTuple } from "./reader.ts";
 
 export const location = <R extends BaseReader>(
   reader: ReaderTuple<R>,

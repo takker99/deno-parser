@@ -1,4 +1,4 @@
-import { isOk, type Parser } from "./types.ts";
+import { isOk, type Parser } from "./parser.ts";
 
 export const chain = <
   A,

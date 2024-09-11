@@ -5,7 +5,7 @@ import { isRangeValid } from "./isRangeValid.ts";
 import { ok } from "./ok.ts";
 import { or } from "./or.ts";
 import { repeat } from "./repeat.ts";
-import type { Parser } from "./types.ts";
+import type { Parser } from "./parser.ts";
 
 export const sepBy = <
   A,

@@ -4,10 +4,9 @@ import {
   type BaseLocation,
   type BaseReader,
   formatLocation,
-  isOk,
-  type Parser,
   type ReaderTuple,
-} from "./types.ts";
+} from "./reader.ts";
+import { isOk, type Parser } from "./parser.ts";
 
 export const makeExec = <
   Reader extends BaseReader,

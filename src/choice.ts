@@ -1,5 +1,5 @@
 import { or } from "./or.ts";
-import type { ParsedExpected, ParsedValue, Parser } from "./types.ts";
+import type { ParsedExpected, ParsedValue, Parser } from "./parser.ts";
 
 export type JoinExpected<
   ParserList extends readonly Parser<unknown, string[]>[],

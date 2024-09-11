@@ -1,10 +1,9 @@
 import {
   discardPreviousPosition,
-  isOk,
-  type Parser,
   restorePreviousPosition,
   saveCurrentPosition,
-} from "./types.ts";
+} from "./reader.ts";
+import { isOk, type Parser } from "./parser.ts";
 
 export const or = <
   A,

@@ -1,4 +1,5 @@
-import { isDone, type Parser } from "./types.ts";
+import { isDone } from "./reader.ts";
+import type { Parser } from "./parser.ts";
 
 const EOF = "<EOF>" as const;
 

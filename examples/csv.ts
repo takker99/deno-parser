@@ -7,7 +7,7 @@ import { map } from "../src/map.ts";
 import { repeat } from "../src/repeat.ts";
 import { sepBy } from "../src/sepBy.ts";
 import { skip } from "../src/skip.ts";
-import type { Parser } from "../src/types.ts";
+import type { Parser } from "../src/parser.ts";
 
 // CSVs should end with `\r\n` but `\n` is fine too.
 const csvEnd = or(text("\r\n"), text("\n"));

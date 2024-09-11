@@ -5,12 +5,11 @@ import {
   type Context,
   discardPreviousPosition,
   isDone,
-  isOk,
-  type Parser,
   type ReaderTuple,
   restorePreviousPosition,
   saveCurrentPosition,
-} from "./types.ts";
+} from "./reader.ts";
+import { isOk, type Parser } from "./parser.ts";
 
 export const repeat = <
   A,

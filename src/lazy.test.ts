@@ -5,7 +5,7 @@ import { sepBy } from "./sepBy.ts";
 import { text } from "./text.ts";
 import { wrap } from "./wrap.ts";
 import { assertEquals } from "@std/assert";
-import type { Parser } from "./types.ts";
+import type { Parser } from "./parser.ts";
 
 Deno.test("lazy", () => {
   type Expr = Item | List;

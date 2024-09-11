@@ -4,7 +4,7 @@ import { match } from "../src/match.ts";
 import { all } from "../src/all.ts";
 import { choice } from "../src/choice.ts";
 import { lazy } from "../src/lazy.ts";
-import type { Parser } from "../src/types.ts";
+import type { Parser } from "../src/parser.ts";
 import { trim } from "../src/trim.ts";
 import { map } from "../src/map.ts";
 import { desc } from "../src/desc.ts";

@@ -1,7 +1,8 @@
 import { all } from "./all.ts";
 import { map } from "./map.ts";
 import { location } from "./location.ts";
-import type { BaseReader, Parser } from "./types.ts";
+import type { BaseReader } from "./reader.ts";
+import type { Parser } from "./parser.ts";
 
 export const node = <
   Reader extends BaseReader,

@@ -1,7 +1,7 @@
 import { chain } from "./chain.ts";
 import { map } from "./map.ts";
 import { ok } from "./ok.ts";
-import type { ParsedExpected, Parser } from "./types.ts";
+import type { ParsedExpected, Parser } from "./parser.ts";
 
 export type JoinResults<
   ParserList extends readonly Parser<unknown, string[]>[],

@@ -1,5 +1,6 @@
 import { makeExec, makeTryExec, type ParseFinalResult } from "./exec.ts";
-import type { BaseLocation, Parser, ReaderTuple } from "./types.ts";
+import type { BaseLocation, ReaderTuple } from "./reader.ts";
+import type { Parser } from "./parser.ts";
 
 export type ByteSeeker = readonly [index: number, stack: readonly number[]];
 export interface ByteLocation extends BaseLocation {}

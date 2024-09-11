@@ -1,6 +1,6 @@
 import { next } from "./next.ts";
 import { skip } from "./skip.ts";
-import type { Parser } from "./types.ts";
+import type { Parser } from "./parser.ts";
 
 export const wrap = <
   L,

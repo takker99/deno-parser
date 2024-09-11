@@ -1,4 +1,4 @@
-import type { Parser } from "./types.ts";
+import type { Parser } from "./parser.ts";
 import { wrap } from "./wrap.ts";
 
 export const trim = <

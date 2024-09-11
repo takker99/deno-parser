@@ -1,4 +1,5 @@
-import { type BaseReader, isEmpty, type Parser, read } from "./types.ts";
+import { type BaseReader, isEmpty, read } from "./reader.ts";
+import type { Parser } from "./parser.ts";
 
 export interface ArrayLikeReader extends BaseReader {
   input: ArrayLike<unknown>;
