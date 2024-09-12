@@ -32,7 +32,9 @@ I only introduce those which differ from the bread-n-butter:
 
 ```ts
 // deno-fmt-ignore
-import { all, choice, lazy, map, match, next, parse, type Parser, text, trim, wrap, } from "@takker/parser";
+import { all, choice, lazy, map, match, next, type Parser, text, trim, wrap, } from "@takker/parser";
+import { tryParse } from "@takker/parser/text-parser";
+import { assertEquals } from "@std/assert";
 
 const ws = match(/\s*/);
 const token = <S extends string>(str: S) => trim(text(str), ws);
@@ -51,19 +53,23 @@ const sub = map(all(termMul, token("-"), termMul), ([l, , r]) => l - r);
 const plus = next(token("+"), term);
 const minus = map(next(token("-"), term), (d) => -d);
 
-const calc = (input: string) => parse(expr, input);
+const calc = (input: string) => tryParse(expr, input);
 
-console.log(calc("1")); // => 1
-console.log(calc("1+2")); // => 3
-console.log(calc("1 + 2 * 3")); // => 7
-console.log(calc("(8 * 4 -3) * (10 /2 +3)")); // => 232
+Deno.test("calc", () => {
+  assertEquals(calc("1"), 1);
+  assertEquals(calc("1+2"), 3);
+  assertEquals(calc("1 + 2 * 3"), 7);
+  assertEquals(calc("(8 * 4 -3) * (10 /2 +3)"), 232);
+});
 ```
 
 ### SemVer Range Parser (partial):
 
 ```ts
 // deno-fmt-ignore
-import { and, choice, map, match, next, ok, or, parse, type Parser, sepBy, skip, text, trim, } from "@takker/parser";
+import { and, choice, map, match, next, ok, or, type Parser, sepBy, skip, text, trim, } from "@takker/parser";
+import { parse } from "@takker/parser/text-parser";
+import { assertEquals } from "@std/assert";
 
 const nr = or(text("0"), match(/[1-9]\d*/));
 const part = or(nr, match(/[-0-9A-Za-z]+/));
@@ -75,7 +81,9 @@ const xr = or(
   map(nr, parseInt),
 );
 const dotXr = next(text("."), xr);
-const optional = <A>(parser: Parser<A>) => or(parser, ok(undefined));
+const optional = <A>(
+  parser: Parser<A>,
+) => or(parser, ok(undefined));
 interface Semver {
   major: number | "*";
   minor?: number | "*";
@@ -138,14 +146,17 @@ const rangeSet = map(
 
 const parseRange = (input: string) => parse(rangeSet, input);
 
-console.log(parseRange("1.2.3 - 2.3.4 || 1.2.3-alpha.3"));
-/*=> {
-  ok: true,
-  value: [
-    [{ op: ">=", major: 1, minor: 2, patch: 3 }, { op: "<=", major: 2, minor: 3, patch: 4 }],
-    [{ op: "=", major: 1, minor: 2, patch: 3, prelease: "alpha.3" }]
-  ]
-} */
+Deno.test("semver", () =>
+  assertEquals(parseRange("1.2.3 - 2.3.4 || 1.2.3-alpha.3"), {
+    ok: true,
+    value: [
+      [
+        { op: ">=", major: 1, minor: 2, patch: 3 },
+        { op: "<=", major: 2, minor: 3, patch: 4 },
+      ],
+      [{ op: "=", major: 1, minor: 2, patch: 3, prelease: "alpha.3" }],
+    ],
+  }));
 ```
 
 For more long examples, see [examples](./examples). If you want to just see the

@@ -1,6 +1,7 @@
 // deno-fmt-ignore
 import { and, choice, map, match, next, ok, or, type Parser, sepBy, skip, text, trim, } from "@takker/parser";
-import { parse } from "../src/text_parser.ts";
+import { parse } from "@takker/parser/text-parser";
+import { assertEquals } from "@std/assert";
 
 const nr = or(text("0"), match(/[1-9]\d*/));
 const part = or(nr, match(/[-0-9A-Za-z]+/));
@@ -77,11 +78,14 @@ const rangeSet = map(
 
 const parseRange = (input: string) => parse(rangeSet, input);
 
-console.log(parseRange("1.2.3 - 2.3.4 || 1.2.3-alpha.3"));
-/*=> {
-  ok: true,
-  value: [
-    [{ op: ">=", major: 1, minor: 2, patch: 3 }, { op: "<=", major: 2, minor: 3, patch: 4 }],
-    [{ op: "=", major: 1, minor: 2, patch: 3, prelease: "alpha.3" }]
-  ]
-} */
+Deno.test("semver", () =>
+  assertEquals(parseRange("1.2.3 - 2.3.4 || 1.2.3-alpha.3"), {
+    ok: true,
+    value: [
+      [
+        { op: ">=", major: 1, minor: 2, patch: 3 },
+        { op: "<=", major: 2, minor: 3, patch: 4 },
+      ],
+      [{ op: "=", major: 1, minor: 2, patch: 3, prelease: "alpha.3" }],
+    ],
+  }));
