@@ -1,6 +1,7 @@
 import type { TextReader } from "./text_parser.ts";
 import { read } from "./reader.ts";
-import { makeExpected, type Parser } from "./parser.ts";
+import type { Parser } from "./parser.ts";
+import { makeExpected } from "./expected.ts";
 
 export const match = (
   regexp: RegExp,

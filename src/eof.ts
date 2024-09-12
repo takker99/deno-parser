@@ -1,5 +1,6 @@
 import { isDone } from "./reader.ts";
-import { makeExpected, type Parser } from "./parser.ts";
+import type { Parser } from "./parser.ts";
+import { makeExpected } from "./expected.ts";
 
 const EOF = "<EOF>" as const;
 

@@ -1,4 +1,5 @@
-import { isOk, makeExpected, type Parser } from "./parser.ts";
+import { isOk, type Parser } from "./parser.ts";
+import { makeExpected } from "./expected.ts";
 import type { BaseReader, Context, ReaderTuple } from "./reader.ts";
 
 export const desc = <

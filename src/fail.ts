@@ -1,4 +1,5 @@
-import { makeExpected, type Parser } from "./parser.ts";
+import type { Parser } from "./parser.ts";
+import { makeExpected } from "./expected.ts";
 
 /**
  * Returns a parser that fails with the given array of strings `expected` and consumes no input.
