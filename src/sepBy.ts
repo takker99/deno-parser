@@ -7,10 +7,7 @@ import { or } from "./or.ts";
 import { repeat } from "./repeat.ts";
 import type { Parser } from "./parser.ts";
 
-export const sepBy = <
-  A,
-  S,
->(
+export const sepBy = <A, S>(
   parser: Parser<A>,
   separator: Parser<S>,
   min = 0,

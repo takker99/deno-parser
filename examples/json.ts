@@ -13,16 +13,17 @@ import { repeat } from "../src/repeat.ts";
 import { sepBy } from "../src/sepBy.ts";
 import { wrap } from "../src/wrap.ts";
 import { and } from "../src/and.ts";
-import { chain } from "../src/chain.ts";
+import { next } from "../src/next.ts";
 
-// Use the JSON standard's definition of whitespace rather than Parsimmon's.
+/** Use the JSON standard's definition of whitespace rather than Parsimmon's. */
 const whitespace = desc(match(/\s*/m), ["ws"]);
 
-// JSON is pretty relaxed about whitespace, so let's make it easy to ignore
-// after most text.
+/** JSON is pretty relaxed about whitespace, so let's make it easy to ignore
+ * after most text.
+ */
 const token = <A>(parser: Parser<A>) => trim(parser, whitespace);
 
-// Several parsers are just strings with optional whitespace.
+/** Several parsers are just strings with optional whitespace. */
 const word = <S extends string>(str: S) => token(text(str));
 
 /** Represents a JSON value. */
@@ -56,10 +57,10 @@ const jsonRCurly = word("]");
 const jsonComma = word(",");
 const jsonColon = word(":");
 const jsonNull = map(word("null"), () => null);
-const jsonTrue = map(word("true"), () => true as const);
-const jsonFalse = map(word("false"), () => false as const);
+const jsonTrue = map(word("true"), () => true);
+const jsonFalse = map(word("false"), () => false);
 
-// A string escape sequence
+/** A string escape sequence */
 const strEscape = choice(
   map(
     match(/\\u[0-9a-fA-F]{4}/),
@@ -73,7 +74,7 @@ const strEscape = choice(
   map(match(/\\./), (str) => str.slice(1)),
 );
 
-// One or more characters that aren't `"` or `\`
+/** One or more characters that aren't `"` or `\` */
 const strChunk = match(/[^"\\]+/);
 
 const strPart = or(strEscape, strChunk);
@@ -91,10 +92,56 @@ const jsonString = desc(
   ["string"],
 );
 
-const numSign = or(text("-"), text(""));
-const numInt = or(match(/[1-9][0-9]*/), text("0"));
-const numFrac = or(match(/\.[0-9]+/), text(""));
-const numExp = or(match(/e[+-]?[0-9]+/i), ok(""));
+const numSign = or(map(text("-"), () => -1), ok(1));
+const digit = map(
+  choice(
+    text("1"),
+    text("2"),
+    text("3"),
+    text("4"),
+    text("5"),
+    text("6"),
+    text("7"),
+    text("8"),
+    text("9"),
+  ),
+  Number as unknown as (<S extends `${number}`>(
+    n: S,
+  ) => S extends `${infer N extends number}` ? N : never),
+);
+const zero = map(text("0"), () => 0);
+const digit0 = or(zero, digit);
+const toNumber = <N extends number[]>(digits: N) =>
+  digits.reverse().reduce(
+    (acc, cur, i) => acc + cur * 10 ** i,
+    0 as number,
+  );
+const numInt = or(
+  map(
+    and(digit, repeat(digit0)),
+    ([a, b]) => toNumber([a, ...b]),
+  ),
+  zero,
+);
+const numFrac = or(
+  map(and(text("."), repeat(digit0, 1)), ([, v]) =>
+    v
+      .reduce(
+        (acc, cur, i) => acc + cur * 10 ** -(i + 1),
+        0 as number,
+      )),
+  ok(0),
+);
+const numExp = or(
+  next(
+    or(text("e"), text("E")),
+    map(
+      and(choice(text("+"), text("-"), ok("")), repeat(digit0, 1)),
+      ([sign, digits]) => toNumber(digits) * (sign === "-" ? -1 : 1),
+    ),
+  ),
+  ok(0),
+);
 
 /** You could write this as one giant regular expression, but breaking it up
  * makes it easier to read, write, and test
@@ -108,33 +155,26 @@ const jsonNumber = desc(
     map(
       all(numSign, numInt, numFrac, numExp),
       ([sign, integer, fractional, exp]) =>
-        // Seeing as JSON numbers are a subset of JS numbers, we can cheat by
-        // passing the whole thing off to the `Number` function, so we don't
-        // have to evaluate the number ourselves
-        Number(sign + integer + fractional + exp),
+        sign * ((integer + fractional) * 10 ** exp),
     ),
   ),
   ["number"],
 );
 
-// Array parsing is ignoring brackets and commas and parsing as many nested JSON
-// documents as possible. Notice that we're using the parser `JSON` we just
-// defined above. Arrays and objects in the JSON grammar are recursive because
-// they can contain any other JSON document within them.
+/** Array parsing is ignoring brackets and commas and parsing as many nested JSON
+ * documents as possible. Notice that we're using the parser {@linkcode JSON} we just
+ * defined above. Arrays and objects in the JSON grammar are recursive because
+ * they can contain any other JSON document within them.
+ */
 const jsonArray = wrap(jsonLCurly, sepBy(JSON, jsonComma, 0), jsonRCurly);
 
-// Object parsing is a little trickier because we have to collect all the key-
-// value pairs in order as length-2 arrays, then manually copy them into an
-// object.
-const objPair = and(jsonString, chain(jsonColon, () => JSON));
+/** Object parsing is a little trickier because we have to collect all the key-
+ * value pairs in order as length-2 arrays, then manually copy them into an
+ * object.
+ */
+const objPair = and(jsonString, next(jsonColon, JSON));
 
 const jsonObject = map(
-  wrap(jsonLBrace, sepBy(objPair, jsonComma, 0), jsonRBrace),
-  (pairs) => {
-    const obj: { [key: string]: JSONValue } = {};
-    for (const [key, value] of pairs) {
-      obj[key] = value;
-    }
-    return obj;
-  },
+  wrap(jsonLBrace, sepBy(objPair, jsonComma), jsonRBrace),
+  (pairs) => Object.fromEntries(pairs),
 );

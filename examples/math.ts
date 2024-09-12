@@ -97,9 +97,7 @@ class MathNumber implements MathExpr {
 
 const token = <A>(parser: Parser<A>) => trim(parser, mathWS);
 
-function operator<S extends string>(string: S) {
-  return token(text(string));
-}
+const operator = <S extends string>(string: S) => token(text(string));
 
 const mathWS = desc(match(/\s*/m), ["ws"]);
 
@@ -116,9 +114,7 @@ const mathNum = map(
 
 // Next level
 const mathBasic: Parser<MathExpr> = lazy(() =>
-  token(
-    trim(or(wrap(text("("), SimpleMath, text(")")), mathNum), mathWS),
-  )
+  token(or(wrap(text("("), SimpleMath, text(")")), mathNum))
 );
 
 // Next level
@@ -151,13 +147,7 @@ const mathPow: Parser<MathExpr> = chain(
 // Next level
 const mathMulDiv: Parser<MathExpr> = chain(mathPow, (expr) =>
   map(
-    repeat(
-      and(
-        or(operator("*"), operator("/")),
-        mathPow,
-      ),
-      0,
-    ),
+    repeat(and(or(operator("*"), operator("/")), mathPow)),
     (pairs) =>
       pairs.reduce(
         (accum, [operator, expr]) => new MathOperator2(operator, accum, expr),
@@ -170,16 +160,7 @@ const mathAddSub: Parser<MathExpr> = chain(
   mathMulDiv,
   (expr) =>
     map(
-      repeat(
-        and(
-          or(
-            operator("+"),
-            operator("-"),
-          ),
-          mathMulDiv,
-        ),
-        0,
-      ),
+      repeat(and(or(operator("+"), operator("-")), mathMulDiv)),
       (pairs) =>
         pairs.reduce(
           (accum, [operator, expr]) => new MathOperator2(operator, accum, expr),
