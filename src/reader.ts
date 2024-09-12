@@ -14,13 +14,20 @@ export type Context<R extends BaseReader> = readonly [
   input: R["input"],
   seeker?: R["seeker"],
 ];
-export type ReadResult<R extends BaseReader> =
-  | readonly [isEmpty: false, context: Context<R>, value: Chunk<R>]
-  | readonly [isEmpty: true, context: Context<R>];
+export type ReadResult<R extends BaseReader> = ReadOk<R> | ReadEmpty<R>;
+export type ReadOk<R extends BaseReader> = readonly [
+  isEmpty: false,
+  context: Context<R>,
+  value: Chunk<R>,
+];
+export type ReadEmpty<R extends BaseReader> = readonly [
+  isEmpty: true,
+  context: Context<R>,
+];
 
 export const isEmpty = <R extends BaseReader>(
   result: ReadResult<R>,
-): result is [isEmpty: true, Context<R>] => result[0];
+): result is ReadEmpty<R> => result[0];
 
 export type ReaderTuple<R extends BaseReader> = readonly [
   initialSeeker: R["seeker"],
