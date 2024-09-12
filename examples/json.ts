@@ -96,12 +96,13 @@ const numInt = or(match(/[1-9][0-9]*/), text("0"));
 const numFrac = or(match(/\.[0-9]+/), text(""));
 const numExp = or(match(/e[+-]?[0-9]+/i), ok(""));
 
-// You could write this as one giant regular expression, but breaking it up
-// makes it easier to read, write, and test
-//
-// ```ts
-// /-?(0|[1-9][0-9]*)([.][0-9]+)?([eE][+-]?[0-9]+)?/
-// ```
+/** You could write this as one giant regular expression, but breaking it up
+ * makes it easier to read, write, and test
+ *
+ * ```ts
+ * /-?(0|[1-9][0-9]*)([.][0-9]+)?([eE][+-]?[0-9]+)?/
+ * ```
+ */
 const jsonNumber = desc(
   token(
     map(
