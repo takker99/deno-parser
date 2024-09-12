@@ -7,15 +7,15 @@ export const match = (
   regexp: RegExp,
 ): Parser<string, TextReader> => {
   for (const flag of regexp.flags) {
-    switch (flag) {
-      case "i": // ignoreCase
-      case "s": // dotAll
-      case "m": // multiline
-      case "u": // unicode
-        continue;
-      default:
-        throw new Error("only the regexp flags 'imsu' are supported");
-    }
+    if (
+      [
+        "i", // ignoreCase
+        "s", // dotAll
+        "m", // multiline
+        "u", // unicode
+      ].includes(flag)
+    ) continue;
+    throw new Error("only the regexp flags 'imsu' are supported");
   }
   const sticky = new RegExp(regexp.source, regexp.flags + "y");
   return (reader, ...context) => {
