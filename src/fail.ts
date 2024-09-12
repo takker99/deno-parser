@@ -14,7 +14,9 @@ import { makeExpected } from "./expected.ts";
  *
  * @example
  * ```ts
- * import { chain, fail, match, ok, tryParse } from "@takker/parser";
+ * import { chain, fail, match, ok } from "@takker/parser";
+ * import { tryParse } from "@takker/parser/text-parser";
+ * import { assertEquals, assertThrows } from "@std/assert";
  *
  * const number = chain(match(/[0-9]+/), (s) => {
  *   const n = Number(s);
@@ -25,11 +27,10 @@ import { makeExpected } from "./expected.ts";
  *   }
  * });
  *
- * tryParse(number, "1984");
- * // => 1984
- *
- * tryParse(number, "9".repeat(999));
- * // => error: expected smaller number
+ * Deno.test("fail", () => {
+ *   assertEquals(tryParse(number, "1984"), 1984);
+ *   assertThrows(() => tryParse(number, "9".repeat(999)), "expected smaller number");
+ * });
  * ```
  */
 export const fail = (
