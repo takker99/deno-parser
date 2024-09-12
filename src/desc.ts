@@ -4,11 +4,12 @@ import type { BaseReader, Context, ReaderTuple } from "./reader.ts";
 
 export const desc = <
   A,
+  const Reader extends BaseReader,
 >(
-  parser: Parser<A>,
+  parser: Parser<A, Reader>,
   expected: string[],
-): Parser<A> =>
-<R extends BaseReader>(reader: ReaderTuple<R>, ...context: Context<R>) => {
+): Parser<A, Reader> =>
+<R extends Reader>(reader: ReaderTuple<R>, ...context: Context<R>) => {
   const result = parser(reader, ...context);
   if (isOk(result)) return result;
   return [

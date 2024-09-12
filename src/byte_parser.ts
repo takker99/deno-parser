@@ -41,7 +41,7 @@ const byteReader: ReaderTuple<ByteReader> = [
 ];
 
 export const parse: <A>(
-  parser: Parser<A>,
+  parser: Parser<A, ByteReader>,
   input: Uint8Array,
 ) => ParseFinalResult<A, ByteLocation> = /* #__PURE__ */ makeExec(byteReader);
 

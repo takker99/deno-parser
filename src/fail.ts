@@ -1,5 +1,6 @@
 import type { Parser } from "./parser.ts";
 import { makeExpected } from "./expected.ts";
+import type { BaseReader } from "./reader.ts";
 
 /**
  * Returns a parser that fails with the given array of strings `expected` and consumes no input.
@@ -33,9 +34,9 @@ import { makeExpected } from "./expected.ts";
  * });
  * ```
  */
-export const fail = (
+export const fail = <const Reader extends BaseReader>(
   expected: string[],
-): Parser<never> =>
-(reader, ...context) => {
-  return [false, context, [makeExpected(reader, context, ...expected)]];
-};
+): Parser<never, Reader> =>
+(reader, ...context) => [false, context, [
+  makeExpected(reader, context, ...expected),
+]];

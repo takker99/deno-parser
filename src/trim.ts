@@ -1,7 +1,8 @@
 import type { Parser } from "./parser.ts";
+import type { BaseReader } from "./reader.ts";
 import { wrap } from "./wrap.ts";
 
-export const trim = <A, B>(
-  parser: Parser<A>,
-  beforeAndAfter: Parser<B>,
-): Parser<A> => wrap(beforeAndAfter, parser, beforeAndAfter);
+export const trim = <A, B, const Reader extends BaseReader>(
+  parser: Parser<A, Reader>,
+  beforeAndAfter: Parser<B, Reader>,
+): Parser<A, Reader> => wrap(beforeAndAfter, parser, beforeAndAfter);
