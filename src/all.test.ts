@@ -1,7 +1,26 @@
 import { assertEquals } from "@std/assert";
+import { assertType, type IsExact } from "@std/testing/types";
 import { parse } from "./text_parser.ts";
 import { text } from "./text.ts";
-import { all } from "./all.ts";
+import { all, type JoinParsers } from "./all.ts";
+import type { Parser } from "./parser.ts";
+
+Deno.test("JoinParsers", () => {
+  assertType<
+    IsExact<
+      JoinParsers<
+        [
+          Parser<string>,
+          Parser<number>,
+          Parser<"test">,
+          Parser<["a", "b", "c", Set<number>]>,
+        ]
+      >,
+      Parser<[string, number, "test", ["a", "b", "c", Set<number>]]>
+    >
+  >(true);
+  assertType<IsExact<JoinParsers<[]>, Parser<[]>>>(true);
+});
 
 Deno.test("all", () => {
   const abc = all(text("a"), text("b"), text("c"));
