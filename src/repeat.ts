@@ -4,6 +4,7 @@ import {
   compare,
   type Context,
   drop,
+  getCurrentPosition,
   isDone,
   pop,
   type ReaderTuple,
@@ -41,7 +42,12 @@ export const repeat = <
         return result;
       }
       if (
-        compare(reader, prev, next) == 0 &&
+        compare(
+            reader,
+            getCurrentPosition(reader, prev),
+            getCurrentPosition(reader, next),
+          ) ==
+          0 &&
         max == Infinity && !isDone(reader, next)
       ) {
         throw new Error(

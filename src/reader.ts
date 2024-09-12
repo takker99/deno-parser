@@ -102,17 +102,6 @@ export const isDone = <R extends BaseReader>(
 
 export const compare = <R extends BaseReader>(
   reader: ReaderTuple<R>,
-  a: Context<R>,
-  b: Context<R>,
-): number =>
-  compare_(
-    reader,
-    getCurrentPosition(reader, a),
-    getCurrentPosition(reader, b),
-  );
-
-export const compare_ = <R extends BaseReader>(
-  reader: ReaderTuple<R>,
   a: R["position"],
   b: R["position"],
 ): number => reader[7](a, b);

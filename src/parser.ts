@@ -1,7 +1,7 @@
 import { type Expected, mergeExpected } from "./expected.ts";
 import {
   type BaseReader,
-  compare_,
+  compare,
   type Context,
   type ReaderTuple,
 } from "./reader.ts";
@@ -65,7 +65,7 @@ export const merge = <
   const expectedB = mergeExpected(reader, ...b[2]);
   const minPos = expectedB.at(-1)?.[1];
   const expectedA = minPos
-    ? a[2].filter(([, pos]) => compare_(reader, minPos, pos) <= 0)
+    ? a[2].filter(([, pos]) => compare(reader, minPos, pos) <= 0)
     : a[2];
   const parseFail = [
     b[0],

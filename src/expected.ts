@@ -1,6 +1,6 @@
 import {
   type BaseReader,
-  compare_,
+  compare,
   type Context,
   getCurrentPosition,
   type ReaderTuple,
@@ -22,7 +22,7 @@ export const mergeExpected = <R extends BaseReader>(
 ): Expected<R>[] =>
   expected.reduce((acc, [e, position]) => {
     const index = acc.findIndex(([, pos]) =>
-      compare_(reader, position, pos) === 0
+      compare(reader, position, pos) === 0
     );
     if (index < 0) {
       acc.push([e, position]);
@@ -30,4 +30,4 @@ export const mergeExpected = <R extends BaseReader>(
     }
     for (const item of e) acc[index][0].add(item);
     return acc;
-  }, [] as Expected<R>[]).sort((a, b) => compare_(reader, b[1], a[1]));
+  }, [] as Expected<R>[]).sort((a, b) => compare(reader, b[1], a[1]));
