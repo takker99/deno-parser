@@ -1,10 +1,5 @@
-import { isOk, type Parser } from "./parser.ts";
-import {
-  type BaseReader,
-  type Context,
-  formatLocation,
-  type ReaderTuple,
-} from "./reader.ts";
+import { isOk, makeExpected, type Parser } from "./parser.ts";
+import type { BaseReader, Context, ReaderTuple } from "./reader.ts";
 
 export const desc = <
   A,
@@ -18,6 +13,6 @@ export const desc = <
   return [
     false,
     result[1],
-    expected.map((e) => [e, formatLocation(reader, result[1])]),
+    [makeExpected(reader, result[1], ...expected)],
   ];
 };

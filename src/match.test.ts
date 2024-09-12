@@ -8,14 +8,14 @@ Deno.test("match", () => {
   assertEquals(parse(num, "abc"), {
     ok: false,
     expected: [{
-      expected: "/\\d+/",
+      expected: ["/\\d+/"],
       location: { index: 0, line: 1, column: 1 },
     }],
   });
   assertEquals(parse(num, ""), {
     ok: false,
     expected: [{
-      expected: "/\\d+/",
+      expected: ["/\\d+/"],
       location: { index: 0, line: 1, column: 1 },
     }],
   });
@@ -27,14 +27,14 @@ Deno.test("match with capture", () => {
   assertEquals(parse(num, "abc"), {
     ok: false,
     expected: [{
-      expected: "/(\\d+)/",
+      expected: ["/(\\d+)/"],
       location: { index: 0, line: 1, column: 1 },
     }],
   });
   assertEquals(parse(num, ""), {
     ok: false,
     expected: [{
-      expected: "/(\\d+)/",
+      expected: ["/(\\d+)/"],
       location: { index: 0, line: 1, column: 1 },
     }],
   });

@@ -10,16 +10,19 @@ Deno.test("fail", () => {
   assertEquals(parse(p, ""), {
     ok: false,
     expected: [
-      { expected: "apple", location: { index: 0, line: 1, column: 1 } },
-      { expected: "banana", location: { index: 0, line: 1, column: 1 } },
+      {
+        expected: ["apple", "banana"],
+        location: { index: 0, line: 1, column: 1 },
+      },
     ],
   });
   assertEquals(parse(q, ""), {
     ok: false,
     expected: [
-      { expected: "other", location: { index: 0, line: 1, column: 1 } },
-      { expected: "apple", location: { index: 0, line: 1, column: 1 } },
-      { expected: "banana", location: { index: 0, line: 1, column: 1 } },
+      {
+        expected: ["other", "apple", "banana"],
+        location: { index: 0, line: 1, column: 1 },
+      },
     ],
   });
 });

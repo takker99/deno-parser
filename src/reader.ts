@@ -1,6 +1,7 @@
 export interface BaseReader {
   input: unknown;
   seeker: unknown;
+  position: unknown;
   location: BaseLocation;
 }
 export interface BaseLocation {
@@ -24,12 +25,13 @@ export const isEmpty = <R extends BaseReader>(
 export type ReaderTuple<R extends BaseReader> = readonly [
   initialSeeker: R["seeker"],
   read: (context: Context<R>, size: number) => ReadResult<R>,
+  getCurrentPosition: (seeker: R["seeker"]) => R["position"],
   saveCurrentPosition: (seeker: R["seeker"]) => R["seeker"],
   restorePreviousPosition: (seeker: R["seeker"]) => R["seeker"],
   discardPreviousPosition: (seeker: R["seeker"]) => R["seeker"],
   isDone: (context: Context<R>) => boolean,
-  compare: (a: R["seeker"], b: R["seeker"]) => number,
-  format: (seeker: R["seeker"]) => BaseLocation,
+  compare: (a: R["position"], b: R["position"]) => number,
+  format: (position: R["position"]) => BaseLocation,
 ];
 
 const getInitialSeeker = <R extends BaseReader>(
@@ -44,6 +46,11 @@ export const read = <R extends BaseReader>(
   seeker?: R["seeker"],
 ): ReadResult<R> => reader[1]([input, seeker], size);
 
+export const getCurrentPosition = <R extends BaseReader>(
+  reader: ReaderTuple<R>,
+  context: Context<R>,
+): R["position"] => reader[2](getInitialSeeker(reader, context));
+
 /**
  * save the current position of the reader
  *
@@ -56,7 +63,7 @@ export const read = <R extends BaseReader>(
 export const save = <R extends BaseReader>(
   reader: ReaderTuple<R>,
   context: Context<R>,
-): Context<R> => [context[0], reader[2](getInitialSeeker(reader, context))];
+): Context<R> => [context[0], reader[3](getInitialSeeker(reader, context))];
 
 /**
  * restore the previous position of the reader and discard it.
@@ -71,7 +78,7 @@ export const save = <R extends BaseReader>(
 export const pop = <R extends BaseReader>(
   reader: ReaderTuple<R>,
   context: Context<R>,
-): Context<R> => [context[0], reader[3](getInitialSeeker(reader, context))];
+): Context<R> => [context[0], reader[4](getInitialSeeker(reader, context))];
 
 /**
  * discard the previous position of the reader.
@@ -86,21 +93,31 @@ export const pop = <R extends BaseReader>(
 export const drop = <R extends BaseReader>(
   reader: ReaderTuple<R>,
   context: Context<R>,
-): Context<R> => [context[0], reader[4](getInitialSeeker(reader, context))];
+): Context<R> => [context[0], reader[5](getInitialSeeker(reader, context))];
 
 export const isDone = <R extends BaseReader>(
   reader: ReaderTuple<R>,
   context: Context<R>,
-): boolean => reader[5](context);
+): boolean => reader[6](context);
 
 export const compare = <R extends BaseReader>(
   reader: ReaderTuple<R>,
   a: Context<R>,
   b: Context<R>,
 ): number =>
-  reader[6](getInitialSeeker(reader, a), getInitialSeeker(reader, b));
+  compare_(
+    reader,
+    getCurrentPosition(reader, a),
+    getCurrentPosition(reader, b),
+  );
+
+export const compare_ = <R extends BaseReader>(
+  reader: ReaderTuple<R>,
+  a: R["position"],
+  b: R["position"],
+): number => reader[7](a, b);
 
 export const formatLocation = <R extends BaseReader>(
   reader: ReaderTuple<R>,
-  context: Context<R>,
-): R["location"] => reader[7](getInitialSeeker(reader, context));
+  position: R["position"],
+): R["location"] => reader[8](position);

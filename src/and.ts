@@ -5,5 +5,5 @@ export const and =
   (reader, ...prev) => {
     const a = parserA(reader, ...prev);
     if (!isOk(a)) return a;
-    return merge(a, parserB(reader, ...a[1]), (b) => [a[3], b]);
+    return merge(reader, a, parserB(reader, ...a[1]), (b) => [a[3], b]);
   };

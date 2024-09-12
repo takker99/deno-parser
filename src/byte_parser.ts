@@ -6,6 +6,7 @@ export type ByteSeeker = readonly [index: number, stack: readonly number[]];
 export interface ByteLocation extends BaseLocation {}
 export interface ByteReader {
   input: Uint8Array;
+  position: number;
   seeker: ByteSeeker;
   location: ByteLocation;
 }
@@ -22,6 +23,7 @@ const byteReader: ReaderTuple<ByteReader> = [
     const popped = input.subarray(index, index + size);
     return [false, [input, [index + size, stack]], popped];
   },
+  ([cur]) => cur,
   ([cur, stack]) => [cur, [cur, ...stack]],
   (seeker) => {
     if (seeker[1].length === 0) return seeker;
@@ -34,8 +36,8 @@ const byteReader: ReaderTuple<ByteReader> = [
     return [cur, stack];
   },
   ([input, seeker]) => (seeker?.[0] ?? 0) >= input.length,
-  (a, b) => a[0] - b[0],
-  ([index]) => ({ index }),
+  (a, b) => a - b,
+  (index) => ({ index }),
 ];
 
 export const parse: <A>(

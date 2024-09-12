@@ -41,18 +41,18 @@ Deno.test("and failure", () => {
   const xy = and(x, y);
   assertEquals(parse(xy, "x"), {
     ok: false,
-    expected: [{ expected: "y", location: { index: 1, line: 1, column: 2 } }],
+    expected: [{ expected: ["y"], location: { index: 1, line: 1, column: 2 } }],
   });
   assertEquals(parse(xy, "y"), {
     ok: false,
-    expected: [{ expected: "x", location: { index: 0, line: 1, column: 1 } }],
+    expected: [{ expected: ["x"], location: { index: 0, line: 1, column: 1 } }],
   });
   assertEquals(parse(xy, "yx"), {
     ok: false,
-    expected: [{ expected: "x", location: { index: 0, line: 1, column: 1 } }],
+    expected: [{ expected: ["x"], location: { index: 0, line: 1, column: 1 } }],
   });
   assertEquals(parse(xy, ""), {
     ok: false,
-    expected: [{ expected: "x", location: { index: 0, line: 1, column: 1 } }],
+    expected: [{ expected: ["x"], location: { index: 0, line: 1, column: 1 } }],
   });
 });

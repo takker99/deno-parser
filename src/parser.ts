@@ -1,4 +1,10 @@
-import type { BaseReader, Context, ReaderTuple } from "./reader.ts";
+import {
+  type BaseReader,
+  compare_,
+  type Context,
+  getCurrentPosition,
+  type ReaderTuple,
+} from "./reader.ts";
 
 /**
  * The parsing action.
@@ -35,9 +41,30 @@ export type ParseOk<A, R extends BaseReader> = readonly [
 ];
 
 export type Expected<R extends BaseReader> = readonly [
-  expected: string,
-  location: R["location"],
+  expected: Set<string>,
+  position: R["position"],
 ];
+export const makeExpected = <R extends BaseReader>(
+  reader: ReaderTuple<R>,
+  context: Context<R>,
+  ...names: string[]
+): Expected<R> => [new Set(names), getCurrentPosition(reader, context)];
+
+export const mergeExpected = <R extends BaseReader>(
+  reader: ReaderTuple<R>,
+  ...expected: Expected<R>[]
+): Expected<R>[] =>
+  expected.reduce((acc, [e, position]) => {
+    const index = acc.findIndex(([, pos]) =>
+      compare_(reader, position, pos) === 0
+    );
+    if (index < 0) {
+      acc.push([e, position]);
+      return acc;
+    }
+    for (const item of e) acc[index][0].add(item);
+    return acc;
+  }, [] as Expected<R>[]).sort((a, b) => compare_(reader, b[1], a[1]));
 export type ParseFail<R extends BaseReader> = readonly [
   ok: false,
   context: Context<R>,
@@ -53,11 +80,21 @@ export const merge = <
   const R extends BaseReader,
   const C = B,
 >(
+  reader: ReaderTuple<R>,
   a: ParseResult<A, R>,
   b: ParseResult<B, R>,
   fn?: (value: B) => C,
 ): (typeof b) extends ParseOk<B, R> ? ParseOk<C, R> : ParseFail<R> => {
-  const parseFail = [b[0], b[1], [...a[2], ...b[2]]] as [
+  const expectedB = mergeExpected(reader, ...b[2]);
+  const minPos = expectedB.at(-1)?.[1];
+  const expectedA = minPos
+    ? a[2].filter(([, pos]) => compare_(reader, minPos, pos) <= 0)
+    : a[2];
+  const parseFail = [
+    b[0],
+    b[1],
+    mergeExpected(reader, ...expectedA, ...expectedB),
+  ] as [
     boolean,
     Context<R>,
     Expected<R>[],

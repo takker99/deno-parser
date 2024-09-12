@@ -88,18 +88,12 @@ block:
     {
       ok: false,
       expected: [
-        { expected: "\r\n", location: { column: 7, index: 6, line: 1 } },
-        { expected: "block:", location: { column: 9, index: 15, line: 2 } },
-        { expected: "\r\n", location: { column: 14, index: 20, line: 2 } },
-        { expected: "\r\n", location: { column: 15, index: 35, line: 3 } },
         {
-          expected: "more than 4 spaces",
+          expected: ["more than 4 spaces"],
           location: { column: 5, index: 40, line: 4 },
         },
-        { expected: "\r\n", location: { column: 14, index: 34, line: 3 } },
-        { expected: "\n", location: { column: 14, index: 34, line: 3 } },
-        { expected: "<EOF>", location: { column: 14, index: 34, line: 3 } },
-        { expected: "<EOF>", location: { column: 1, index: 21, line: 3 } },
+        { expected: ["EOL"], location: { column: 14, index: 34, line: 3 } },
+        { expected: ["<EOF>"], location: { column: 1, index: 21, line: 3 } },
       ],
     },
   ));

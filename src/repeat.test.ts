@@ -24,8 +24,7 @@ Deno.test("repeat 0+", () => {
   assertEquals(parse(aaa, "b"), {
     ok: false,
     expected: [
-      { expected: "a", location: { index: 0, line: 1, column: 1 } },
-      { expected: "<EOF>", location: { index: 0, line: 1, column: 1 } },
+      { expected: ["a", "<EOF>"], location: { index: 0, line: 1, column: 1 } },
     ],
   });
 });
@@ -35,7 +34,7 @@ Deno.test("repeat 1+", () => {
   const aaa = repeat(a, 1);
   assertEquals(parse(aaa, ""), {
     ok: false,
-    expected: [{ expected: "a", location: { index: 0, line: 1, column: 1 } }],
+    expected: [{ expected: ["a"], location: { index: 0, line: 1, column: 1 } }],
   });
   assertEquals(parse(aaa, "a"), { ok: true, value: ["a"] });
   assertEquals(parse(aaa, "aa"), { ok: true, value: ["a", "a"] });
@@ -46,7 +45,7 @@ Deno.test("repeat 1+", () => {
   });
   assertEquals(parse(aaa, "b"), {
     ok: false,
-    expected: [{ expected: "a", location: { index: 0, line: 1, column: 1 } }],
+    expected: [{ expected: ["a"], location: { index: 0, line: 1, column: 1 } }],
   });
 });
 
@@ -55,24 +54,24 @@ Deno.test("repeat 2-3", () => {
   const aaa = repeat(a, 2, 3);
   assertEquals(parse(aaa, ""), {
     ok: false,
-    expected: [{ expected: "a", location: { index: 0, line: 1, column: 1 } }],
+    expected: [{ expected: ["a"], location: { index: 0, line: 1, column: 1 } }],
   });
   assertEquals(parse(aaa, "a"), {
     ok: false,
-    expected: [{ expected: "a", location: { index: 1, line: 1, column: 2 } }],
+    expected: [{ expected: ["a"], location: { index: 1, line: 1, column: 2 } }],
   });
   assertEquals(parse(aaa, "aa"), { ok: true, value: ["a", "a"] });
   assertEquals(parse(aaa, "aaa"), { ok: true, value: ["a", "a", "a"] });
   assertEquals(parse(aaa, "aaaa"), {
     ok: false,
     expected: [{
-      expected: "<EOF>",
+      expected: ["<EOF>"],
       location: { index: 3, line: 1, column: 4 },
     }],
   });
   assertEquals(parse(aaa, "b"), {
     ok: false,
-    expected: [{ expected: "a", location: { index: 0, line: 1, column: 1 } }],
+    expected: [{ expected: ["a"], location: { index: 0, line: 1, column: 1 } }],
   });
 });
 

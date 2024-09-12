@@ -1,6 +1,6 @@
 import type { TextReader } from "./text_parser.ts";
-import { formatLocation, read } from "./reader.ts";
-import type { Parser } from "./parser.ts";
+import { read } from "./reader.ts";
+import { makeExpected, type Parser } from "./parser.ts";
 
 export const match = (
   regexp: RegExp,
@@ -21,7 +21,7 @@ export const match = (
     sticky.lastIndex = context[1]?.[0]?.[0] ?? 0;
     const match = context[0].match(sticky);
     if (!match) {
-      return [false, context, [[`${regexp}`, formatLocation(reader, context)]]];
+      return [false, context, [makeExpected(reader, context, `${regexp}`)]];
     }
     const res = read(match[0].length, reader, ...context);
     return [true, res[1], [], res[2] ?? ""];

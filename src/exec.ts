@@ -1,6 +1,11 @@
 import { eof } from "./eof.ts";
 import { skip } from "./skip.ts";
-import type { BaseLocation, BaseReader, ReaderTuple } from "./reader.ts";
+import {
+  type BaseLocation,
+  type BaseReader,
+  formatLocation,
+  type ReaderTuple,
+} from "./reader.ts";
 import { isOk, type Parser } from "./parser.ts";
 
 export const makeExec = <
@@ -17,8 +22,8 @@ export const makeExec = <
   return {
     ok: false,
     expected: result[2].map(([expected, location]) => ({
-      expected,
-      location,
+      expected: [...expected],
+      location: formatLocation(reader, location),
     })),
   };
 };
@@ -40,7 +45,7 @@ export interface ParseFinalFail<L extends BaseLocation> {
 }
 
 export interface FinalExpected<L extends BaseLocation> {
-  expected: string;
+  expected: string[];
   location: L;
 }
 

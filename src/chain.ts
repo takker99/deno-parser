@@ -7,5 +7,5 @@ export const chain = <A, B>(
 (reader, ...context) => {
   const a = parser(reader, ...context);
   if (!isOk(a)) return a;
-  return merge(a, fn(a[3])(reader, ...a[1]));
+  return merge(reader, a, fn(a[3])(reader, ...a[1]));
 };

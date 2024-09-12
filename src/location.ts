@@ -1,5 +1,10 @@
 import type { ParseResult } from "./parser.ts";
-import { type BaseReader, formatLocation, type ReaderTuple } from "./reader.ts";
+import {
+  type BaseReader,
+  formatLocation,
+  getCurrentPosition,
+  type ReaderTuple,
+} from "./reader.ts";
 
 export const location = <R extends BaseReader>(
   reader: ReaderTuple<R>,
@@ -9,5 +14,5 @@ export const location = <R extends BaseReader>(
   true,
   [input, seeker],
   [],
-  formatLocation(reader, [input, seeker]),
+  formatLocation(reader, getCurrentPosition(reader, [input, seeker])),
 ];

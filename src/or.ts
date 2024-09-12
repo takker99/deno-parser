@@ -9,5 +9,5 @@ export const or =
     if (isOk(a)) {
       return [true, drop(reader, next), a[2], a[3]];
     }
-    return merge(a, parserB(reader, ...pop(reader, next)));
+    return merge(reader, a, parserB(reader, ...pop(reader, next)));
   };

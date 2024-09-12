@@ -14,7 +14,7 @@ Deno.test("desc", () => {
   assertEquals(parse(num, "x"), {
     ok: false,
     expected: [{
-      expected: "number",
+      expected: ["number"],
       location: { index: 0, line: 1, column: 1 },
     }],
   });
@@ -36,7 +36,7 @@ Deno.test("desc with node", () => {
   assertEquals(parse(num, "x"), {
     ok: false,
     expected: [{
-      expected: "number",
+      expected: ["number"],
       location: { index: 0, line: 1, column: 1 },
     }],
   });

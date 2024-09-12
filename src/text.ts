@@ -1,11 +1,5 @@
-import {
-  type BaseLocation,
-  type BaseReader,
-  formatLocation,
-  isEmpty,
-  read,
-} from "./reader.ts";
-import type { Parser } from "./parser.ts";
+import { type BaseLocation, type BaseReader, isEmpty, read } from "./reader.ts";
+import { makeExpected, type Parser } from "./parser.ts";
 
 export const text = <
   const S extends string,
@@ -16,7 +10,7 @@ export const text = <
   if (!isEmpty(res) && res[2] == string) {
     return [true, res[1], [], string];
   }
-  return [false, context, [[string, formatLocation(reader, context)]]];
+  return [false, context, [makeExpected(reader, context, string)]];
 };
 
 const decode = (buffer: BufferSource) => new TextDecoder().decode(buffer);
@@ -26,6 +20,7 @@ export const textInBytes = <
   const Reader extends {
     input: BufferSource;
     seeker: unknown;
+    position: unknown;
     location: BaseLocation;
   },
 >(string: S): Parser<S, Reader> =>
@@ -34,5 +29,5 @@ export const textInBytes = <
   if (!isEmpty(res) && decode(res[2]!) == string) {
     return [true, res[1], [], string];
   }
-  return [false, context, [[string, formatLocation(reader, context)]]];
+  return [false, context, [makeExpected(reader, context, string)]];
 };

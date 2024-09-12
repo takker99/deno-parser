@@ -8,10 +8,10 @@ Deno.test("map", () => {
   assertEquals(parse(a, "a"), { ok: true, value: 1 });
   assertEquals(parse(a, "b"), {
     ok: false,
-    expected: [{ expected: "a", location: { index: 0, line: 1, column: 1 } }],
+    expected: [{ expected: ["a"], location: { index: 0, line: 1, column: 1 } }],
   });
   assertEquals(parse(a, ""), {
     ok: false,
-    expected: [{ expected: "a", location: { index: 0, line: 1, column: 1 } }],
+    expected: [{ expected: ["a"], location: { index: 0, line: 1, column: 1 } }],
   });
 });

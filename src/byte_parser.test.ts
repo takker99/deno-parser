@@ -44,19 +44,19 @@ Deno.test("and failure", () => {
   const xy = and(x, y);
   assertEquals(parse(xy, encode("x")), {
     ok: false,
-    expected: [{ expected: "y", location: { index: 1 } }],
+    expected: [{ expected: ["y"], location: { index: 1 } }],
   });
   assertEquals(parse(xy, encode("y")), {
     ok: false,
-    expected: [{ expected: "x", location: { index: 0 } }],
+    expected: [{ expected: ["x"], location: { index: 0 } }],
   });
   assertEquals(parse(xy, encode("yx")), {
     ok: false,
-    expected: [{ expected: "x", location: { index: 0 } }],
+    expected: [{ expected: ["x"], location: { index: 0 } }],
   });
   assertEquals(parse(xy, new Uint8Array()), {
     ok: false,
-    expected: [{ expected: "x", location: { index: 0 } }],
+    expected: [{ expected: ["x"], location: { index: 0 } }],
   });
 });
 
@@ -69,19 +69,17 @@ Deno.test("or", () => {
   assertEquals(parse(ab, encode("c")), {
     ok: false,
     expected: [
-      { expected: "a", location: { index: 0 } },
-      { expected: "b", location: { index: 0 } },
+      { expected: ["a", "b"], location: { index: 0 } },
     ],
   });
   assertEquals(parse(ab, encode("ab")), {
     ok: false,
-    expected: [{ expected: "<EOF>", location: { index: 1 } }],
+    expected: [{ expected: ["<EOF>"], location: { index: 1 } }],
   });
   assertEquals(parse(ab, new Uint8Array()), {
     ok: false,
     expected: [
-      { expected: "a", location: { index: 0 } },
-      { expected: "b", location: { index: 0 } },
+      { expected: ["a", "b"], location: { index: 0 } },
     ],
   });
 });

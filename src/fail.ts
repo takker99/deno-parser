@@ -1,5 +1,4 @@
-import type { Parser } from "./parser.ts";
-import { formatLocation } from "./reader.ts";
+import { makeExpected, type Parser } from "./parser.ts";
 
 /**
  * Returns a parser that fails with the given array of strings `expected` and consumes no input.
@@ -36,6 +35,5 @@ export const fail = (
   expected: string[],
 ): Parser<never> =>
 (reader, ...context) => {
-  const location = formatLocation(reader, context);
-  return [false, context, expected.map((e) => [e, location])];
+  return [false, context, [makeExpected(reader, context, ...expected)]];
 };

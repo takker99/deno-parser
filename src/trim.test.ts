@@ -8,14 +8,14 @@ Deno.test("trim", () => {
   assertEquals(parse(p, "~x~"), { ok: true, value: "x" });
   assertEquals(parse(p, "~x"), {
     ok: false,
-    expected: [{ expected: "~", location: { index: 2, line: 1, column: 3 } }],
+    expected: [{ expected: ["~"], location: { index: 2, line: 1, column: 3 } }],
   });
   assertEquals(parse(p, "~"), {
     ok: false,
-    expected: [{ expected: "x", location: { index: 1, line: 1, column: 2 } }],
+    expected: [{ expected: ["x"], location: { index: 1, line: 1, column: 2 } }],
   });
   assertEquals(parse(p, "x>"), {
     ok: false,
-    expected: [{ expected: "~", location: { index: 0, line: 1, column: 1 } }],
+    expected: [{ expected: ["~"], location: { index: 0, line: 1, column: 1 } }],
   });
 });

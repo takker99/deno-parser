@@ -43,6 +43,7 @@ const textReader: ReaderTuple<TextReader> = [
     }
     return [false, [input, [[index, line, column], stack]], sliced];
   },
+  ([cur]) => cur,
   ([cur, stack]) => [cur, [cur, ...stack]],
   (seeker) => {
     if (seeker[1].length === 0) return seeker;
@@ -55,8 +56,8 @@ const textReader: ReaderTuple<TextReader> = [
     return [cur, stack];
   },
   ([input, seeker]) => (seeker?.[0]?.[0] ?? 0) >= input.length,
-  (a, b) => a[0][0] - b[0][0],
-  ([[index, line, column]]) => ({ index, line, column }),
+  (a, b) => a[0] - b[0],
+  ([index, line, column]) => ({ index, line, column }),
 ];
 
 export const parse: <A>(

@@ -7,7 +7,7 @@ Deno.test("matchEOF", () => {
   assertEquals(parse(eof, "x"), {
     ok: false,
     expected: [{
-      expected: "<EOF>",
+      expected: ["<EOF>"],
       location: { index: 0, line: 1, column: 1 },
     }],
   });

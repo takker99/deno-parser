@@ -23,26 +23,24 @@ Deno.test("choice", () => {
   assertEquals(parse(abc123, "aaaa"), {
     ok: false,
     expected: [{
-      expected: "<EOF>",
+      expected: ["<EOF>"],
       location: { index: 1, line: 1, column: 2 },
     }],
   });
   assertEquals(parse(abc123, "abb"), {
     ok: false,
     expected: [{
-      expected: "<EOF>",
+      expected: ["<EOF>"],
       location: { index: 1, line: 1, column: 2 },
     }],
   });
   assertEquals(parse(abc123, ""), {
     ok: false,
     expected: [
-      { expected: "a", location: { index: 0, line: 1, column: 1 } },
-      { expected: "b", location: { index: 0, line: 1, column: 1 } },
-      { expected: "c", location: { index: 0, line: 1, column: 1 } },
-      { expected: "1", location: { index: 0, line: 1, column: 1 } },
-      { expected: "2", location: { index: 0, line: 1, column: 1 } },
-      { expected: "3", location: { index: 0, line: 1, column: 1 } },
+      {
+        expected: ["a", "b", "c", "1", "2", "3"],
+        location: { index: 0, line: 1, column: 1 },
+      },
     ],
   });
 });

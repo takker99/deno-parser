@@ -37,7 +37,7 @@ const pyNL = or(text("\r\n"), text("\n"));
 /** Lines should always end in a newline sequence, but many files are missing
  * the final newline
  */
-const pyEnd = or(pyNL, eof);
+const pyEnd = desc(or(pyNL, eof), ["EOL"]);
 
 /** Just a variable and then the end of the line. */
 const pyIdent = map(

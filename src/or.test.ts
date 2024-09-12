@@ -11,21 +11,19 @@ Deno.test("or", () => {
   assertEquals(parse(ab, "b"), { ok: true, value: "b" });
   assertEquals(parse(ab, "c"), {
     expected: [
-      { expected: "a", location: { index: 0, line: 1, column: 1 } },
-      { expected: "b", location: { index: 0, line: 1, column: 1 } },
+      { expected: ["a", "b"], location: { index: 0, line: 1, column: 1 } },
     ],
     ok: false,
   });
   assertEquals(parse(ab, "ab"), {
     expected: [
-      { expected: "<EOF>", location: { index: 1, line: 1, column: 2 } },
+      { expected: ["<EOF>"], location: { index: 1, line: 1, column: 2 } },
     ],
     ok: false,
   });
   assertEquals(parse(ab, ""), {
     expected: [
-      { expected: "a", location: { index: 0, line: 1, column: 1 } },
-      { expected: "b", location: { index: 0, line: 1, column: 1 } },
+      { expected: ["a", "b"], location: { index: 0, line: 1, column: 1 } },
     ],
     ok: false,
   });
