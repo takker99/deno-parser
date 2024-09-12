@@ -1,42 +1,46 @@
 import { eof } from "./eof.ts";
 import { skip } from "./skip.ts";
-import {
-  type BaseLocation,
-  type BaseReader,
-  formatLocation,
-  type ReaderTuple,
-} from "./reader.ts";
+import type { BaseLocation, BaseReader, ReaderTuple } from "./reader.ts";
 import { isOk, type Parser } from "./parser.ts";
 
 export const makeExec = <
   Reader extends BaseReader,
 >(reader: ReaderTuple<Reader>) =>
-<A, const Expected extends string[]>(
-  parser: Parser<A, Expected, Reader>,
+<A>(
+  parser: Parser<A, Reader>,
   input: Reader["input"],
-): ParseFinalResult<A, Expected | ["<EOF>"], Reader["location"]> => {
+): ParseFinalResult<A, Reader["location"]> => {
   const result = skip(parser, eof)(reader, input);
   if (isOk(result)) {
-    return { ok: true, value: result[2] };
+    return { ok: true, value: result[3] };
   }
   return {
     ok: false,
-    location: formatLocation(reader, result[1]),
-    expected: result[2],
+    expected: result[2].map(([expected, location]) => ({
+      expected,
+      location,
+    })),
   };
 };
 
-export type ParseFinalResult<A, Expected, L extends BaseLocation> =
+export type ParseFinalResult<
+  A,
+  L extends BaseLocation,
+> =
   | ParseFinalOk<A>
-  | ParseFinalFail<Expected, L>;
+  | ParseFinalFail<L>;
 
 export interface ParseFinalOk<A> {
   ok: true;
   value: A;
 }
-export interface ParseFinalFail<Expected, L extends BaseLocation> {
+export interface ParseFinalFail<L extends BaseLocation> {
   ok: false;
-  expected: Expected;
+  expected: FinalExpected<L>[];
+}
+
+export interface FinalExpected<L extends BaseLocation> {
+  expected: string;
   location: L;
 }
 
@@ -44,15 +48,15 @@ export const makeTryExec = <
   Reader extends BaseReader,
 >(reader: ReaderTuple<Reader>) => {
   const exec = makeExec(reader);
-  return <A, const Expected extends string[]>(
-    parser: Parser<A, Expected, Reader>,
-    input: Reader["input"],
-  ): A => {
+  return <A>(parser: Parser<A, Reader>, input: Reader["input"]): A => {
     const result = exec(parser, input);
     if (result.ok) return result.value;
-    const { expected, location } = result;
-    const message = `parse error at ${location}: ` +
-      `expected ${expected.join(", ")}`;
+    const { expected } = result;
+    const message = `parse error at\n${
+      expected.map(({ expected, location }) =>
+        `\t${location}: expected ${expected}`
+      )
+    }`;
     throw new Error(message);
   };
 };

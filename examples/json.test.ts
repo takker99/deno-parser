@@ -59,9 +59,45 @@ Deno.test("json multiline", () =>
 `,
     ),
     {
-      expected: [",", "}"],
-      location: { column: 3, index: 46, line: 4 },
       ok: false,
+      expected: [
+        {
+          expected: "/\\\\u[0-9a-fA-F]{4}/",
+          location: { column: 9, index: 11, line: 3 },
+        },
+        { expected: "\\b", location: { column: 9, index: 11, line: 3 } },
+        { expected: "\\n", location: { column: 9, index: 11, line: 3 } },
+        { expected: "\\f", location: { column: 9, index: 11, line: 3 } },
+        { expected: "\\r", location: { column: 9, index: 11, line: 3 } },
+        { expected: "\\t", location: { column: 9, index: 11, line: 3 } },
+        { expected: "/\\\\./", location: { column: 9, index: 11, line: 3 } },
+        {
+          expected: '/[^"\\\\]+/',
+          location: { column: 9, index: 11, line: 3 },
+        },
+        { expected: "{", location: { column: 12, index: 14, line: 3 } },
+        { expected: "{", location: { column: 13, index: 15, line: 3 } },
+        { expected: "[", location: { column: 13, index: 15, line: 3 } },
+        { expected: "string", location: { column: 13, index: 15, line: 3 } },
+        { expected: "-", location: { column: 13, index: 15, line: 3 } },
+        {
+          expected: "/\\.[0-9]+/",
+          location: { column: 14, index: 16, line: 3 },
+        },
+        {
+          expected: "/e[+-]?[0-9]+/i",
+          location: { column: 14, index: 16, line: 3 },
+        },
+        { expected: ",", location: { column: 40, index: 42, line: 3 } },
+        { expected: ",", location: { column: 3, index: 46, line: 4 } },
+        { expected: "}", location: { column: 3, index: 46, line: 4 } },
+        { expected: "[", location: { column: 1, index: 1, line: 2 } },
+        { expected: "string", location: { column: 1, index: 1, line: 2 } },
+        { expected: "number", location: { column: 1, index: 1, line: 2 } },
+        { expected: "null", location: { column: 1, index: 1, line: 2 } },
+        { expected: "true", location: { column: 1, index: 1, line: 2 } },
+        { expected: "false", location: { column: 1, index: 1, line: 2 } },
+      ],
     },
   ));
 

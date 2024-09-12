@@ -60,7 +60,7 @@ const EmptyTag = wrap(text("<"), OpeningTagInsides, next(W0, text("/>")));
 
 // - Full elements have an opening and closing tag (e.g. `<a></a>`)
 // - Empty elements just have an empty tag (e.g. `<a/>`).
-const Element: Parser<XMLElement, string[]> = lazy(() =>
+const Element: Parser<XMLElement> = lazy(() =>
   skip(choice(FullElement, EmptyElement), W0)
 );
 
@@ -92,4 +92,4 @@ const TextContent = match(/[^<>]+/);
 // An element can contain other elements, or text.
 const Children = repeat(choice(Element, TextContent));
 
-export const XML: Parser<XMLElement, string[]> = trim(Element, W0);
+export const XML: Parser<XMLElement> = trim(Element, W0);

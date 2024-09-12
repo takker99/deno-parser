@@ -1,16 +1,11 @@
-import { isOk, type Parser } from "./parser.ts";
+import { isOk, merge, type Parser } from "./parser.ts";
 
-export const chain = <
-  A,
-  const ExpectedA extends string[],
-  B,
-  const ExpectedB extends string[],
->(
-  parser: Parser<A, ExpectedA>,
-  fn: (value: A) => Parser<B, ExpectedB>,
-): Parser<B, ExpectedA | ExpectedB> =>
+export const chain = <A, B>(
+  parser: Parser<A>,
+  fn: (value: A) => Parser<B>,
+): Parser<B> =>
 (reader, ...context) => {
   const a = parser(reader, ...context);
   if (!isOk(a)) return a;
-  return fn(a[2])(reader, ...a[1]);
+  return merge(a, fn(a[3])(reader, ...a[1]));
 };

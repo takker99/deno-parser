@@ -1,4 +1,5 @@
 import type { Parser } from "./parser.ts";
+import { formatLocation } from "./reader.ts";
 
 /**
  * Returns a parser that fails with the given array of strings `expected` and consumes no input.
@@ -31,9 +32,10 @@ import type { Parser } from "./parser.ts";
  * // => error: expected smaller number
  * ```
  */
-export const fail = <
-  const Expected extends string[],
->(
-  expected: [...Expected],
-): Parser<never, Expected> =>
-(_, ...context) => [false, context, expected];
+export const fail = (
+  expected: string[],
+): Parser<never> =>
+(reader, ...context) => {
+  const location = formatLocation(reader, context);
+  return [false, context, expected.map((e) => [e, location])];
+};

@@ -44,17 +44,46 @@ export const read = <R extends BaseReader>(
   seeker?: R["seeker"],
 ): ReadResult<R> => reader[1]([input, seeker], size);
 
-export const saveCurrentPosition = <R extends BaseReader>(
+/**
+ * save the current position of the reader
+ *
+ * The function name comes from `git stash save`
+ *
+ * @param reader
+ * @param context
+ * @returns
+ */
+export const save = <R extends BaseReader>(
   reader: ReaderTuple<R>,
   context: Context<R>,
 ): Context<R> => [context[0], reader[2](getInitialSeeker(reader, context))];
 
-export const restorePreviousPosition = <R extends BaseReader>(
+/**
+ * restore the previous position of the reader and discard it.
+ * The current position is changed to the previous one.
+ *
+ * The function name comes from `git stash pop`
+ *
+ * @param reader
+ * @param context
+ * @returns
+ */
+export const pop = <R extends BaseReader>(
   reader: ReaderTuple<R>,
   context: Context<R>,
 ): Context<R> => [context[0], reader[3](getInitialSeeker(reader, context))];
 
-export const discardPreviousPosition = <R extends BaseReader>(
+/**
+ * discard the previous position of the reader.
+ * The current position is not changed.
+ *
+ * The function name comes from `git stash drop`
+ *
+ * @param reader
+ * @param context
+ * @returns
+ */
+export const drop = <R extends BaseReader>(
   reader: ReaderTuple<R>,
   context: Context<R>,
 ): Context<R> => [context[0], reader[4](getInitialSeeker(reader, context))];

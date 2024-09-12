@@ -7,15 +7,10 @@ import type { Parser } from "./parser.ts";
 export const node = <
   Reader extends BaseReader,
 >() =>
-<
-  S extends string,
-  A,
-  const Expected extends string[],
-  R extends Reader,
->(
-  parser: Parser<A, Expected, R>,
+<S extends string, A, R extends Reader>(
+  parser: Parser<A, R>,
   name: S,
-): Parser<ParseNode<S, A, R>, Expected, R> =>
+): Parser<ParseNode<S, A, R>, R> =>
   map(
     all(location, parser, location),
     ([start, value, end]) => ({ name, value, start, end }),

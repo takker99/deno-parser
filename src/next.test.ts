@@ -8,22 +8,21 @@ Deno.test("next", () => {
   assertEquals(parse(ab, "ab"), { ok: true, value: "b" });
   assertEquals(parse(ab, "a"), {
     ok: false,
-    expected: ["b"],
-    location: { index: 1, line: 1, column: 2 },
+    expected: [{ expected: "b", location: { index: 1, line: 1, column: 2 } }],
   });
   assertEquals(parse(ab, "aa"), {
     ok: false,
-    expected: ["b"],
-    location: { index: 1, line: 1, column: 2 },
+    expected: [{ expected: "b", location: { index: 1, line: 1, column: 2 } }],
   });
   assertEquals(parse(ab, "abb"), {
     ok: false,
-    expected: ["<EOF>"],
-    location: { index: 2, line: 1, column: 3 },
+    expected: [{
+      expected: "<EOF>",
+      location: { index: 2, line: 1, column: 3 },
+    }],
   });
   assertEquals(parse(ab, ""), {
     ok: false,
-    expected: ["a"],
-    location: { index: 0, line: 1, column: 1 },
+    expected: [{ expected: "a", location: { index: 0, line: 1, column: 1 } }],
   });
 });

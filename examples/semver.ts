@@ -12,8 +12,8 @@ const xr = or(
   map(nr, parseInt),
 );
 const dotXr = next(text("."), xr);
-const optional = <A, const Expected extends string[]>(
-  parser: Parser<A, Expected>,
+const optional = <A>(
+  parser: Parser<A>,
 ) => or(parser, ok(undefined));
 interface Semver {
   major: number | "*";
@@ -34,7 +34,7 @@ const qualifier = map(
     return obj;
   },
 );
-const partial: Parser<Semver, string[]> = map(
+const partial: Parser<Semver> = map(
   and(xr, optional(and(dotXr, optional(and(dotXr, optional(qualifier)))))),
   ([major, rest]) => {
     const [minor, rest2] = rest ?? [];
@@ -56,7 +56,7 @@ const primitive = and(
 interface Comparator extends Semver {
   op: "<" | ">" | ">=" | "<=" | "=" | "~" | "^";
 }
-const simple: Parser<Comparator, string[]> = map(
+const simple: Parser<Comparator> = map(
   choice(primitive, partial, tilde, caret),
   (v) => {
     if (!Array.isArray(v)) return { op: "=", ...v };
@@ -64,7 +64,7 @@ const simple: Parser<Comparator, string[]> = map(
     return { op, ...partial };
   },
 );
-const hyphen: Parser<[Comparator, Comparator], string[]> = map(
+const hyphen: Parser<[Comparator, Comparator]> = map(
   and(skip(partial, text(" - ")), partial),
   ([start, end]) => [{ op: ">=", ...start }, { op: "<=", ...end }],
 );

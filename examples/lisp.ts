@@ -22,7 +22,7 @@ export type LispList = ParseNode<"LispList", LispExpr[], TextReader>;
 /** Represents a Lisp expression. */
 export type LispExpr = LispSymbol | LispNumber | LispList;
 
-const lispExpr: Parser<LispExpr, string[]> = lazy(() =>
+const lispExpr: Parser<LispExpr> = lazy(() =>
   choice(lispSymbol, lispNumber, lispList)
 );
 
@@ -47,10 +47,7 @@ const lispList = node(
 );
 
 /** A Lisp file parser */
-export const Lisp: Parser<
-  ParseNode<"LispFile", LispExpr[], TextReader>,
-  string[]
-> = node(
+export const Lisp: Parser<ParseNode<"LispFile", LispExpr[], TextReader>> = node(
   repeat(trim(lispExpr, lispWS)),
   "LispFile",
 );

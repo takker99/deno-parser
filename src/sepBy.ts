@@ -9,20 +9,18 @@ import type { Parser } from "./parser.ts";
 
 export const sepBy = <
   A,
-  ExpectedA extends string[],
   S,
-  ExpectedS extends string[],
 >(
-  parser: Parser<A, ExpectedA>,
-  separator: Parser<S, ExpectedS>,
+  parser: Parser<A>,
+  separator: Parser<S>,
   min = 0,
   max = Infinity,
-): Parser<A[], ExpectedA | ExpectedS> => {
+): Parser<A[]> => {
   if (!isRangeValid(min, max)) {
     throw new Error(`sepBy: bad range (${min} to ${max})`);
   }
   if (min === 0) {
-    return or(sepBy(parser, separator, 1, max), ok<[], []>([]));
+    return or(sepBy(parser, separator, 1, max), ok([]));
   }
   // We also know that min=1 due to previous checks, so we can skip the call
   // to `repeat` here

@@ -3,22 +3,21 @@ import {
   type BaseReader,
   compare,
   type Context,
-  discardPreviousPosition,
+  drop,
   isDone,
+  pop,
   type ReaderTuple,
-  restorePreviousPosition,
-  saveCurrentPosition,
+  save,
 } from "./reader.ts";
 import { isOk, type Parser } from "./parser.ts";
 
 export const repeat = <
   A,
-  Expected extends string[],
 >(
-  parser: Parser<A, Expected>,
+  parser: Parser<A>,
   min = 0,
   max = Infinity,
-): Parser<A[], Expected> => {
+): Parser<A[]> => {
   if (!isRangeValid(min, max)) {
     throw new Error(`repeat: bad range (${min} to ${max})`);
   }
@@ -32,17 +31,14 @@ export const repeat = <
     while (true) {
       if (items.length >= max) break;
 
-      const result = parser(reader, ...saveCurrentPosition(reader, next));
+      const result = parser(reader, ...save(reader, next));
       prev = next;
-      const is = isOk(result);
+      const ok = isOk(result);
       const isLack = items.length < min;
-      next = (is || isLack ? discardPreviousPosition : restorePreviousPosition)(
-        reader,
-        result[1],
-      );
-      if (!is) {
-        if (isLack) return result;
-        break;
+      next = (!ok && !isLack ? pop : drop)(reader, result[1]);
+      if (!ok) {
+        if (!isLack) return [true, next, result[2], items];
+        return result;
       }
       if (
         compare(reader, prev, next) == 0 &&
@@ -52,8 +48,8 @@ export const repeat = <
           "infinite loop detected; don't call .repeat() with parsers that can accept zero characters",
         );
       }
-      items.push(result[2]);
+      items.push(result[3]);
     }
-    return [true, next, items];
+    return [true, next, [], items];
   };
 };

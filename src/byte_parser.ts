@@ -38,13 +38,12 @@ const byteReader: ReaderTuple<ByteReader> = [
   ([index]) => ({ index }),
 ];
 
-export const parse: <A, const Expected extends string[]>(
-  parser: Parser<A, Expected, ByteReader>,
+export const parse: <A>(
+  parser: Parser<A>,
   input: Uint8Array,
-) => ParseFinalResult<A, Expected | ["<EOF>"], ByteLocation> =
-  /* #__PURE__ */ makeExec(byteReader);
+) => ParseFinalResult<A, ByteLocation> = /* #__PURE__ */ makeExec(byteReader);
 
-export const tryParse: <A, const Expected extends string[]>(
-  parser: Parser<A, Expected, ByteReader>,
+export const tryParse: <A>(
+  parser: Parser<A, ByteReader>,
   input: Uint8Array,
 ) => A = /* #__PURE__ */ makeTryExec(byteReader);

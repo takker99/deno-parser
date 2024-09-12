@@ -5,8 +5,9 @@ export const location = <R extends BaseReader>(
   reader: ReaderTuple<R>,
   input: R["input"],
   seeker?: R["seeker"],
-): ParseResult<R["location"], never, R> => [
+): ParseResult<R["location"], R> => [
   true,
   [input, seeker],
+  [],
   formatLocation(reader, [input, seeker]),
 ];

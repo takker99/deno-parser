@@ -95,9 +95,7 @@ class MathNumber implements MathExpr {
 
 // ---[ Parser ]---
 
-const token = <A, const Expected extends string[]>(
-  parser: Parser<A, Expected>,
-) => trim(parser, mathWS);
+const token = <A>(parser: Parser<A>) => trim(parser, mathWS);
 
 function operator<S extends string>(string: S) {
   return token(text(string));
@@ -117,14 +115,14 @@ const mathNum = map(
 );
 
 // Next level
-const mathBasic: Parser<MathExpr, string[]> = lazy(() =>
+const mathBasic: Parser<MathExpr> = lazy(() =>
   token(
     trim(or(wrap(text("("), SimpleMath, text(")")), mathNum), mathWS),
   )
 );
 
 // Next level
-const mathUnaryPrefix: Parser<MathExpr, string[]> = lazy(() =>
+const mathUnaryPrefix: Parser<MathExpr> = lazy(() =>
   or(
     map(
       and(operator("-"), mathUnaryPrefix),
@@ -135,7 +133,7 @@ const mathUnaryPrefix: Parser<MathExpr, string[]> = lazy(() =>
 );
 
 // Next level
-const mathPow: Parser<MathExpr, string[]> = chain(
+const mathPow: Parser<MathExpr> = chain(
   mathUnaryPrefix,
   (expr) =>
     // Exponentiaton is right associative, meaning that `2 ** 3 ** 4` is
@@ -151,7 +149,7 @@ const mathPow: Parser<MathExpr, string[]> = chain(
 );
 
 // Next level
-const mathMulDiv: Parser<MathExpr, string[]> = chain(mathPow, (expr) =>
+const mathMulDiv: Parser<MathExpr> = chain(mathPow, (expr) =>
   map(
     repeat(
       and(
@@ -168,7 +166,7 @@ const mathMulDiv: Parser<MathExpr, string[]> = chain(mathPow, (expr) =>
   ));
 
 // Next level
-const mathAddSub: Parser<MathExpr, string[]> = chain(
+const mathAddSub: Parser<MathExpr> = chain(
   mathMulDiv,
   (expr) =>
     map(
@@ -194,4 +192,4 @@ const mathAddSub: Parser<MathExpr, string[]> = chain(
 /**
  * Represents a parser for mathematical expressions.
  */
-export const SimpleMath: Parser<MathExpr, string[]> = mathAddSub;
+export const SimpleMath: Parser<MathExpr> = mathAddSub;

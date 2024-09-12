@@ -1,27 +1,13 @@
-import {
-  discardPreviousPosition,
-  restorePreviousPosition,
-  saveCurrentPosition,
-} from "./reader.ts";
-import { isOk, type Parser } from "./parser.ts";
+import { drop, pop, save } from "./reader.ts";
+import { isOk, merge, type Parser } from "./parser.ts";
 
-export const or = <
-  A,
-  B,
-  const ExpectedA extends string[],
-  const ExpectedB extends string[],
->(
-  parserA: Parser<A, ExpectedA>,
-  parserB: Parser<B, ExpectedB>,
-): Parser<A | B, [...ExpectedA, ...ExpectedB]> =>
-(reader, ...context) => {
-  const a = parserA(reader, ...saveCurrentPosition(reader, context));
-  if (isOk(a)) {
-    return [true, discardPreviousPosition(reader, a[1]), a[2]];
-  }
-
-  const b = parserB(reader, ...restorePreviousPosition(reader, a[1]));
-  if (isOk(b)) return b;
-  const [x, next, expected] = b;
-  return [x, next, [...a[2], ...expected]];
-};
+export const or =
+  <A, B>(parserA: Parser<A>, parserB: Parser<B>): Parser<A | B> =>
+  (reader, ...context) => {
+    const a = parserA(reader, ...save(reader, context));
+    const next = a[1];
+    if (isOk(a)) {
+      return [true, drop(reader, next), a[2], a[3]];
+    }
+    return merge(a, parserB(reader, ...pop(reader, next)));
+  };

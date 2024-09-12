@@ -20,9 +20,7 @@ const whitespace = desc(match(/\s*/m), ["ws"]);
 
 // JSON is pretty relaxed about whitespace, so let's make it easy to ignore
 // after most text.
-const token = <A, const Expected extends string[]>(
-  parser: Parser<A, Expected>,
-) => trim(parser, whitespace);
+const token = <A>(parser: Parser<A>) => trim(parser, whitespace);
 
 // Several parsers are just strings with optional whitespace.
 const word = <S extends string>(str: S) => token(text(str));
@@ -38,7 +36,7 @@ export type JSONValue =
   | false;
 
 /** This is the main entry point of the parser: a full JSON value. */
-export const JSON: Parser<JSONValue, string[]> = lazy(() =>
+export const JSON: Parser<JSONValue> = lazy(() =>
   token(choice(
     jsonObject,
     jsonArray,

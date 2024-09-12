@@ -42,14 +42,7 @@ const csvRow = sepBy(csvField, text(","), 1);
 /** A CSV file is _basically_ just 1 or more rows, but our parser accidentally
  * reads the final empty line incorrectly and we have to hack around that.
  */
-export const CSV: Parser<
-  string[][],
-  [","] | ["\r\n", "\n"] | [string, '""', string] | ['"', string] | [
-    "\r\n",
-    "\n",
-    ...string[],
-  ]
-> = map(
+export const CSV: Parser<string[][]> = map(
   skip(
     sepBy(csvRow, csvEnd, 1),
     or(csvEnd, ok("")),

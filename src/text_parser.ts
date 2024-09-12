@@ -59,13 +59,10 @@ const textReader: ReaderTuple<TextReader> = [
   ([[index, line, column]]) => ({ index, line, column }),
 ];
 
-export const parse: <A, const Expected extends string[]>(
-  parser: Parser<A, Expected, TextReader>,
+export const parse: <A>(
+  parser: Parser<A, TextReader>,
   input: string,
-) => ParseFinalResult<A, Expected | ["<EOF>"], TextLocation> =
-  /* #__PURE__ */ makeExec(textReader);
+) => ParseFinalResult<A, TextLocation> = /* #__PURE__ */ makeExec(textReader);
 
-export const tryParse: <A, const Expected extends string[]>(
-  parser: Parser<A, Expected, TextReader>,
-  input: string,
-) => A = /* #__PURE__ */ makeTryExec(textReader);
+export const tryParse: <A>(parser: Parser<A, TextReader>, input: string) => A =
+  /* #__PURE__ */ makeTryExec(textReader);

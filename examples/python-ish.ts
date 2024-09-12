@@ -19,8 +19,8 @@ type PyBlock = { type: "Block"; statements: PyStatement[] };
 type PyIdent = { type: "Ident"; value: string };
 type PyStatement = PyBlock | PyIdent;
 interface Py {
-  pyStatement: Parser<PyStatement, string[]>;
-  pyRestStatement: Parser<PyStatement, string[]>;
+  pyStatement: Parser<PyStatement>;
+  pyRestStatement: Parser<PyStatement>;
 }
 
 /** Consume zero or more spaces and then return the number consumed. For a
@@ -84,9 +84,7 @@ function py(indent: number): Py {
 
   // This is just a statement in our language. To simplify, this is either a
   // block of code or just an identifier
-  const pyStatement: Parser<PyStatement, string[]> = lazy(() =>
-    or(pyBlock, pyIdent)
-  );
+  const pyStatement: Parser<PyStatement> = lazy(() => or(pyBlock, pyIdent));
 
   // This is a statement which is indented to the level of the current parse
   // state. It's called RestStatement because the first statement in a block
