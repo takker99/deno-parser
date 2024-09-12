@@ -19,8 +19,8 @@ import { isOk, merge, type Parser } from "./parser.ts";
  * const b = text("b");
  * const ab = or(a, b);
  * Deno.test("or", () => {
- *  assertEquals(tryParse(ab, "a"), "a");
- *  assertEquals(tryParse(ab, "b"), "b");
+ *   assertEquals(tryParse(ab, "a"), "a");
+ *   assertEquals(tryParse(ab, "b"), "b");
  * });
  * ```
  *

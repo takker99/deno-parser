@@ -24,8 +24,8 @@ import type { BaseReader } from "./reader.ts";
  *   ));
  *
  * Deno.test("chain", () => {
- *  assertEquals(tryParse(xmlTag, "<body></body>"), ["body", ""]);
- *  assertEquals(tryParse(xmlTag, "<meta>data</meta>"), ["meta", "data"]);
+ *   assertEquals(tryParse(xmlTag, "<body></body>"), ["body", ""]);
+ *   assertEquals(tryParse(xmlTag, "<meta>data</meta>"), ["meta", "data"]);
  * });
  * ```
  */

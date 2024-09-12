@@ -61,9 +61,9 @@ import { isOk, type Parser } from "./parser.ts";
  *
  * const xs = repeat(text("x"), 1);
  * Deno.test("repeat", () => {
- *  assertThrows(() => tryParse(xs, ""));
- *  assertEquals(tryParse(xs, "x"), ["x"]);
- *  assertEquals(tryParse(xs, "xx"), ["x", "x"]);
+ *   assertThrows(() => tryParse(xs, ""));
+ *   assertEquals(tryParse(xs, "x"), ["x"]);
+ *   assertEquals(tryParse(xs, "xx"), ["x", "x"]);
  * });
  * ```
  *

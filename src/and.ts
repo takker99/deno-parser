@@ -18,7 +18,7 @@ import type { BaseReader } from "./reader.ts";
  * const ab = and(a, b);
  *
  * Deno.test("and", () => {
- *  assertEquals(tryParse(ab, "ab"), ["a", "b"]);
+ *   assertEquals(tryParse(ab, "ab"), ["a", "b"]);
  * });
  * ```
  */
