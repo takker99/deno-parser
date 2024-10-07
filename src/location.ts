@@ -1,8 +1,12 @@
-import { type Context, contextOk, toSourceLocation } from "./context.ts";
-import type { ActionResult, SourceLocation } from "./parse.ts";
+import type { Parser } from "./parser.ts";
+import {
+  type BaseReader,
+  formatLocation,
+  getCurrentPosition,
+} from "./reader.ts";
 
 /**
- * Parser that yields the current {@linkcode SourceLocation}, containing properties
+ * Parser that yields the current {@linkcode BaseReader["location"]}, containing properties
  * `index`, `line` and `column`.
  * Useful when used before and after a given parser,
  * so you can know the source range for highlighting errors.
@@ -10,28 +14,37 @@ import type { ActionResult, SourceLocation } from "./parse.ts";
  *
  * @example
  * ```ts
- * import { chain, location, map, match, type Parser, type SourceLocation, tryParse } from "@takker/parser";
+ * import { chain, location, map, match } from "@takker/parser";
+ * import { type TextReader, tryParse } from "@takker/parser/text-parser";
+ * import { assertEquals } from "@std/assert";
  *
- * type Inspect = { type: "Identifier"; name: string; start: SourceLocation; end: SourceLocation };
- *
- * // TypeScript can't assume the type parameters of `Parser`, so you have to manually specify like this.
- * const identifier: Parser<Inspect> = chain(location, (start) => {
- *   return chain(match(/[a-z]+/i), (name) => {
- *     return map(location, (end) => {
- *       return { type: "Identifier", name, start, end };
- *     });
+ * const identifier = chain(
+ *   location<TextReader>(),
+ *   (start) =>
+ *     chain(
+ *       match(/[a-z]+/i),
+ *       (name) =>
+ *         map(
+ *           location<TextReader>(),
+ *           (end) => ({ type: "Identifier", name, start, end }),
+ *         ),
+ *     ),
+ * );
+ * Deno.test("location", () => {
+ *   assertEquals(tryParse(identifier, "abc"), {
+ *     type: "Identifier",
+ *     name: "abc",
+ *     start: { index: 0, line: 1, column: 1 },
+ *     end: { index: 3, line: 1, column: 4 },
  *   });
  * });
- * tryParse(identifier, "abc");
- * // => {
- * //   type: "Identifier",
- * //   name: "abc",
- * //   start: { index: 0, line: 1, column: 1 },
- * //   end: { index: 2, line: 1, column: 3 }
- * // }
  * ```
  */
-export const location = <I extends ArrayLike<unknown>>(
-  context: Context<I>,
-): ActionResult<SourceLocation> =>
-  contextOk(context, context[1][0], toSourceLocation(context[1]));
+export const location =
+  <Reader extends BaseReader>(): Parser<Reader["location"], Reader> =>
+  (reader, input, seeker) => [
+    true,
+    [input, seeker],
+    [],
+    formatLocation(reader, getCurrentPosition(reader, [input, seeker])),
+  ];

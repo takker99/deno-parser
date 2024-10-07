@@ -4,11 +4,10 @@ import { desc } from "../src/desc.ts";
 import { map } from "../src/map.ts";
 import { next } from "../src/next.ts";
 import { and } from "../src/and.ts";
-import { text } from "../src/text.ts";
 import { match } from "../src/match.ts";
 import { all } from "../src/all.ts";
 import { choice } from "../src/choice.ts";
-import type { Parser } from "../src/parse.ts";
+import { text } from "../src/text.ts";
 import { wrap } from "../src/wrap.ts";
 
 function rgba(r: number, g: number, b: number, a: number) {
@@ -59,9 +58,4 @@ const rgbaColor = map(
  * first then the last 3 hex digits would be left over at the end when parsing a
  * 6-digit hex color, causing an error.
  */
-export const Color: Parser<{
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-}> = choice(hexColorLong, hexColorShort, rgbColor, rgbaColor);
+export const Color = choice(hexColorLong, hexColorShort, rgbColor, rgbaColor);

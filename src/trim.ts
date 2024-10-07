@@ -1,4 +1,5 @@
-import type { Parser } from "./parse.ts";
+import type { Parser } from "./parser.ts";
+import type { BaseReader } from "./reader.ts";
 import { wrap } from "./wrap.ts";
 
 /**
@@ -11,16 +12,21 @@ import { wrap } from "./wrap.ts";
  * > Whitespace parsers typically also parse code comments, since those are
  * > generally ignored when parsing, just like whitespace.
  *
+ * @example
  * ```ts
- * import { match, ok, or, text, trim, tryParse } from "@takker/parser";
+ * import { match, ok, or, text, trim } from "@takker/parser";
+ * import { tryParse } from "@takker/parser/text-parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const whitespace = match(/\s+/);
  * const optWhitespace = or(whitespace, ok(""));
  * const item = trim(text("a"), optWhitespace);
- * tryParse(item, "     a "); // => "a"
+ * Deno.test("trim", () => {
+ *   assertEquals(tryParse(item, " a\n"), "a");
+ * });
  * ```
  */
-export const trim = <A, B, I extends ArrayLike<unknown>>(
-  parser: Parser<A, I>,
-  beforeAndAfter: Parser<B, I>,
-): Parser<A, I> => wrap(beforeAndAfter, parser, beforeAndAfter);
+export const trim = <A, B, const Reader extends BaseReader>(
+  parser: Parser<A, Reader>,
+  beforeAndAfter: Parser<B, Reader>,
+): Parser<A, Reader> => wrap(beforeAndAfter, parser, beforeAndAfter);

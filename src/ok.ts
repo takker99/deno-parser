@@ -1,5 +1,5 @@
-import { contextOk } from "./context.ts";
-import type { Parser } from "./parse.ts";
+import type { Parser } from "./parser.ts";
+import type { BaseReader } from "./reader.ts";
 
 /**
  * Returns a parser that yields the given `value` and consumes no input.
@@ -9,14 +9,18 @@ import type { Parser } from "./parse.ts";
  *
  * @example
  * ```ts
- * import { choice, ok, text, tryParse } from "@takker/parser";
+ * import { choice, ok, text } from "@takker/parser";
+ * import { tryParse } from "@takker/parser/text-parser";
+ * import { assertEquals } from "@std/assert";
  *
- * const sign = choice(text("+"), text("-"), ok(""));
- * tryParse(sign, "+"); // => "+"
- * tryParse(sign, "-"); // => "-"
- * tryParse(sign, ""); // => ""
+ * const sign = choice(text("+"), text("-"), ok("default"));
+ * Deno.test("ok", () => {
+ *   assertEquals(tryParse(sign, "+"), "+");
+ *   assertEquals(tryParse(sign, "-"), "-");
+ *   assertEquals(tryParse(sign, ""), "default");
+ * });
  * ```
  */
 export const ok =
-  <A, I extends ArrayLike<unknown>>(value: A): Parser<A, I> => (context) =>
-    contextOk(context, context[1][0], value);
+  <const A, const Reader extends BaseReader>(value: A): Parser<A, Reader> =>
+  (_, ...context) => [true, context, [], value];

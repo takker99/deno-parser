@@ -1,5 +1,7 @@
-import { contextFail, contextOk } from "./context.ts";
-import type { Parser } from "./parse.ts";
+import type { TextReader } from "./text_parser.ts";
+import { read } from "./reader.ts";
+import type { Parser } from "./parser.ts";
+import { makeExpected } from "./expected.ts";
 
 /**
  * Returns a parser that matches the entire `regexp` at the current parser
@@ -28,38 +30,38 @@ import type { Parser } from "./parse.ts";
  *
  * @example
  * ```ts
- * import { match, tryParse } from "@takker/parser";
- * const identifier = match(/[a-z_]+/i);
- * tryParse(identifier, "internal_toString");
- * // => "internal_toString"
+ * import { match } from "@takker/parser";
+ * import { tryParse } from "@takker/parser/text-parser";
+ * import { assertEquals } from "@std/assert";
  *
- * const number = match(/[0-9]+/);
- * tryParse(number, "404");
- * // => 404
+ * Deno.test("match", () => {
+ *   const identifier = match(/[a-z_]+/i);
+ *   assertEquals(tryParse(identifier, "internal_toString"), "internal_toString");
+ *   const number = match(/[0-9]+/);
+ *   assertEquals(tryParse(number, "404"), "404");
+ * });
  * ```
  */
-export const match = (regexp: RegExp): Parser<string, string> => {
+export const match = (regexp: RegExp): Parser<string, TextReader> => {
   for (const flag of regexp.flags) {
-    switch (flag) {
-      case "i": // ignoreCase
-      case "s": // dotAll
-      case "m": // multiline
-      case "u": // unicode
-        continue;
-      default:
-        throw new Error("only the regexp flags 'imsu' are supported");
-    }
+    if (
+      [
+        "i", // ignoreCase
+        "s", // dotAll
+        "m", // multiline
+        "u", // unicode
+      ].includes(flag)
+    ) continue;
+    throw new Error("only the regexp flags 'imsu' are supported");
   }
   const sticky = new RegExp(regexp.source, regexp.flags + "y");
-  return (context) => {
-    const [input, [start]] = context;
-    sticky.lastIndex = start;
-    const match = input.match(sticky);
-    if (match) {
-      const end = start + match[0].length;
-      const string = input.slice(start, end);
-      return contextOk(context, end, string);
+  return (reader, ...context) => {
+    sticky.lastIndex = context[1]?.[0]?.[0] ?? 0;
+    const match = context[0].match(sticky);
+    if (!match) {
+      return [false, context, [makeExpected(reader, context, `${regexp}`)]];
     }
-    return contextFail(context, start, [`${regexp}`]);
+    const res = read(match[0].length, reader, ...context);
+    return [true, res[1], [], res[2] ?? ""];
   };
 };

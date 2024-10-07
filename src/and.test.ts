@@ -2,8 +2,8 @@ import { assertEquals } from "@std/assert";
 import { and } from "./and.ts";
 import { chain } from "./chain.ts";
 import { map } from "./map.ts";
-import { parse } from "./parse.ts";
 import { text } from "./text.ts";
+import { parse } from "./text_parser.ts";
 
 Deno.test("and", () => {
   const x = text("x");
@@ -41,22 +41,18 @@ Deno.test("and failure", () => {
   const xy = and(x, y);
   assertEquals(parse(xy, "x"), {
     ok: false,
-    expected: ["y"],
-    location: { index: 1, line: 1, column: 2 },
+    expected: [{ expected: ["y"], location: { index: 1, line: 1, column: 2 } }],
   });
   assertEquals(parse(xy, "y"), {
     ok: false,
-    expected: ["x"],
-    location: { index: 0, line: 1, column: 1 },
+    expected: [{ expected: ["x"], location: { index: 0, line: 1, column: 1 } }],
   });
   assertEquals(parse(xy, "yx"), {
     ok: false,
-    expected: ["x"],
-    location: { index: 0, line: 1, column: 1 },
+    expected: [{ expected: ["x"], location: { index: 0, line: 1, column: 1 } }],
   });
   assertEquals(parse(xy, ""), {
     ok: false,
-    expected: ["x"],
-    location: { index: 0, line: 1, column: 1 },
+    expected: [{ expected: ["x"], location: { index: 0, line: 1, column: 1 } }],
   });
 });

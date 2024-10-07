@@ -1,9 +1,8 @@
-import { merge } from "./context.ts";
-import type { Parser } from "./parse.ts";
-import { isFail } from "./action.ts";
+import { isOk, merge, type Parser } from "./parser.ts";
+import type { BaseReader } from "./reader.ts";
 
 /**
- * Parse using the current parser. If it succeeds, pass the value to the `fn`
+ * Parse using the current `parser`. If it succeeds, pass the value to the `fn`
  * function, which returns the next parser to use. Similar to {@linkcode and}, but you get to
  * choose which parser comes next based on the value of the first one.
  *
@@ -12,27 +11,30 @@ import { isFail } from "./action.ts";
  *
  * @example
  * ```ts
- * import { chain, choice, map, match, skip, text, tryParse, wrap } from "@takker/parser";
+ * import { chain, map, match, and, text, wrap } from "@takker/parser";
+ * import { tryParse } from "@takker/parser/text-parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const openingTag = wrap(text("<"), match(/\w+/), text(">"));
  * const closingTag = (tag: string) => wrap(text("</"), text(tag), text(">"));
  * const xmlTag = chain(openingTag, (tag) =>
  *   map(
- *     skip(match(/[^<]+|/), closingTag(tag)),
- *     (content) => [tag, content] as const,
+ *     and(match(/[^<]+|/), closingTag(tag)),
+ *     ([content]) => [tag, content],
  *   ));
  *
- * tryParse(xmlTag, "<body></body>"); // => ["body", ""]
- * tryParse(xmlTag, "<meta>data</meta>"); // => ["meta", "data"]
+ * Deno.test("chain", () => {
+ *   assertEquals(tryParse(xmlTag, "<body></body>"), ["body", ""]);
+ *   assertEquals(tryParse(xmlTag, "<meta>data</meta>"), ["meta", "data"]);
+ * });
  * ```
  */
-export const chain = <A, B, I extends ArrayLike<unknown>>(
-  parser: Parser<A, I>,
-  fn: (value: A) => Parser<B, I>,
-): Parser<B, I> =>
-(context) => {
-  const a = parser(context);
-  if (isFail(a)) return a;
-  const parserB = fn(a.value);
-  return merge(a, parserB([context[0], a.location]));
+export const chain = <A, B, const Reader extends BaseReader>(
+  parser: Parser<A, Reader>,
+  fn: (value: A) => Parser<B, Reader>,
+): Parser<B, Reader> =>
+(reader, ...context) => {
+  const a = parser(reader, ...context);
+  if (!isOk(a)) return a;
+  return merge(reader, a, fn(a[3])(reader, ...a[1]));
 };

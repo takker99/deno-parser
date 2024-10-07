@@ -1,5 +1,7 @@
 // deno-fmt-ignore
-import { all, choice, lazy, map, match, next, parse, type Parser, text, trim, wrap, } from "@takker/parser";
+import { all, choice, lazy, map, match, next, type Parser, text, trim, wrap, } from "@takker/parser";
+import { tryParse } from "@takker/parser/text-parser";
+import { assertEquals } from "@std/assert";
 
 const ws = match(/\s*/);
 const token = <S extends string>(str: S) => trim(text(str), ws);
@@ -18,9 +20,11 @@ const sub = map(all(termMul, token("-"), termMul), ([l, , r]) => l - r);
 const plus = next(token("+"), term);
 const minus = map(next(token("-"), term), (d) => -d);
 
-const calc = (input: string) => parse(expr, input);
+const calc = (input: string) => tryParse(expr, input);
 
-console.log(calc("1")); // => 1
-console.log(calc("1+2")); // => 3
-console.log(calc("1 + 2 * 3")); // => 7
-console.log(calc("(8 * 4 -3) * (10 /2 +3)")); // => 232
+Deno.test("calc", () => {
+  assertEquals(calc("1"), 1);
+  assertEquals(calc("1+2"), 3);
+  assertEquals(calc("1 + 2 * 3"), 7);
+  assertEquals(calc("(8 * 4 -3) * (10 /2 +3)"), 232);
+});

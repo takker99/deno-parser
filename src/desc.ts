@@ -1,5 +1,6 @@
-import type { Parser } from "./parse.ts";
-import { isOk, makeActionFail } from "./action.ts";
+import { isOk, type Parser } from "./parser.ts";
+import { makeExpected } from "./expected.ts";
+import type { BaseReader, Context, ReaderTuple } from "./reader.ts";
 
 /**
  * Returns a parser which parses the same value, but discards other error messages,
@@ -13,7 +14,9 @@ import { isOk, makeActionFail } from "./action.ts";
  *
  * @example
  * ```ts
- * import { desc, map, match, tryParse } from "@takker/parser";
+ * import { desc, map, match } from "@takker/parser";
+ * import { tryParse } from "@takker/parser/text-parser";
+ * import { assertEquals, assertThrows } from "@std/assert";
  *
  * const jsonNumber1 = map(
  *   match(/-?(0|[1-9][0-9]*)([.][0-9]+)?([eE][+-]?[0-9]+)?/),
@@ -21,18 +24,26 @@ import { isOk, makeActionFail } from "./action.ts";
  * );
  * const jsonNumber2 = desc(jsonNumber1, ["number"]);
  *
- * tryParse(jsonNumber1, "x");
- * // => ["/-?(0|[1-9][0-9]*)([.][0-9]+)?([eE][+-]?[0-9]+)?/"]
- *
- * tryParse(jsonNumber2, "x");
- * // => ["number"]
+ * Deno.test("desc", () => {
+ *   assertEquals(tryParse(jsonNumber1, "1312"), 1312);
+ *   assertEquals(tryParse(jsonNumber1, "777"), 777);
+ *   assertThrows(() => tryParse(jsonNumber1, "x"), "number");
+ * });
  * ```
  */
-export const desc = <A, I extends ArrayLike<unknown>>(
-  parser: Parser<A, I>,
+export const desc = <
+  A,
+  const Reader extends BaseReader,
+>(
+  parser: Parser<A, Reader>,
   expected: string[],
-): Parser<A, I> =>
-(context) => {
-  const result = parser(context);
-  return isOk(result) ? result : makeActionFail(result.furthest, expected);
+): Parser<A, Reader> =>
+<R extends Reader>(reader: ReaderTuple<R>, ...context: Context<R>) => {
+  const result = parser(reader, ...context);
+  if (isOk(result)) return result;
+  return [
+    false,
+    result[1],
+    [makeExpected(reader, result[1], ...expected)],
+  ];
 };

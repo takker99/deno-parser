@@ -1,7 +1,6 @@
 import { XML } from "./xml-ish.ts";
-import { assertSnapshot } from "@std/testing/snapshot";
 import { assertEquals } from "@std/assert";
-import { parse, tryParse } from "../src/parse.ts";
+import { parse, tryParse } from "../src/text_parser.ts";
 
 Deno.test("xml basic", () => {
   assertEquals(tryParse(XML, `<a key="val" />`), {
@@ -16,9 +15,8 @@ Deno.test("xml basic", () => {
   });
 });
 
-Deno.test("xml large example", (t) =>
-  assertSnapshot(
-    t,
+Deno.test("xml large example", () =>
+  assertEquals(
     parse(
       XML,
       `
@@ -38,4 +36,119 @@ Deno.test("xml large example", (t) =>
     </Map>
     `,
     ),
+    {
+      ok: true,
+      value: {
+        attributes: {},
+        children: [
+          `
+      `,
+          {
+            attributes: {
+              key: "string-a",
+            },
+            children: [
+              {
+                attributes: {},
+                children: [
+                  "alpha",
+                ],
+                name: "String",
+              },
+            ],
+            name: "Entry",
+          },
+          {
+            attributes: {
+              key: "string-b",
+            },
+            children: [
+              {
+                attributes: {},
+                children: [
+                  "bravo",
+                ],
+                name: "String",
+              },
+            ],
+            name: "Entry",
+          },
+          {
+            attributes: {
+              key: "string-c",
+            },
+            children: [
+              {
+                attributes: {},
+                children: [
+                  "charlie",
+                ],
+                name: "String",
+              },
+            ],
+            name: "Entry",
+          },
+          {
+            attributes: {
+              key: "list",
+            },
+            children: [
+              `
+        `,
+              {
+                attributes: {},
+                children: [
+                  `
+          `,
+                  {
+                    attributes: {},
+                    children: [
+                      "a",
+                    ],
+                    name: "String",
+                  },
+                  {
+                    attributes: {},
+                    children: [
+                      "b",
+                    ],
+                    name: "String",
+                  },
+                  {
+                    attributes: {},
+                    children: [
+                      "c",
+                    ],
+                    name: "String",
+                  },
+                ],
+                name: "List",
+              },
+            ],
+            name: "Entry",
+          },
+          {
+            attributes: {
+              key: "null",
+            },
+            children: [
+              {
+                attributes: {},
+                children: [],
+                name: "Null",
+              },
+            ],
+            name: "Entry",
+          },
+          {
+            attributes: {
+              key: "empty",
+            },
+            children: [],
+            name: "Entry",
+          },
+        ],
+        name: "Map",
+      },
+    },
   ));

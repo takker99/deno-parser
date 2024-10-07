@@ -1,8 +1,8 @@
-import { assertEquals } from "@std/assert";
 import { choice } from "./choice.ts";
 import { map } from "./map.ts";
-import { parse } from "./parse.ts";
+import { parse } from "./text_parser.ts";
 import { text } from "./text.ts";
+import { assertEquals } from "@std/assert";
 
 Deno.test("choice", () => {
   const abc123 = choice(
@@ -21,18 +21,26 @@ Deno.test("choice", () => {
   assertEquals(parse(abc123, "2"), { ok: true, value: 2 });
   assertEquals(parse(abc123, "3"), { ok: true, value: 3 });
   assertEquals(parse(abc123, "aaaa"), {
-    expected: ["<EOF>"],
-    location: { index: 1, line: 1, column: 2 },
     ok: false,
+    expected: [{
+      expected: ["<EOF>"],
+      location: { index: 1, line: 1, column: 2 },
+    }],
   });
   assertEquals(parse(abc123, "abb"), {
-    expected: ["<EOF>"],
-    location: { index: 1, line: 1, column: 2 },
     ok: false,
+    expected: [{
+      expected: ["<EOF>"],
+      location: { index: 1, line: 1, column: 2 },
+    }],
   });
   assertEquals(parse(abc123, ""), {
-    expected: ["a", "b", "c", "1", "2", "3"],
-    location: { index: 0, line: 1, column: 1 },
     ok: false,
+    expected: [
+      {
+        expected: ["a", "b", "c", "1", "2", "3"],
+        location: { index: 0, line: 1, column: 1 },
+      },
+    ],
   });
 });

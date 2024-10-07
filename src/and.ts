@@ -1,6 +1,7 @@
-import { contextOk, merge } from "./context.ts";
-import type { Parser } from "./parse.ts";
-import { isFail, isOk } from "./action.ts";
+import { chain } from "./chain.ts";
+import { map } from "./map.ts";
+import type { Parser } from "./parser.ts";
+import type { BaseReader } from "./reader.ts";
 
 /**
  * Combines two parsers one after the other, yielding the results of both in
@@ -8,29 +9,20 @@ import { isFail, isOk } from "./action.ts";
  *
  * @example
  * ```ts
- * import { and, text, tryParse } from "@takker/parser";
+ * import { and, text } from "@takker/parser";
+ * import { tryParse } from "@takker/parser/text-parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const a = text("a");
  * const b = text("b");
  * const ab = and(a, b);
- * tryParse(ab, "a");
- * // => ["a", "b"]
-```
+ *
+ * Deno.test("and", () => {
+ *   assertEquals(tryParse(ab, "ab"), ["a", "b"]);
+ * });
+ * ```
  */
-export const and = <A, B, I extends ArrayLike<unknown>>(
-  parserA: Parser<A, I>,
-  parserB: Parser<B, I>,
-): Parser<[A, B], I> =>
-(
-  context,
-) => {
-  const a = parserA(context);
-  if (isFail(a)) return a;
-  context = [context[0], a.location];
-  const b = merge(a, parserB(context));
-  if (isOk(b)) {
-    const value: [A, B] = [a.value, b.value];
-    return merge(b, contextOk(context, b.location[0], value));
-  }
-  return b;
-};
+export const and = <A, B, const Reader extends BaseReader>(
+  parserA: Parser<A, Reader>,
+  parserB: Parser<B, Reader>,
+): Parser<[A, B], Reader> => chain(parserA, (a) => map(parserB, (b) => [a, b]));

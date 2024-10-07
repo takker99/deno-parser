@@ -1,7 +1,8 @@
 import { all } from "./all.ts";
-import { location } from "./location.ts";
 import { map } from "./map.ts";
-import type { Parser, SourceLocation } from "./parse.ts";
+import { location } from "./location.ts";
+import type { BaseReader } from "./reader.ts";
+import type { Parser } from "./parser.ts";
 
 /**
  * Returns a parser that adds `name` and start/end location metadata.
@@ -19,44 +20,47 @@ import type { Parser, SourceLocation } from "./parse.ts";
  * > [!NOTE]
  * > The `end` location is _exclusive_ of the parse (one character further)
  *
- * @example Basic Usage
+ * @example
  * ```ts
- * import { node, match, tryParse } from "@takker/parser";
+ * import { node, match, type ParseNode } from "@takker/parser";
+ * import { type TextReader, tryParse } from "@takker/parser/text-parser";
+ * import { assertEquals } from "@std/assert";
  *
- * const identifier = node(match(/[a-z]+/i), "Identifier");
- * tryParse(identifier, "hello");
- * // => {
- * //   name: "Identifier",
- * //   value: "hello",
- * //   start: SourceLocation { index: 0, line: 1, column: 1 },
- * //   end: SourceLocation { index: 5, line: 1, column: 6 } }
- * // }
- * ```
- *
- * @example Create type aliases for TypeScript use
- * ```ts
- * import type { ParseNode } from "@takker/parser";
- *
- * type LispSymbol = ParseNode<"LispSymbol", string>;
- * type LispNumber = ParseNode<"LispNumber", number>;
- * type LispList = ParseNode<"LispList", LispExpr[]>;
+ * type LispSymbol = ParseNode<"LispSymbol", string, TextReader>;
+ * type LispNumber = ParseNode<"LispNumber", number, TextReader>;
+ * type LispList = ParseNode<"LispList", LispExpr[], TextReader>;
  * type LispExpr = LispSymbol | LispNumber | LispList;
+ *
+ * const identifier = node<TextReader>()(match(/[a-z]+/i), "Identifier");
+ * Deno.test("node", () => {
+ *   assertEquals(tryParse(identifier, "hello"), {
+ *     name: "Identifier",
+ *     value: "hello",
+ *     start: { index: 0, line: 1, column: 1 },
+ *     end: { index: 5, line: 1, column: 6 },
+ *   });
+ * });
  * ```
  */
-export const node = <A, I extends ArrayLike<unknown>, S extends string>(
-  parser: Parser<A, I>,
+export const node = <
+  Reader extends BaseReader,
+>(): <S extends string, A, R extends Reader>(
+  parser: Parser<A, R>,
   name: S,
-): Parser<ParseNode<S, A>, I> =>
-  map(
-    all(location, parser, location),
-    ([start, value, end]) => ({ name, value, start, end }) as const,
-  );
+) => Parser<ParseNode<S, A, R>, R> => {
+  const loc = location<Reader>();
+  return (parser, name) =>
+    map(
+      all(loc, parser, loc),
+      ([start, value, end]) => ({ name, value, start, end }),
+    );
+};
 
 /**
  * Result type from {@linkcode node}.
  * See {@linkcode node} for more details.
  */
-export interface ParseNode<S extends string, A> {
+export interface ParseNode<S extends string, A, R extends BaseReader> {
   /**
    * The name of the node.
    * This is useful for debugging and error reporting.
@@ -67,8 +71,8 @@ export interface ParseNode<S extends string, A> {
   value: A;
 
   /** The start location of the parsed range. */
-  start: SourceLocation;
+  start: R["location"];
 
   /** The end location of the parsed range. */
-  end: SourceLocation;
+  end: R["location"];
 }

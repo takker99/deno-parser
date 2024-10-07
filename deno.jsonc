@@ -1,10 +1,15 @@
 {
   "name": "@takker/parser",
   "version": "0.0.0",
-  "exports": "./mod.ts",
+  "exports": {
+    ".": "./mod.ts",
+    "./text-parser": "./src/text_parser.ts",
+    "./byte-parser": "./src/byte_parser.ts"
+  },
   "tasks": {
-    "fix": "deno fmt && deno lint --fix && deno doc --lint mod.ts && deno test --allow-read=./ --doc --parallel --shuffle && deno publish --dry-run --allow-dirty",
-    "check": "deno fmt --check && deno lint && deno doc --lint mod.ts && deno test --allow-read=./ --doc --parallel --shuffle && deno publish --dry-run",
+    // "fix": "deno fmt && deno lint --fix && deno doc --lint mod.ts src/text_parser.ts src/byte_parser.ts && deno test --allow-read=./examples --doc --parallel --shuffle && deno publish --dry-run --allow-dirty",
+    "fix": "deno fmt && deno lint --fix && deno test --allow-read=./examples --doc --parallel --shuffle && deno publish --dry-run --allow-dirty",
+    "check": "deno fmt --check && deno lint && deno doc --lint mod.ts src/text_parser.ts src/byte_parser.ts && deno test --allow-read=./examples --doc --parallel --shuffle && deno publish --dry-run",
     "coverage": "deno test --allow-read=./ --parallel --shuffle --coverage && deno coverage --html",
     // from https://github.com/jsr-core/unknownutil/blob/v4.2.2/deno.jsonc#L84-L85
     "update": "deno run --allow-env --allow-read --allow-write=. --allow-run=git,deno --allow-net=jsr.io,registry.npmjs.org jsr:@molt/cli",
@@ -16,6 +21,7 @@
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.3",
     "@std/testing": "jsr:@std/testing@^1.0.1",
-    "@takker/parser": "./mod.ts"
+    "@takker/parser": "./mod.ts",
+    "@takker/parser/text-parser": "./src/text_parser.ts"
   }
 }

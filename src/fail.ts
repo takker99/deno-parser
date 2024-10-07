@@ -1,5 +1,6 @@
-import { contextFail } from "./context.ts";
-import type { Parser } from "./parse.ts";
+import type { Parser } from "./parser.ts";
+import { makeExpected } from "./expected.ts";
+import type { BaseReader } from "./reader.ts";
 
 /**
  * Returns a parser that fails with the given array of strings `expected` and consumes no input.
@@ -14,7 +15,9 @@ import type { Parser } from "./parse.ts";
  *
  * @example
  * ```ts
- * import { chain, fail, match, ok, tryParse } from "@takker/parser";
+ * import { chain, fail, match, ok } from "@takker/parser";
+ * import { tryParse } from "@takker/parser/text-parser";
+ * import { assertEquals, assertThrows } from "@std/assert";
  *
  * const number = chain(match(/[0-9]+/), (s) => {
  *   const n = Number(s);
@@ -25,13 +28,15 @@ import type { Parser } from "./parse.ts";
  *   }
  * });
  *
- * tryParse(number, "1984");
- * // => 1984
- *
- * tryParse(number, "9".repeat(999));
- * // => error: expected smaller number
+ * Deno.test("fail", () => {
+ *   assertEquals(tryParse(number, "1984"), 1984);
+ *   assertThrows(() => tryParse(number, "9".repeat(999)), "expected smaller number");
+ * });
  * ```
  */
-export const fail =
-  <A, I extends ArrayLike<unknown>>(expected: string[]): Parser<A, I> =>
-  (context) => contextFail(context, context[1][0], expected);
+export const fail = <const Reader extends BaseReader>(
+  expected: string[],
+): Parser<never, Reader> =>
+(reader, ...context) => [false, context, [
+  makeExpected(reader, context, ...expected),
+]];
