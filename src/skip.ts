@@ -8,12 +8,12 @@ import type { Parser } from "./parse.ts";
  * @example
  * ```ts
  * import { skip, text, tryParse } from "@takker/parser";
+ * import { assertThrows } from "@std/assert";
  *
  * const a = text("a");
  * const b = text("b");
  * const ab = skip(a, b);
- * tryParse(ab, "ab");
- * // => "a"
+ * assertThrows(() => tryParse(ab, "a"));
  * ```
  */
 export const skip = <A, B, I extends ArrayLike<unknown>>(

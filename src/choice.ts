@@ -18,20 +18,21 @@ import type { Parser, ParserResult } from "./parse.ts";
  * @example
  * ```ts
  * import { choice, text, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
- * const parser1 = choice(text("a"), text("b"), text("c"));
- * tryParse(parser1, "a"); // => "a"
- * tryParse(parser1, "b"); // => "b"
- * tryParse(parser1, "c"); // => "c"
+ * const parser = choice(text("a"), text("b"), text("c"));
+ * assertEquals(tryParse(parser, "a"), "a");
+ * assertEquals(tryParse(parser, "b"), "b");
+ * assertEquals(tryParse(parser, "c"), "c");
  * ```
  *
  * @example
  * ```ts
  * import { choice, text, tryParse } from "@takker/parser";
+ * import { assertThrows } from "@std/assert";
  *
- * const parser2 = choice(text("abc"), text("abc-123"));
- * tryParse(parser2, "abc-123");
- * // => Error
+ * const parser = choice(text("abc"), text("abc-123"));
+ * assertThrows(() => tryParse(parser, "abc-123"), "at line 1 column 4: expected -");
  * ```
  *
  * This fails because the first parser `abc` succeeds, but then there is still
@@ -41,24 +42,25 @@ import type { Parser, ParserResult } from "./parse.ts";
  * @example
  * ```ts
  * import { choice, text, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
- * const parser3 = choice(text("abc-123"), text("abc"));
- * tryParse(parser3, "abc-123");
- * // => "abc-123"
+ * const parser = choice(text("abc-123"), text("abc"));
+ * assertEquals(tryParse(parser, "abc"), "abc");
+ * assertEquals(tryParse(parser, "abc-123"), "abc-123");
  * ```
  *
  * Since both parsers start with `abc`, we have to put the longer one first.
  */
 export const choice = <
   A,
-  I extends ArrayLike<unknown>,
-  Parsers extends Parser<unknown, I>[],
+  Input extends ArrayLike<unknown>,
+  Parsers extends Parser<unknown, Input>[],
 >(
-  ...parsers: [Parser<A, I>, ...Parsers]
-): Parser<A | ParserResult<Parsers[number]>, I> =>
+  ...parsers: [Parser<A, Input>, ...Parsers]
+): Parser<A | ParserResult<Input, Parsers[number]>, Input> =>
   // TODO: This could be optimized with a custom parser, but I should probably add
   // benchmarking first to see if it really matters enough to rewrite it
   parsers.reduce((acc, p) => or(acc, p)) as Parser<
-    A | ParserResult<Parsers[number]>,
-    I
+    A | ParserResult<Input, Parsers[number]>,
+    Input
   >;

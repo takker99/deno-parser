@@ -1,5 +1,7 @@
-import { contextFail, contextOk } from "./context.ts";
+import { makeExpected } from "./expected.ts";
+import { move } from "./move.ts";
 import type { Parser } from "./parse.ts";
+import { defaultLocation } from "./SourceLocation.ts";
 
 /**
  * Returns a parser that matches the entire `regexp` at the current parser
@@ -29,13 +31,13 @@ import type { Parser } from "./parse.ts";
  * @example
  * ```ts
  * import { match, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
+ *
  * const identifier = match(/[a-z_]+/i);
- * tryParse(identifier, "internal_toString");
- * // => "internal_toString"
+ * assertEquals(tryParse(identifier, "internal_toString"), "internal_toString");
  *
  * const number = match(/[0-9]+/);
- * tryParse(number, "404");
- * // => 404
+ * assertEquals(tryParse(number, "404"), "404");
  * ```
  */
 export const match = (regexp: RegExp): Parser<string, string> => {
@@ -51,15 +53,21 @@ export const match = (regexp: RegExp): Parser<string, string> => {
     }
   }
   const sticky = new RegExp(regexp.source, regexp.flags + "y");
-  return (context) => {
-    const [input, [start]] = context;
+  return (input, prev = defaultLocation) => {
+    const start = prev.index;
     sticky.lastIndex = start;
     const match = input.match(sticky);
     if (match) {
       const end = start + match[0].length;
       const string = input.slice(start, end);
-      return contextOk(context, end, string);
+      const next = move(input, prev, end);
+      return {
+        ok: true,
+        value: string,
+        next,
+        expected: [makeExpected(prev, `${regexp}`)],
+      };
     }
-    return contextFail(context, start, [`${regexp}`]);
+    return { ok: false, expected: [makeExpected(prev, `${regexp}`)] };
   };
 };

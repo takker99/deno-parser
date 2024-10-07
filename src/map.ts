@@ -8,16 +8,17 @@ import type { Parser } from "./parse.ts";
  * @example
  * ```ts
  * import { map, match, or, text, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const num = map(match(/[0-9]+/), (str) => Number(str));
- * tryParse(num, "1312"); // => 1312
- * tryParse(num, "777"); // =>  777
+ * assertEquals(tryParse(num, "1312"), 1312);
+ * assertEquals(tryParse(num, "777"), 777);
  *
  * const yes = map(text("yes"), () => true as const);
  * const no = map(text("no"), () => false as const);
  * const bool = or(yes, no);
- * tryParse(bool, "yes"); // => true
- * tryParse(bool, "no"); // => false
+ * assertEquals(tryParse(bool, "yes"), true);
+ * assertEquals(tryParse(bool, "no"), false);
  * ```
  */
 export const map = <A, B, I extends ArrayLike<unknown>>(

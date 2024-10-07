@@ -1,6 +1,5 @@
-import { merge } from "./context.ts";
-import type { Parser } from "./parse.ts";
-import { isFail } from "./action.ts";
+import { isFail, type Parser } from "./parse.ts";
+import { merge } from "./merge.ts";
 
 /**
  * Parse using the current parser. If it succeeds, pass the value to the `fn`
@@ -13,6 +12,7 @@ import { isFail } from "./action.ts";
  * @example
  * ```ts
  * import { chain, choice, map, match, skip, text, tryParse, wrap } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const openingTag = wrap(text("<"), match(/\w+/), text(">"));
  * const closingTag = (tag: string) => wrap(text("</"), text(tag), text(">"));
@@ -22,17 +22,20 @@ import { isFail } from "./action.ts";
  *     (content) => [tag, content] as const,
  *   ));
  *
- * tryParse(xmlTag, "<body></body>"); // => ["body", ""]
- * tryParse(xmlTag, "<meta>data</meta>"); // => ["meta", "data"]
+ * assertEquals(tryParse(xmlTag, "<body></body>"), ["body", ""]);
+ * assertEquals(tryParse(xmlTag, "<meta>data</meta>"), ["meta", "data"]);
  * ```
  */
-export const chain = <A, B, I extends ArrayLike<unknown>>(
-  parser: Parser<A, I>,
-  fn: (value: A) => Parser<B, I>,
-): Parser<B, I> =>
-(context) => {
-  const a = parser(context);
+export const chain = <
+  A,
+  B,
+  Input extends ArrayLike<unknown>,
+>(
+  parser: Parser<A, Input>,
+  fn: (value: A) => Parser<B, Input>,
+): Parser<B, Input> =>
+(input, prev, options) => {
+  const a = parser(input, prev, options);
   if (isFail(a)) return a;
-  const parserB = fn(a.value);
-  return merge(a, parserB([context[0], a.location]));
+  return merge(a, fn(a.value)(input, a.next, options));
 };

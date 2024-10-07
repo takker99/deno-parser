@@ -1,5 +1,6 @@
-import { contextFail, contextOk } from "./context.ts";
-import type { Parser } from "./parse.ts";
+import { move } from "./move.ts";
+import type { ParseFail, ParseOk, Parser } from "./parse.ts";
+import { defaultLocation } from "./SourceLocation.ts";
 
 /** Returns a parser that matches the exact `string` supplied.
  *
@@ -9,22 +10,30 @@ import type { Parser } from "./parse.ts";
  * @example
  * ```ts
  * import { and, text, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const keywordWhile = text("while");
  * const paren = and(text("("), text(")"));
- * tryParse(keywordWhile, "while"); // => "while"
- * tryParse(paren, "()"); // => ["(", ")"]
+ * assertEquals(tryParse(keywordWhile, "while"), "while");
+ * assertEquals(tryParse(paren, "()"), ["(", ")"]);
  * ```
  */
 export const text =
-  <A extends string, L extends string>(string: A): Parser<A, L> =>
-  (
-    context,
-  ) => {
-    const [input, [start]] = context;
+  <S extends string>(string: S): Parser<S, string> =>
+  (input, prev = defaultLocation) => {
+    const start = prev.index;
     const end = start + string.length;
     if (input.slice(start, end) == string) {
-      return contextOk(context, end, string);
+      const next = move(input, prev, end);
+      return {
+        ok: true,
+        value: string,
+        next,
+        expected: [{ expected: new Set([string]), location: next }],
+      } satisfies ParseOk<S>;
     }
-    return contextFail(context, start, [string]);
+    return {
+      ok: false,
+      expected: [{ expected: new Set([string]), location: prev }],
+    } satisfies ParseFail;
   };
