@@ -1,7 +1,7 @@
 import { fail } from "./fail.ts";
 import { or } from "./or.ts";
 import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 import { assertEquals } from "@std/assert";
 
 Deno.test("fail", () => {

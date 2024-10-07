@@ -2,7 +2,7 @@ import { assertEquals, assertThrows } from "@std/assert";
 import { parse } from "./parse.ts";
 import { repeat } from "./repeat.ts";
 import { sepBy } from "./sepBy.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 
 Deno.test("repeat with bad range", () => {
   const a = text("a");

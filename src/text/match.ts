@@ -1,7 +1,7 @@
-import { makeExpected } from "./expected.ts";
-import { move } from "./move.ts";
-import type { Parser } from "./parse.ts";
-import { defaultLocation } from "./SourceLocation.ts";
+import { makeExpected } from "../expected.ts";
+import { move } from "../move.ts";
+import type { Parser } from "../parse.ts";
+import { defaultLocation } from "../SourceLocation.ts";
 
 /**
  * Returns a parser that matches the entire `regexp` at the current parser

@@ -1,9 +1,9 @@
 import { assertEquals } from "@std/assert";
 import { desc } from "./desc.ts";
-import { match } from "./match.ts";
+import { match } from "./text/match.ts";
 import { node } from "./node.ts";
 import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 
 Deno.test("node", () => {
   const identifier = desc(node(match(/[a-z]+/i), "Identifier"), ["identifier"]);

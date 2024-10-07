@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { all } from "./all.ts";
 import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 
 Deno.test("all", () => {
   const abc = all(text("a"), text("b"), text("c"));

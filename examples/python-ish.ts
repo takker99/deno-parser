@@ -1,8 +1,8 @@
 import { ok } from "../src/ok.ts";
 import { fail } from "../src/fail.ts";
 import { eof } from "../src/eof.ts";
-import { text } from "../src/text.ts";
-import { match } from "../src/match.ts";
+import { text } from "../src/text/text.ts";
+import { match } from "../src/text/match.ts";
 import { lazy } from "../src/lazy.ts";
 import type { Parser } from "../src/parse.ts";
 import { chain } from "../src/chain.ts";

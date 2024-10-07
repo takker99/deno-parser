@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
-import { parse, tryParse } from "./parse.ts";
-import { text } from "./text.ts";
+import { parse, tryParse } from "../parse.ts";
+import { text } from "../text/text.ts";
 
 Deno.test("test a test", () => {
   const x = text("x");

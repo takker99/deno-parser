@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { next } from "./next.ts";
 import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 
 Deno.test("next", () => {
   const ab = next(text("a"), text("b"));

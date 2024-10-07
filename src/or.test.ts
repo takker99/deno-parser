@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { or } from "./or.ts";
 import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 
 Deno.test("or", () => {
   const a = text("a");

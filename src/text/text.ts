@@ -1,6 +1,6 @@
-import { move } from "./move.ts";
-import type { ParseFail, ParseOk, Parser } from "./parse.ts";
-import { defaultLocation } from "./SourceLocation.ts";
+import { move } from "../move.ts";
+import type { ParseFail, ParseOk, Parser } from "../parse.ts";
+import { defaultLocation } from "../SourceLocation.ts";
 
 /** Returns a parser that matches the exact `string` supplied.
  *
