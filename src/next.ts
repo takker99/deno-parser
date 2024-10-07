@@ -8,12 +8,12 @@ import type { Parser } from "./parse.ts";
  * @example
  * ```ts
  * import { next, text, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const a = text("a");
  * const b = text("b");
  * const ab = next(a, b);
- * tryParse(ab, "ab");
- * // => "b"
+ * assertEquals(tryParse(ab, "ab"), "b");
  * ```
  */
 export const next = <A, B, I extends ArrayLike<unknown>>(

@@ -12,13 +12,14 @@ import { skip } from "./skip.ts";
  * @example
  * ```ts
  * import { sepBy, text, tryParse, wrap } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const item = text("a");
  * const comma = text(",");
  * const lbrack = text("[");
  * const rbrack = text("]");
  * const list = wrap(lbrack, sepBy(item, comma), rbrack);
- * tryParse(list, "[a,a,a]"); // => ["a", "a", "a"]
+ * assertEquals(tryParse(list, "[a,a,a]"), ["a", "a", "a"]);
  * ```
  */
 export const wrap = <L, A, R, I extends ArrayLike<unknown>>(

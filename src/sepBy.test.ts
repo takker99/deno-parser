@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { parse } from "./parse.ts";
 import { sepBy } from "./sepBy.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 Deno.test("sepBy 0+", () => {
   const a = text("a");
   const sep = text(",");

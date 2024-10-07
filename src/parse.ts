@@ -1,8 +1,7 @@
 import { skip } from "./skip.ts";
 import { eof } from "./eof.ts";
-import { type Context, toSourceLocation } from "./context.ts";
-import type { ActionResult } from "./action.ts";
-export type { ActionFail, ActionOK, ActionResult } from "./action.ts";
+import type { Expected } from "./expected.ts";
+import type { SourceLocation } from "./SourceLocation.ts";
 
 /**
  * The parsing action.
@@ -15,22 +14,32 @@ export type { ActionFail, ActionOK, ActionResult } from "./action.ts";
  * @param context A parsing context
  * @returns An {@linkcode ActionResult}
  */
-export type Parser<A, Input extends ArrayLike<unknown> = string> = (
-  context: Context<Input>,
-) => ActionResult<A>;
+export type Parser<A, Input extends ArrayLike<unknown>> = (
+  input: Input,
+  location?: SourceLocation,
+  options?: ParserOptions,
+) => ParseResult<A>;
+
+// deno-lint-ignore no-empty-interface
+export interface ParserOptions {}
 
 /** Extracts the parsed type from a {@linkcode Parser}. */
-export type ParserResult<P> = P extends Parser<infer A, infer L> ? A
+export type ParserResult<
+  Input extends ArrayLike<unknown>,
+  P extends Parser<unknown, Input>,
+> = P extends Parser<infer A, Input> ? A
   : never;
 
 /**  Extracts the input type from a {@linkcode Parser}. */
-export type ParserInput<P> = P extends Parser<infer A, infer L> ? L
-  : never;
+export type ParserInput<P extends Parser<unknown, ArrayLike<unknown>>> =
+  P extends Parser<unknown, infer I extends ArrayLike<unknown>> ? I : never;
+
+export type ParseResult<A> = ParseOk<A> | ParseFail;
 
 /**
  * Represents a successful parse result.
  */
-export interface ParseOK<A> {
+export interface ParseOk<A> {
   /**
    * Whether the parse was successful.
    */
@@ -38,6 +47,12 @@ export interface ParseOK<A> {
 
   /** The parsed value */
   value: A;
+
+  /** List of expected values at the location the parse failed */
+  expected: Expected[];
+
+  /** The next location where a parse starts to read */
+  next: SourceLocation;
 }
 
 /**
@@ -50,43 +65,17 @@ export interface ParseFail {
    */
   ok: false;
 
-  /** The input location where the parse failed */
-  location: SourceLocation;
-
   /** List of expected values at the location the parse failed */
-  expected: string[];
+  expected: Expected[];
 }
 
-/**
- * Represents a location in the input (source code). Keeps track of `index` (for
- * use with `.slice` and such), as well as `line` and `column` for displaying to
- * users.
- *
- * The `index` is counted as you would normally index a string for use with `.slice` and such.
- * But the `line` and `column` properly count complex Unicode characters like emojis.
- * Each `\n` character separates lines.
- */
-export interface SourceLocation {
-  /** The string index into the input (e.g. for use with `.slice`) */
-  index: number;
+export const isOk = <A>(
+  parseResult: ParseResult<A>,
+): parseResult is ParseOk<A> => parseResult.ok;
 
-  /**
-   * The line number for error reporting. Only the character `\n` is used to
-   * signify the beginning of a new line.
-   *
-   * > [!NOTE]
-   * > This is 1-indexed.
-   */
-  line: number;
-
-  /**
-   * The column number for error reporting.
-   *
-   * > [!NOTE]
-   * > This is 1-indexed.
-   */
-  column: number;
-}
+export const isFail = <A>(
+  parseResult: ParseResult<A>,
+): parseResult is ParseFail => !parseResult.ok;
 
 /**
  * Returns a parse result with either the value or error information.
@@ -101,33 +90,26 @@ export interface SourceLocation {
  * @example
  * ```ts
  * import { text, parse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const a = text("a");
  * const result1 = parse(a, "a");
  * if (result1.ok) {
- *   console.log(result1.value);
- *   // => "a"
+ *   assertEquals(result1.value, "a");
  * } else {
- *   const { location, expected } = result1;
- *   console.error("error at line", location.line, "column", location.column);
- *   console.error("expected one of", expected.join(", "));
+ *   const { expected } = result1;
+ *   console.error(`${expected.length} parse error(s) occurred:\n${
+ *     expected.map(({ expected, location: { line, column } }) =>
+ *       `at line ${line} column ${column}: expected ${[...expected].join(", ")}`
+ *     )
+ *   }`);
  * }
  * ```
  */
 export const parse = <A, Input extends ArrayLike<unknown>>(
   parser: Parser<A, Input>,
   input: Input,
-): ParseOK<A> | ParseFail => {
-  const result = skip(parser, eof)([input, [0, 1, 1]]);
-  if (result.ok) {
-    return { ok: true, value: result.value };
-  }
-  return {
-    ok: false,
-    location: toSourceLocation(result.furthest),
-    expected: result.expected,
-  };
-};
+): ParseResult<A> => skip(parser, eof)(input);
 
 /**
  * Returns the parsed result or throws an error.
@@ -145,9 +127,10 @@ export const parse = <A, Input extends ArrayLike<unknown>>(
  *
  * ```ts
  * import { text, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const a = text("a");
- * tryParse(a, "a"); // => "a"
+ * assertEquals(tryParse(a, "a"), "a");
  * ```
  */
 export const tryParse = <A, Input extends ArrayLike<unknown>>(
@@ -155,12 +138,12 @@ export const tryParse = <A, Input extends ArrayLike<unknown>>(
   input: Input,
 ): A => {
   const result = parse(parser, input);
-  if (result.ok) {
-    return result.value;
-  }
-  const { expected, location } = result;
-  const { line, column } = location;
-  const message = `parse error at line ${line} column ${column}: ` +
-    `expected ${expected.join(", ")}`;
+  if (isOk(result)) return result.value;
+  const { expected } = result;
+  const message = `${expected.length} parse error(s) occurred:\n${
+    expected.map(({ expected, location: { line, column } }) =>
+      `at line ${line} column ${column}: expected ${[...expected].join(", ")}`
+    )
+  }`;
   throw new Error(message);
 };

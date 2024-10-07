@@ -1,9 +1,9 @@
 import { assertEquals } from "@std/assert";
 import { chain } from "./chain.ts";
 import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 import { map } from "./map.ts";
-import { match } from "./match.ts";
+import { match } from "./text/match.ts";
 import { skip } from "./skip.ts";
 import { wrap } from "./wrap.ts";
 

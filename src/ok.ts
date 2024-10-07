@@ -1,5 +1,5 @@
-import { contextOk } from "./context.ts";
 import type { Parser } from "./parse.ts";
+import { defaultLocation } from "./SourceLocation.ts";
 
 /**
  * Returns a parser that yields the given `value` and consumes no input.
@@ -10,13 +10,14 @@ import type { Parser } from "./parse.ts";
  * @example
  * ```ts
  * import { choice, ok, text, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const sign = choice(text("+"), text("-"), ok(""));
- * tryParse(sign, "+"); // => "+"
- * tryParse(sign, "-"); // => "-"
- * tryParse(sign, ""); // => ""
+ * assertEquals(tryParse(sign, "+"), "+");
+ * assertEquals(tryParse(sign, "-"), "-");
+ * assertEquals(tryParse(sign, ""), "");
  * ```
  */
 export const ok =
-  <A, I extends ArrayLike<unknown>>(value: A): Parser<A, I> => (context) =>
-    contextOk(context, context[1][0], value);
+  <A, I extends ArrayLike<unknown>>(value: A): Parser<A, I> =>
+  (_, next = defaultLocation) => ({ ok: true, value, expected: [], next });

@@ -1,7 +1,8 @@
 import { all } from "./all.ts";
 import { location } from "./location.ts";
 import { map } from "./map.ts";
-import type { Parser, SourceLocation } from "./parse.ts";
+import type { Parser } from "./parse.ts";
+import type { SourceLocation } from "./SourceLocation.ts";
 
 /**
  * Returns a parser that adds `name` and start/end location metadata.
@@ -14,7 +15,7 @@ import type { Parser, SourceLocation } from "./parse.ts";
  * avoid this function and instead use your own custom node creation
  * function that fits your domain better.
  *
- * Location `index` is 0-indexed and `line`/`column` information is 1-indexed.
+ * {@linkcode SourceLocation} `index` is 0-indexed and `line`/`column` information is 1-indexed.
  *
  * > [!NOTE]
  * > The `end` location is _exclusive_ of the parse (one character further)
@@ -22,15 +23,15 @@ import type { Parser, SourceLocation } from "./parse.ts";
  * @example Basic Usage
  * ```ts
  * import { node, match, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const identifier = node(match(/[a-z]+/i), "Identifier");
- * tryParse(identifier, "hello");
- * // => {
- * //   name: "Identifier",
- * //   value: "hello",
- * //   start: SourceLocation { index: 0, line: 1, column: 1 },
- * //   end: SourceLocation { index: 5, line: 1, column: 6 } }
- * // }
+ * assertEquals(tryParse(identifier, "hello"), {
+ *   name: "Identifier",
+ *   value: "hello",
+ *   start: { index: 0, line: 1, column: 1 },
+ *   end: { index: 5, line: 1, column: 6 },
+ * });
  * ```
  *
  * @example Create type aliases for TypeScript use
@@ -48,7 +49,11 @@ export const node = <A, I extends ArrayLike<unknown>, S extends string>(
   name: S,
 ): Parser<ParseNode<S, A>, I> =>
   map(
-    all(location, parser, location),
+    all<[Parser<SourceLocation, I>, Parser<A, I>, Parser<SourceLocation, I>]>(
+      location,
+      parser,
+      location,
+    ),
     ([start, value, end]) => ({ name, value, start, end }) as const,
   );
 

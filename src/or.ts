@@ -1,6 +1,5 @@
-import { merge } from "./context.ts";
-import type { Parser } from "./parse.ts";
-import { isOk } from "./action.ts";
+import { isOk, type Parser } from "./parse.ts";
+import { merge } from "./merge.ts";
 
 /**
  * Try to parse using `parserA`. If that fails, parse using `parserB`.
@@ -13,30 +12,32 @@ import { isOk } from "./action.ts";
  * @example Basic usage
  * ```ts
  * import { or, text, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const a = text("a");
  * const b = text("b");
  * const ab = or(a, b);
- * tryParse(ab, "a"); // => "a"
- * tryParse(ab, "b"); // => "b"
+ * assertEquals(tryParse(ab, "a"), "a");
+ * assertEquals(tryParse(ab, "b"), "b");
  * ```
  *
  * @example Optional parsers
  * ```ts
  * import { ok, or, text, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * // You can also use this to implement optional parsers
  * const aMaybe = or(text("a"), ok(null));
- * tryParse(aMaybe, "a"); // => "a"
- * tryParse(aMaybe, ""); // => null
+ * assertEquals(tryParse(aMaybe, "a"), "a");
+ * assertEquals(tryParse(aMaybe, ""), null);
  * ```
  */
 export const or = <A, B, I extends ArrayLike<unknown>>(
   parserA: Parser<A, I>,
   parserB: Parser<B, I>,
 ): Parser<A | B, I> =>
-(context) => {
-  const a = parserA(context);
+(...args) => {
+  const a = parserA(...args);
   if (isOk(a)) return a;
-  return merge(a, parserB(context));
+  return merge(a, parserB(...args));
 };

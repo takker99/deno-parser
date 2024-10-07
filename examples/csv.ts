@@ -1,6 +1,6 @@
 import { ok } from "../src/ok.ts";
-import { text } from "../src/text.ts";
-import { match } from "../src/match.ts";
+import { text } from "../src/text/text.ts";
+import { match } from "../src/text/match.ts";
 import type { Parser } from "../src/parse.ts";
 import { or } from "../src/or.ts";
 import { chain } from "../src/chain.ts";

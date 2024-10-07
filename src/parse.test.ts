@@ -1,7 +1,7 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { parse, tryParse } from "./parse.ts";
-import { text } from "./text.ts";
-import { match } from "./match.ts";
+import { text } from "./text/text.ts";
+import { match } from "./text/match.ts";
 import { next } from "./next.ts";
 import { sepBy } from "./sepBy.ts";
 import { skip } from "./skip.ts";

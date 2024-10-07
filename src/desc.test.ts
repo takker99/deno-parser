@@ -1,7 +1,7 @@
 import { desc } from "./desc.ts";
 import { map } from "./map.ts";
 import { parse } from "./parse.ts";
-import { match } from "./match.ts";
+import { match } from "./text/match.ts";
 import { node } from "./node.ts";
 import { assertEquals } from "@std/assert";
 

@@ -1,6 +1,6 @@
 import { map } from "./map.ts";
 import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 import { assertEquals } from "@std/assert";
 
 Deno.test("map", () => {

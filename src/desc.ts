@@ -1,5 +1,6 @@
+import { makeExpected } from "./expected.ts";
 import type { Parser } from "./parse.ts";
-import { isOk, makeActionFail } from "./action.ts";
+import { defaultLocation } from "./SourceLocation.ts";
 
 /**
  * Returns a parser which parses the same value, but discards other error messages,
@@ -14,6 +15,7 @@ import { isOk, makeActionFail } from "./action.ts";
  * @example
  * ```ts
  * import { desc, map, match, tryParse } from "@takker/parser";
+ * import { assertThrows } from "@std/assert";
  *
  * const jsonNumber1 = map(
  *   match(/-?(0|[1-9][0-9]*)([.][0-9]+)?([eE][+-]?[0-9]+)?/),
@@ -21,18 +23,16 @@ import { isOk, makeActionFail } from "./action.ts";
  * );
  * const jsonNumber2 = desc(jsonNumber1, ["number"]);
  *
- * tryParse(jsonNumber1, "x");
- * // => ["/-?(0|[1-9][0-9]*)([.][0-9]+)?([eE][+-]?[0-9]+)?/"]
- *
- * tryParse(jsonNumber2, "x");
- * // => ["number"]
+ * assertThrows(() => tryParse(jsonNumber1, "x"), "expected /-?(0|[1-9][0-9]*)([.][0-9]+)?([eE][+-]?[0-9]+)?/");
+ * assertThrows(() => tryParse(jsonNumber2, "x"), "expected number");
  * ```
  */
 export const desc = <A, I extends ArrayLike<unknown>>(
   parser: Parser<A, I>,
   expected: string[],
 ): Parser<A, I> =>
-(context) => {
-  const result = parser(context);
-  return isOk(result) ? result : makeActionFail(result.furthest, expected);
+(input, prev = defaultLocation, options) => {
+  const result = parser(input, prev, options);
+  result.expected = [makeExpected(prev, ...expected)];
+  return result;
 };

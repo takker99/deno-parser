@@ -1,9 +1,10 @@
-import { contextOk, merge } from "./context.ts";
 import { isRangeValid } from "./isRangeValid.ts";
+import { move } from "./move.ts";
 import { ok } from "./ok.ts";
 import { or } from "./or.ts";
-import type { Parser } from "./parse.ts";
-import { isFail, isOk } from "./action.ts";
+import { isFail, isOk, type Parser } from "./parse.ts";
+import { defaultLocation } from "./SourceLocation.ts";
+import { merge } from "./merge.ts";
 
 /**
  * Repeats the current parser between min and max times, yielding the results
@@ -18,25 +19,25 @@ import { isFail, isOk } from "./action.ts";
  *
  * ```ts
  * import { match, repeat, skip, text, tryParse, wrap } from "@takker/parser";
+ * import { assertEquals, assertThrows } from "@std/assert";
  *
  * const identifier = match(/[a-z]+/i);
  * const expression = skip(identifier, text("()"));
  * const statement = skip(expression, text(";"));
  * const block = wrap(text("{"), repeat(statement), text("}"));
- * tryParse(block, "{apple();banana();coconut();}");
- * // => ["apple", "banana", "coconut"];
+ * assertEquals(tryParse(block, "{apple();banana();coconut();}"), ["apple", "banana", "coconut"]);
  *
  * const aaa = repeat(text("a"), 1, 3);
- * tryParse(aaa, ""); // => Error
- * tryParse(aaa, "a"); // => "a"
- * tryParse(aaa, "aa"); // => "aa"
- * tryParse(aaa, "aaa"); // => "aaa"
- * tryParse(aaa, "aaaa"); // => Error
+ * assertThrows(() => tryParse(aaa, ""));
+ * assertEquals(tryParse(aaa, "a"), ["a"]);
+ * assertEquals(tryParse(aaa, "aa"), ["a", "a"]);
+ * assertEquals(tryParse(aaa, "aaa"), ["a", "a", "a"]);
+ * assertThrows(() => tryParse(aaa, "aaaa"));
  *
  * const xs = repeat(text("x"), 1);
- * tryParse(xs, ""); // => Error
- * tryParse(xs, "x"); // => "x"
- * tryParse(xs, "xx"); // => "xx"
+ * assertThrows(() => tryParse(xs, ""));
+ * assertEquals(tryParse(xs, "x"), ["x"]);
+ * assertEquals(tryParse(xs, "xx"), ["x", "x"]);
  * ```
  *
  * @param parser The parser to repeat.
@@ -54,24 +55,30 @@ export const repeat = <A, I extends ArrayLike<unknown>>(
   if (min === 0) {
     return or(repeat(parser, 1, max), ok([]));
   }
-  return (context) => {
+  return (input, prev = defaultLocation, options) => {
     const items: A[] = [];
-    let result = parser(context);
+    let result = parser(input, prev, options);
     if (isFail(result)) return result;
 
+    let location = prev;
     while (isOk(result) && items.length < max) {
       items.push(result.value);
-      if (result.location[0] === context[1][0]) {
+      if (result.next.index === location.index) {
         throw new Error(
           "infinite loop detected; don't call .repeat() with parsers that can accept zero characters",
         );
       }
-      context = [context[0], result.location];
-      result = merge(result, parser(context));
+      location = move(input, location, result.next.index);
+      result = merge(result, parser(input, location, options));
     }
     if (isFail(result) && items.length < min) {
       return result;
     }
-    return merge(result, contextOk(context, context[1][0], items));
+    return merge(result, {
+      ok: true,
+      value: items,
+      next: location,
+      expected: [],
+    });
   };
 };

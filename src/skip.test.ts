@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { parse } from "./parse.ts";
 import { skip } from "./skip.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 
 Deno.test("skip", () => {
   const ab = skip(text("a"), text("b"));

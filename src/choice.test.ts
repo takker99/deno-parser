@@ -2,7 +2,7 @@ import { assertEquals } from "@std/assert";
 import { choice } from "./choice.ts";
 import { map } from "./map.ts";
 import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 
 Deno.test("choice", () => {
   const abc123 = choice(

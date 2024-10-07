@@ -14,6 +14,7 @@ import { repeat } from "./repeat.ts";
  * @example
  * ```ts
  * import { map, match, sepBy, text, tryParse, wrap } from "@takker/parser";
+ * import { assertEquals, assertThrows } from "@std/assert";
  *
  * const num = map(match(/[0-9]+/), Number);
  * const color = map(
@@ -26,22 +27,21 @@ import { repeat } from "./repeat.ts";
  *     return { red, green, blue };
  *   }
  * );
- * tryParse(color, "rgb(0,127,36)");
- * // => { red: 0, green: 127, blue: 36 }
+ * assertEquals(tryParse(color, "rgb(0,127,36)"), { red: 0, green: 127, blue: 36 });
  *
  * const classNames = sepBy(match(/\S+/), match(/\s+/));
- * tryParse(classNames, ""); // => []
- * tryParse(classNames, "btn"); // => ["btn"]
- * tryParse(classNames, "btn btn-primary"); // => ["btn", "btn-primary"]
+ * assertEquals(tryParse(classNames, ""), []);
+ * assertEquals(tryParse(classNames, "btn"), ["btn"]);
+ * assertEquals(tryParse(classNames, "btn btn-primary"), ["btn", "btn-primary"]);
  *
  * const dimensions = sepBy(
  *   map(match(/\d+/), Number),
  *   match(/\s*x\s{0,}/), 2, 3,
  * );
- * tryParse(dimensions, ""); // => Error
- * tryParse(dimensions, "3 x 4"); // => [3, 4]
- * tryParse(dimensions, "10x20x30"); // => [10, 20, 30]
- * tryParse(dimensions, "1x2x3x4"); // => Error
+ * assertThrows(() => tryParse(dimensions, ""));
+ * assertEquals(tryParse(dimensions, "3 x 4"), [3, 4]);
+ * assertEquals(tryParse(dimensions, "10x20x30"), [10, 20, 30]);
+ * assertThrows(() => tryParse(dimensions, "1x2x3x4"));
  * ```
  */
 export const sepBy = <A, B, I extends ArrayLike<unknown>>(

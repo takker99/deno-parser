@@ -18,19 +18,20 @@ import type { Parser } from "./parse.ts";
  * @example
  * ```ts
  * import { lazy, match, or, type Parser, sepBy, text, tryParse, wrap } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * type XExpr = XItem | XList;
  * type XItem = string;
  * type XList = XExpr[];
- * const expr: Parser<XExpr> = lazy(() => or(list, item));
- * const item: Parser<XItem> = match(/[a-z]+/i);
- * const list: Parser<XList> = wrap(
+ * const expr: Parser<XExpr, string> = lazy(() => or(list, item));
+ * const item  = match(/[a-z]+/i) satisfies Parser<XItem, string>;
+ * const list = wrap(
  *   text("["),
  *   sepBy(expr, text(",")),
  *   text("]"),
- * );
- * tryParse(expr, "[a,b,[c,d,[]],[[e]]]");
- * // => ["a", "b", ["c", "d", []], [["e"]]]
+ * ) satisfies Parser<XList, string>;
+ *
+ * assertEquals(tryParse(expr, "[a,b,[c,d,[]],[[e]]]"), ["a", "b", ["c", "d", []], [["e"]]]);
  * ```
  *
  * `lazy` must be used here in order to reference variables `item` and `list`

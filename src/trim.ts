@@ -13,11 +13,12 @@ import { wrap } from "./wrap.ts";
  *
  * ```ts
  * import { match, ok, or, text, trim, tryParse } from "@takker/parser";
+ * import { assertEquals } from "@std/assert";
  *
  * const whitespace = match(/\s+/);
  * const optWhitespace = or(whitespace, ok(""));
  * const item = trim(text("a"), optWhitespace);
- * tryParse(item, "     a "); // => "a"
+ * assertEquals(tryParse(item, "     a "), "a");
  * ```
  */
 export const trim = <A, B, I extends ArrayLike<unknown>>(

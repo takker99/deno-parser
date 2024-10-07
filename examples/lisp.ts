@@ -1,6 +1,6 @@
 import { node, type ParseNode } from "../src/node.ts";
-import { text } from "../src/text.ts";
-import { match } from "../src/match.ts";
+import { text } from "../src/text/text.ts";
+import { match } from "../src/text/match.ts";
 import { choice } from "../src/choice.ts";
 import { lazy } from "../src/lazy.ts";
 import type { Parser } from "../src/parse.ts";

@@ -2,7 +2,7 @@ import { lazy } from "./lazy.ts";
 import { or } from "./or.ts";
 import { parse, type Parser } from "./parse.ts";
 import { sepBy } from "./sepBy.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 import { wrap } from "./wrap.ts";
 import { assertEquals } from "@std/assert";
 

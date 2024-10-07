@@ -3,7 +3,7 @@ import { and } from "./and.ts";
 import { chain } from "./chain.ts";
 import { map } from "./map.ts";
 import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 
 Deno.test("and", () => {
   const x = text("x");

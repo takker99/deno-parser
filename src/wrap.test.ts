@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { parse } from "./parse.ts";
-import { text } from "./text.ts";
+import { text } from "./text/text.ts";
 import { wrap } from "./wrap.ts";
 
 Deno.test("wrap", () => {

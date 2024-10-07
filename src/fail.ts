@@ -1,5 +1,6 @@
-import { contextFail } from "./context.ts";
+import { makeExpected } from "./expected.ts";
 import type { Parser } from "./parse.ts";
+import { defaultLocation } from "./SourceLocation.ts";
 
 /**
  * Returns a parser that fails with the given array of strings `expected` and consumes no input.
@@ -15,6 +16,7 @@ import type { Parser } from "./parse.ts";
  * @example
  * ```ts
  * import { chain, fail, match, ok, tryParse } from "@takker/parser";
+ * import { assertEquals, assertThrows } from "@std/assert";
  *
  * const number = chain(match(/[0-9]+/), (s) => {
  *   const n = Number(s);
@@ -25,13 +27,14 @@ import type { Parser } from "./parse.ts";
  *   }
  * });
  *
- * tryParse(number, "1984");
- * // => 1984
+ * assertEquals(tryParse(number, "1984"), 1984);
  *
- * tryParse(number, "9".repeat(999));
- * // => error: expected smaller number
+ * assertThrows(() => tryParse(number, "9".repeat(999)), "expected smaller number");
  * ```
  */
 export const fail =
   <A, I extends ArrayLike<unknown>>(expected: string[]): Parser<A, I> =>
-  (context) => contextFail(context, context[1][0], expected);
+  (_, location = defaultLocation) => ({
+    ok: false,
+    expected: [makeExpected(location, ...expected)],
+  });
